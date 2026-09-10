@@ -108,15 +108,7 @@ h4 {
   margin-block-start: var(--space-2);
 }
 
-.prose a {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--accent-ink);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
-}
-
-/* ---------- Links ---------- */
+/* ---------- Links: dezente Linie in Ruhe, gelb im Hover ---------- */
 
 a {
   color: inherit;
@@ -124,23 +116,70 @@ a {
   text-decoration-color: var(--rule);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
-  transition: color var(--motion-base) var(--ease),
-    text-decoration-color var(--motion-fast) var(--ease);
+  transition: text-decoration-color var(--motion-fast) var(--ease),
+    text-decoration-thickness var(--motion-fast) var(--ease);
 }
 
 a:hover {
-  text-decoration-color: currentColor;
+  text-decoration-color: var(--signal);
+  text-decoration-thickness: 2px;
 }
 
-/* ---------- Fokus: immer sichtbar, nie entfernt, nie der Akzent ---------- */
+/* Kurze gelbe Kante unter Abschnittsmarken (Caps-Labels). */
+.rail-mark {
+  width: max-content;
+  max-width: 100%;
+  padding-block-end: var(--space-2);
+  border-block-end: var(--rail) solid var(--signal);
+}
+
+/* ----------------------------------------------------------------------------
+   Fokus: gelbe Fläche + schwarzer Balken darunter (nach dem Muster von GOV.UK).
+   Gilt für ALLE fokussierbaren Elemente – deshalb !important, damit scoped
+   Komponenten-Stile (Footer-Links, Menü, Buttons) den Fokus nicht überschreiben.
+   Der transparente Outline wird im Windows-Kontrastmodus sichtbar.
+   -------------------------------------------------------------------------- */
 
 :focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
+  outline: 3px solid transparent !important;
+  outline-offset: 0 !important;
+  color: var(--signal-ink) !important;
+  background-color: var(--signal) !important;
+  box-shadow:
+    0 -2px var(--signal),
+    0 4px var(--signal-ink) !important;
+  text-decoration: none !important;
+}
+
+/* Kinder eines fokussierten Blocklinks (Karten, „Next case study") mitziehen. */
+:focus-visible :where(*) {
+  color: var(--signal-ink) !important;
+  border-color: var(--signal-ink) !important;
+  background-color: transparent !important;
 }
 
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/* Auf gelbem Grund (CTA-Band) invertiert der Fokus – sonst gelb auf gelb. */
+.home__cta :focus-visible {
+  color: var(--signal) !important;
+  background-color: var(--signal-ink) !important;
+  border-color: var(--signal) !important;
+  box-shadow:
+    0 -2px var(--signal-ink),
+    0 4px var(--signal) !important;
+}
+
+.home__cta :focus-visible :where(*) {
+  color: var(--signal) !important;
+  border-color: var(--signal) !important;
+}
+
+/* Der gelbe Punkt im Umschalter würde auf gelbem Grund verschwinden. */
+.theme-toggle:focus-visible .theme-toggle__dot {
+  background-color: var(--signal-ink) !important;
 }
 
 /* ---------- Skip-Link ---------- */

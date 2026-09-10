@@ -200,13 +200,6 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     padding-block-start: var(--space-8);
   }
 
-  .case__chapters :global(a) {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: var(--accent-ink);
-    text-underline-offset: 0.18em;
-  }
-
   .case__chapters :global(ul),
   .case__chapters :global(ol) {
     padding-inline-start: var(--space-6);
@@ -220,20 +213,23 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
   .case__chapters :global(section) {
     display: grid;
     grid-template-columns: var(--meta-col) minmax(0, 1fr);
-    gap: var(--space-14);
+    gap: var(--space-12);
     align-items: start;
     padding-block-start: var(--space-16);
   }
 
   .case__chapters :global(section > *) {
     grid-column: 2;
-    max-width: var(--measure);
+    max-width: var(--measure-wide);
   }
 
   .case__chapters :global(section > h2) {
     grid-column: 1;
+    width: max-content;
+    max-width: 100%;
     margin: 0;
-    padding-block-start: var(--space-2);
+    padding-block: var(--space-1) var(--space-2);
+    border-block-end: var(--rail) solid var(--signal);
     font-family: var(--font-mono);
     font-size: var(--step--2);
     font-weight: 400;
