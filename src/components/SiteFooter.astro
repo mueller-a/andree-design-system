@@ -6,7 +6,10 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="wrap site-footer__inner">
-    <a class="site-footer__email" href={`mailto:${site.email}`}>{site.email}</a>
+    <span class="site-footer__contact">
+      <a class="site-footer__email" href={`mailto:${site.email}`}>{site.email}</a>
+      <a class="site-footer__ext" href={site.linkedin} rel="me external">LinkedIn</a>
+    </span>
 
     <nav class="site-footer__nav" aria-label="Legal">
       <ul role="list">
@@ -50,6 +53,13 @@ const year = new Date().getFullYear();
     color: var(--ink-faint);
   }
 
+  .site-footer__contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-6);
+  }
+
   .site-footer__email {
     color: var(--ink-faint);
     text-decoration: none;
@@ -57,7 +67,13 @@ const year = new Date().getFullYear();
     letter-spacing: 0.04em;
   }
 
-  .site-footer__email:hover {
+  .site-footer__ext {
+    color: var(--ink-faint);
+    text-decoration: none;
+  }
+
+  .site-footer__email:hover,
+  .site-footer__ext:hover {
     color: var(--ink);
   }
 

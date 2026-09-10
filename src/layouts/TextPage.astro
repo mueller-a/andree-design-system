@@ -4,7 +4,7 @@ import Base from './Base.astro';
 interface Props {
   title: string;
   description?: string;
-  /** Kleine Mono-Marke über dem Titel, z. B. "Legal". */
+  /** Kleine Mono-Marke im linken Rail, z. B. "Legal". */
   kicker?: string;
   lead?: string;
   /** ISO-Datum der letzten Aktualisierung, z. B. "2026-09-08". */
@@ -26,53 +26,80 @@ const updatedWord = lang === 'de' ? 'Stand' : 'Updated';
 ---
 
 <Base title={title} description={description} noindex={noindex} mainClass="textpage">
-  <div class="wrap textpage__inner">
-    <header class="textpage__header">
-      {kicker && <p class="caps caps--wide rail-mark textpage__kicker">{kicker}</p>}
-      <h1 class="textpage__title">{title}</h1>
-      {lead && <p class="textpage__lead">{lead}</p>}
+  <div class="wrap textpage__grid">
+    <aside class="textpage__rail">
+      {kicker && <p class="caps caps--wide rail-mark">{kicker}</p>}
       {
         updatedLabel && (
           <p class="caps textpage__updated">
-            {updatedWord}: <time datetime={updated}>{updatedLabel}</time>
+            {updatedWord}
+            <time datetime={updated}>{updatedLabel}</time>
           </p>
         )
       }
-    </header>
+    </aside>
 
-    <div class="prose" lang={lang}>
-      <slot />
+    <div class="textpage__main">
+      <h1 class="textpage__title">{title}</h1>
+      {lead && <p class="textpage__lead">{lead}</p>}
+      <div class="prose textpage__prose" lang={lang}>
+        <slot />
+      </div>
     </div>
   </div>
 
   <style>
-    .textpage__inner {
-      padding-block: var(--space-24) var(--space-24);
-    }
-
-    .textpage__header {
-      max-width: var(--measure);
-      margin-block-end: var(--space-16);
-    }
-
-    .textpage__kicker {
-      margin: 0 0 var(--space-6);
-    }
-
-    .textpage__title {
-      max-width: 18ch;
-    }
-
-    .textpage__lead {
-      margin-block-start: var(--space-6);
-      font-size: var(--step-1);
-      line-height: 1.55;
-      color: var(--ink-muted);
+    .textpage__grid {
+      display: grid;
+      grid-template-columns: var(--meta-col) minmax(0, 1fr);
+      gap: var(--space-12);
+      align-items: start;
+      padding-block: var(--space-24);
     }
 
     .textpage__updated {
-      margin-block-start: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      margin-block-start: var(--space-8);
       color: var(--ink-faint);
+    }
+
+    .textpage__main {
+      max-width: var(--measure-wide);
+    }
+
+    .textpage__title {
+      max-width: 24ch;
+    }
+
+    .textpage__lead {
+      margin-block: var(--space-8);
+      font-size: var(--step-1);
+      line-height: 1.6;
+      color: var(--ink-muted);
+    }
+
+    .textpage__prose {
+      max-width: none;
+    }
+
+    .textpage__prose :global(h2) {
+      width: max-content;
+      max-width: 100%;
+      padding-block-end: var(--space-2);
+      border-block-end: var(--rail) solid var(--signal);
+    }
+
+    @media (max-width: 48rem) {
+      .textpage__grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+      }
+
+      .textpage__updated {
+        margin-block-start: var(--space-4);
+      }
     }
   </style>
 </Base>
