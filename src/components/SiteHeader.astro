@@ -1,0 +1,110 @@
+---
+import { nav, site } from '../site.config';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  /** Aktueller Pfad, für aria-current in der Navigation. */
+  path: string;
+}
+
+const { path } = Astro.props;
+
+/** Normalisiert Pfade auf "ohne Trailing-Slash" für den Vergleich. */
+const norm = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
+const current = norm(path);
+
+const isCurrent = (href: string) => {
+  const h = norm(href);
+  if (h === '/') return current === '/';
+  return current === h || current.startsWith(h + '/');
+};
+---
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="site-header__mark" href="/" rel="home">
+      <span class="site-header__name">{site.name}</span>
+      <span class="site-header__role">{site.role}, {site.location}</span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Hauptnavigation">
+      <ul role="list">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <ThemeToggle />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-block-end: 1px solid var(--rule);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-4) var(--space-8);
+    padding-block: var(--space-4);
+  }
+
+  .site-header__mark {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    margin-inline-end: auto;
+  }
+
+  .site-header__mark:hover .site-header__name {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .site-header__name {
+    font-family: var(--font-display);
+    font-weight: 620;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .site-header__role {
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+
+  .site-header__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-6);
+    margin: 0;
+  }
+
+  .site-header__nav a {
+    text-decoration: none;
+    color: var(--ink-muted);
+    padding-block: var(--space-1);
+  }
+
+  .site-header__nav a:hover {
+    color: var(--ink);
+  }
+
+  /* Aktiver Punkt: Farbe UND gelbe Unterstreichung – nicht nur Farbe. */
+  .site-header__nav a[aria-current='page'] {
+    color: var(--ink);
+    box-shadow: inset 0 -2px 0 0 var(--signal);
+  }
+</style>
