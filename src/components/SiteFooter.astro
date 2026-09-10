@@ -8,7 +8,14 @@ const year = new Date().getFullYear();
   <div class="wrap site-footer__inner">
     <span class="site-footer__contact">
       <a class="site-footer__email" href={`mailto:${site.email}`}>{site.email}</a>
-      <a class="site-footer__ext" href={site.linkedin} rel="me external">LinkedIn</a>
+      <a
+        class="site-footer__ext"
+        href={site.linkedin}
+        target="_blank"
+        rel="me external noopener noreferrer"
+      >
+        LinkedIn
+      </a>
     </span>
 
     <nav class="site-footer__nav" aria-label="Legal">

@@ -91,7 +91,11 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
       d.reference && (
         <p class="wrap case__ref">
           <span class="caps caps--wide">Reference</span>
-          <a href={d.reference.url} rel="external">
+          <a
+            href={d.reference.url}
+            target="_blank"
+            rel="external noopener noreferrer"
+          >
             {d.reference.label}
           </a>
         </p>
