@@ -1,6 +1,6 @@
 /*
- * Basis-Elementstile + wenige Utility-Klassen.
- * Reihenfolge des Imports: fonts -> tokens -> reset -> global
+ * Basis-Elementstile + wenige Utility-Klassen — Dark Studio.
+ * Importreihenfolge: fonts -> tokens -> reset -> global
  */
 
 /* ---------- Grundfläche ---------- */
@@ -8,11 +8,13 @@
 body {
   font-family: var(--font-body);
   font-size: var(--step-0);
-  font-optical-sizing: auto;
+  font-weight: var(--weight-body);
+  line-height: var(--leading-body);
   color: var(--ink);
   background-color: var(--surface);
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
@@ -27,26 +29,60 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: 620;
-  line-height: var(--leading-tight);
+  font-weight: var(--weight-display);
+  line-height: 1.1;
   letter-spacing: var(--tracking-tight);
   color: var(--ink);
+  text-wrap: pretty;
 }
 
 h1 {
   font-size: var(--step-4);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
 }
 h2 {
-  font-size: var(--step-3);
+  font-size: var(--step-2);
+  font-weight: var(--weight-subhead);
 }
 h3 {
-  font-size: var(--step-2);
+  font-size: var(--step-1);
+  font-weight: var(--weight-subhead);
 }
 h4 {
-  font-size: var(--step-1);
+  font-size: var(--step-0);
+  font-family: var(--font-mono);
+  font-weight: var(--weight-body);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
 }
 
-/* Fließtext-Block: ruhige Spalte, begrenzte Zeilenlänge. */
+/* ---------- Caps-Labels: immer Mono, immer uppercase ---------- */
+
+.caps {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-weight: 400;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--ink-muted);
+}
+
+.caps--wide {
+  letter-spacing: var(--tracking-caps-wide);
+}
+
+.caps--accent {
+  color: var(--accent-ink);
+}
+
+.caps--faint {
+  color: var(--ink-faint);
+}
+
+/* ---------- Fließtext ---------- */
+
 .prose {
   max-width: var(--measure);
 }
@@ -55,11 +91,7 @@ h4 {
   margin-block-start: var(--space-6);
 }
 
-.prose h2 {
-  margin-block-start: var(--space-16);
-}
-
-.prose h3 {
+.prose :is(h2, h3) {
   margin-block-start: var(--space-12);
 }
 
@@ -78,8 +110,10 @@ h4 {
 
 .prose a {
   color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-ink);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.15em;
+  text-underline-offset: 0.18em;
 }
 
 /* ---------- Links ---------- */
@@ -89,23 +123,22 @@ a {
   text-decoration: underline;
   text-decoration-color: var(--rule);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.15em;
-  transition: text-decoration-color var(--motion-fast) var(--ease);
+  text-underline-offset: 0.18em;
+  transition: color var(--motion-base) var(--ease),
+    text-decoration-color var(--motion-fast) var(--ease);
 }
 
 a:hover {
   text-decoration-color: currentColor;
 }
 
-/* ---------- Fokus: immer sichtbar, nie entfernt ---------- */
+/* ---------- Fokus: immer sichtbar, nie entfernt, nie der Akzent ---------- */
 
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
-  border-radius: var(--radius);
 }
 
-/* Kein Fokusring bei reiner Mausbedienung, aber Fallback für alte Engines. */
 :focus:not(:focus-visible) {
   outline: none;
 }
@@ -120,8 +153,7 @@ a:hover {
   padding: var(--space-2) var(--space-4);
   background-color: var(--surface-raised);
   color: var(--ink);
-  border: 1px solid var(--ink);
-  border-radius: var(--radius);
+  border: 1px solid var(--accent-ink);
   text-decoration: none;
   transform: translateY(-150%);
   transition: transform var(--motion-fast) var(--ease);
@@ -131,24 +163,35 @@ a:hover {
   transform: translateY(0);
 }
 
-/* ---------- Utilities ---------- */
+/* ---------- Rahmen & Raster ---------- */
 
 .wrap {
   width: 100%;
   max-width: var(--wrap);
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: var(--gutter);
 }
 
-.stack > * + * {
-  margin-block-start: var(--flow, var(--space-4));
+@media (max-width: 64rem) {
+  :root {
+    --gutter: 2.5rem;
+  }
 }
 
-.cluster {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--gap, var(--space-4));
-  align-items: baseline;
+@media (max-width: 40rem) {
+  :root {
+    --gutter: 1.5rem;
+  }
+}
+
+/* Beschriftete Platzhalterfläche (Bilder, die noch fehlen). */
+.placeholder {
+  display: grid;
+  place-items: center;
+  padding: var(--space-8);
+  background: var(--placeholder);
+  color: var(--ink-muted);
+  text-align: center;
 }
 
 .visually-hidden {
@@ -169,11 +212,16 @@ a:hover {
   border-block-start: 1px solid var(--rule);
 }
 
-/* Display-Zahl (Statistik, Score) – bewusst KEIN Heading. */
-.stat {
-  font-family: var(--font-display);
-  font-size: var(--step-4);
-  font-weight: 640;
-  line-height: 1;
-  letter-spacing: var(--tracking-tight);
+/* Einmaliges, dezentes Aufblenden – nur mit erlaubter Bewegung. */
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    animation: fade-in 300ms var(--ease) both;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
 }

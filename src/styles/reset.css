@@ -58,13 +58,6 @@ h4 {
   overflow-wrap: break-word;
 }
 
-h1,
-h2,
-h3,
-h4 {
-  text-wrap: balance;
-}
-
 p {
   text-wrap: pretty;
 }

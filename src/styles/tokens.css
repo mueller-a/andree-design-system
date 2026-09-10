@@ -1,39 +1,59 @@
 /*
- * Design-Tokens als Custom Properties.
- * Farbwelt aus dem Lebenslauf, damit Dokumente und Website eine Familie bilden.
- *
- * Regel: Jeder Farbwert ist in BEIDEN Modi definiert – kein Wert fällt aus dem
- * hellen in den dunklen Modus durch. Der manuelle Umschalter (data-theme) hat
- * Vorrang vor der Systemeinstellung.
+ * tokens.css — Dark Studio
+ * Ersetzt src/styles/tokens.css. Palette und Skalen aus den 2020-Dokumenten.
+ * Regel bleibt: jeder Wert ist in BEIDEN Modi definiert.
+ * Neu: Dunkel ist der Default. Hell nur per Umschalter / Systemeinstellung.
  */
 
 :root {
-  /* --- Farbe: heller Modus --- */
-  --signal: #ffd500; /* Akzent, sparsam: Linien, ein Wort, aktive Zustände */
-  --signal-ink: #1b1e1f; /* Text auf Signalflächen */
-  --ink: #1b1e1f;
-  --ink-muted: #676a6d;
-  --surface: #fafbff;
-  --surface-raised: #ffffff;
-  --rule: #e2e2e2;
-  --focus: #0a5fcc; /* eigener Fokusring, nicht der Akzent */
+  /* --- Farbe: dunkler Modus (Default) --- */
+  --signal: #ffd500;            /* Gelb als FLÄCHE: CTA-Band, Marker, Punkte */
+  --signal-ink: #1b1e1f;        /* Text auf Gelbflächen */
+  --accent-ink: #ffd500;        /* Gelb als TEXT – im hellen Modus abgedunkelt */
+
+  --surface: #13242e;           /* Seitengrund */
+  --surface-raised: #1b2c36;    /* Karten, Metazellen */
+  --surface-raised-hover: #20353f;
+
+  --ink: #f2f3f5;               /* Überschriften, Primärtext */
+  --ink-muted: #b7bfcc;         /* Fließtext, Labels */
+  --ink-faint: #8a97a3;         /* Footer, Randnotizen */
+  --rule: rgba(183, 191, 204, 0.22);
+
+  --placeholder: repeating-linear-gradient(
+    135deg,
+    rgba(183, 191, 204, 0.14) 0 8px,
+    rgba(183, 191, 204, 0.05) 8px 16px
+  );
+
+  --focus: #6faaff;             /* eigener Fokusring, nicht der Akzent */
 
   /* --- Typografie --- */
-  --font-display: "InterVariable", "Inter", system-ui, -apple-system, "Segoe UI",
-    sans-serif;
-  --font-body: "InterVariable", "Inter", system-ui, -apple-system, "Segoe UI",
-    sans-serif;
+  --font-display: "Archivo", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
-  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.09rem);
-  --step-1: clamp(1.2rem, 1.13rem + 0.35vw, 1.4rem);
-  --step-2: clamp(1.44rem, 1.32rem + 0.6vw, 1.8rem);
-  --step-3: clamp(1.73rem, 1.53rem + 1vw, 2.3rem);
-  --step-4: clamp(2.07rem, 1.75rem + 1.6vw, 3rem);
+  /* Displaygewichte: 200 für große Headlines, 300 für Zwischentitel */
+  --weight-display: 200;
+  --weight-subhead: 300;
+  --weight-body: 400;
+  --weight-strong: 600;
 
-  --leading-body: 1.6;
-  --leading-tight: 1.15;
-  --tracking-tight: -0.011em;
+  --step--2: clamp(0.63rem, 0.61rem + 0.1vw, 0.69rem);  /* Caps-Labels */
+  --step--1: clamp(0.81rem, 0.78rem + 0.15vw, 0.88rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.06rem);
+  --step-1: clamp(1.13rem, 1.06rem + 0.3vw, 1.25rem);
+  --step-2: clamp(1.38rem, 1.25rem + 0.6vw, 1.75rem);   /* h2 */
+  --step-3: clamp(1.75rem, 1.5rem + 1.2vw, 2.5rem);     /* Kartentitel */
+  --step-4: clamp(2.25rem, 1.8rem + 2.4vw, 4.13rem);    /* Detail-h1 */
+  --step-5: clamp(2.75rem, 1.9rem + 4.4vw, 6.5rem);     /* Start-h1, 104px */
+
+  --leading-body: 1.65;
+  --leading-tight: 0.98;
+  --tracking-display: -0.04em;   /* nur ab step-4 */
+  --tracking-tight: -0.02em;
+  --tracking-caps: 0.18em;       /* Caps-Labels, mono */
+  --tracking-caps-wide: 0.22em;  /* Sektionsmarken */
 
   /* --- Raum, 4er-Raster --- */
   --space-1: 0.25rem;
@@ -42,50 +62,66 @@
   --space-4: 1rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
+  --space-10: 2.5rem;
   --space-12: 3rem;
+  --space-14: 3.5rem;
   --space-16: 4rem;
   --space-24: 6rem;
   --space-32: 8rem;
 
   /* --- Maße --- */
-  --measure: 68ch;
-  --wrap: 76rem;
-  --radius: 2px;
+  --measure: 40ch;      /* Fließtext im Case Study Body: max. 640px */
+  --wrap: 77.5rem;      /* 1240px Rahmenbreite des Entwurfs */
+  --gutter: 3.75rem;    /* 60px seitliches Padding */
+  --meta-col: 12.5rem;  /* 200px Labelspalte im Detail */
+  --radius: 0;          /* keine Radien in dieser Richtung */
 
   /* --- Bewegung --- */
   --motion-fast: 120ms;
   --motion-base: 200ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
-/* Dunkler Modus per Systemeinstellung – nur, wenn nicht manuell auf hell gestellt. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --signal: #ffd500;
-    --signal-ink: #1b1e1f;
-    --ink: #f2f3f5;
-    --ink-muted: #a7abb0;
-    --surface: #16191a;
-    --surface-raised: #1e2224;
-    --rule: #343a3d;
-    --focus: #6faaff;
+/* Heller Modus per Systemeinstellung – nur, wenn nicht manuell auf dunkel gestellt. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --accent-ink: #7a5e00;   /* 5.6:1 auf #fafbff – Gelb als Text */
+    --surface: #fafbff;
+    --surface-raised: #ffffff;
+    --surface-raised-hover: #f4f5f8;
+    --ink: #1b1e1f;
+    --ink-muted: #516573;
+    --ink-faint: #676a6d;
+    --rule: #e2e2e2;
+    --placeholder: repeating-linear-gradient(
+      135deg,
+      #edeef1 0 8px,
+      #f6f7f9 8px 16px
+    );
+    --focus: #0a5fcc;
 
-    color-scheme: dark;
+    color-scheme: light;
   }
 }
 
-/* Dunkler Modus per manuellem Umschalter – gewinnt in beide Richtungen. */
-:root[data-theme="dark"] {
-  --signal: #ffd500;
-  --signal-ink: #1b1e1f;
-  --ink: #f2f3f5;
-  --ink-muted: #a7abb0;
-  --surface: #16191a;
-  --surface-raised: #1e2224;
-  --rule: #343a3d;
-  --focus: #6faaff;
+/* Heller Modus per manuellem Umschalter – gewinnt in beide Richtungen. */
+:root[data-theme="light"] {
+  --accent-ink: #7a5e00;
+  --surface: #fafbff;
+  --surface-raised: #ffffff;
+  --surface-raised-hover: #f4f5f8;
+  --ink: #1b1e1f;
+  --ink-muted: #516573;
+  --ink-faint: #676a6d;
+  --rule: #e2e2e2;
+  --placeholder: repeating-linear-gradient(
+    135deg,
+    #edeef1 0 8px,
+    #f6f7f9 8px 16px
+  );
+  --focus: #0a5fcc;
 
-  color-scheme: dark;
+  color-scheme: light;
 }
