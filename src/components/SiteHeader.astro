@@ -9,25 +9,22 @@ interface Props {
 
 const { path } = Astro.props;
 
-/** Normalisiert Pfade auf "ohne Trailing-Slash" für den Vergleich. */
 const norm = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
 const current = norm(path);
 
 const isCurrent = (href: string) => {
+  if (href.startsWith('mailto:') || href.startsWith('http')) return false;
   const h = norm(href);
-  if (h === '/') return current === '/';
+  if (h === '/') return current === '/' || current.startsWith('/work');
   return current === h || current.startsWith(h + '/');
 };
 ---
 
 <header class="site-header">
   <div class="wrap site-header__inner">
-    <a class="site-header__mark" href="/" rel="home">
-      <span class="site-header__name">{site.name}</span>
-      <span class="site-header__role">{site.role}, {site.location}</span>
-    </a>
+    <a class="site-header__mark" href="/" rel="home">{site.name}</a>
 
-    <nav class="site-header__nav" aria-label="Hauptnavigation">
+    <nav class="site-header__nav" aria-label="Primary">
       <ul role="list">
         {
           nav.map((item) => (
@@ -42,9 +39,8 @@ const isCurrent = (href: string) => {
           ))
         }
       </ul>
+      <ThemeToggle />
     </nav>
-
-    <ThemeToggle />
   </div>
 </header>
 
@@ -56,45 +52,49 @@ const isCurrent = (href: string) => {
   .site-header__inner {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
+    justify-content: space-between;
     gap: var(--space-4) var(--space-8);
-    padding-block: var(--space-4);
+    padding-block: var(--space-6);
   }
 
   .site-header__mark {
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    line-height: 1.25;
-    margin-inline-end: auto;
-  }
-
-  .site-header__mark:hover .site-header__name {
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-
-  .site-header__name {
-    font-family: var(--font-display);
-    font-weight: 620;
-    letter-spacing: var(--tracking-tight);
-  }
-
-  .site-header__role {
     font-size: var(--step--1);
-    color: var(--ink-muted);
+    font-weight: var(--weight-strong);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .site-header__mark:hover {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+  }
+
+  .site-header__nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6) var(--space-8);
   }
 
   .site-header__nav ul {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4) var(--space-6);
+    gap: var(--space-4) var(--space-8);
     margin: 0;
   }
 
   .site-header__nav a {
-    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
     color: var(--ink-muted);
+    text-decoration: none;
     padding-block: var(--space-1);
   }
 
@@ -102,9 +102,9 @@ const isCurrent = (href: string) => {
     color: var(--ink);
   }
 
-  /* Aktiver Punkt: Farbe UND gelbe Unterstreichung – nicht nur Farbe. */
+  /* Aktiver Punkt: Akzentfarbe UND gelbe Unterkante – nicht nur Farbe. */
   .site-header__nav a[aria-current='page'] {
-    color: var(--ink);
+    color: var(--accent-ink);
     box-shadow: inset 0 -2px 0 0 var(--signal);
   }
 </style>
