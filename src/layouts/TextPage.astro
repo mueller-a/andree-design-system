@@ -4,60 +4,75 @@ import Base from './Base.astro';
 interface Props {
   title: string;
   description?: string;
+  /** Kleine Mono-Marke über dem Titel, z. B. "Legal". */
+  kicker?: string;
   lead?: string;
   /** ISO-Datum der letzten Aktualisierung, z. B. "2026-09-08". */
   updated?: string;
+  /** Sprache des Inhalts, falls abweichend von der Seite (Impressum, Datenschutz). */
+  lang?: string;
   noindex?: boolean;
 }
 
-const { title, description, lead, updated, noindex } = Astro.props;
+const { title, description, kicker, lead, updated, lang, noindex } = Astro.props;
 
+const updatedLocale = lang === 'de' ? 'de-DE' : 'en-GB';
 const updatedLabel = updated
-  ? new Intl.DateTimeFormat('de-DE', { dateStyle: 'long' }).format(
+  ? new Intl.DateTimeFormat(updatedLocale, { dateStyle: 'long' }).format(
       new Date(updated),
     )
   : null;
+const updatedWord = lang === 'de' ? 'Stand' : 'Updated';
 ---
 
 <Base title={title} description={description} noindex={noindex} mainClass="textpage">
   <div class="wrap textpage__inner">
     <header class="textpage__header">
-      <h1>{title}</h1>
+      {kicker && <p class="caps caps--wide textpage__kicker">{kicker}</p>}
+      <h1 class="textpage__title">{title}</h1>
       {lead && <p class="textpage__lead">{lead}</p>}
       {
         updatedLabel && (
-          <p class="textpage__updated">
-            Stand: <time datetime={updated}>{updatedLabel}</time>
+          <p class="caps textpage__updated">
+            {updatedWord}: <time datetime={updated}>{updatedLabel}</time>
           </p>
         )
       }
     </header>
 
-    <div class="prose">
+    <div class="prose" lang={lang}>
       <slot />
     </div>
   </div>
 
   <style>
     .textpage__inner {
-      padding-block: var(--space-16) var(--space-24);
+      padding-block: var(--space-24) var(--space-24);
     }
 
     .textpage__header {
       max-width: var(--measure);
-      margin-block-end: var(--space-12);
+      margin-block-end: var(--space-16);
+    }
+
+    .textpage__kicker {
+      margin: 0 0 var(--space-6);
+    }
+
+    .textpage__title {
+      max-width: 18ch;
     }
 
     .textpage__lead {
       margin-block-start: var(--space-6);
       font-size: var(--step-1);
+      line-height: 1.55;
       color: var(--ink-muted);
     }
 
     .textpage__updated {
-      margin-block-start: var(--space-4);
-      font-size: var(--step--1);
-      color: var(--ink-muted);
+      margin-block-start: var(--space-6);
+      color: var(--ink-faint);
     }
   </style>
 </Base>
