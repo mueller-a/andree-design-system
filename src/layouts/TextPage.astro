@@ -1,0 +1,63 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  lead?: string;
+  /** ISO-Datum der letzten Aktualisierung, z. B. "2026-09-08". */
+  updated?: string;
+  noindex?: boolean;
+}
+
+const { title, description, lead, updated, noindex } = Astro.props;
+
+const updatedLabel = updated
+  ? new Intl.DateTimeFormat('de-DE', { dateStyle: 'long' }).format(
+      new Date(updated),
+    )
+  : null;
+---
+
+<Base title={title} description={description} noindex={noindex} mainClass="textpage">
+  <div class="wrap textpage__inner">
+    <header class="textpage__header">
+      <h1>{title}</h1>
+      {lead && <p class="textpage__lead">{lead}</p>}
+      {
+        updatedLabel && (
+          <p class="textpage__updated">
+            Stand: <time datetime={updated}>{updatedLabel}</time>
+          </p>
+        )
+      }
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+  </div>
+
+  <style>
+    .textpage__inner {
+      padding-block: var(--space-16) var(--space-24);
+    }
+
+    .textpage__header {
+      max-width: var(--measure);
+      margin-block-end: var(--space-12);
+    }
+
+    .textpage__lead {
+      margin-block-start: var(--space-6);
+      font-size: var(--step-1);
+      color: var(--ink-muted);
+    }
+
+    .textpage__updated {
+      margin-block-start: var(--space-4);
+      font-size: var(--step--1);
+      color: var(--ink-muted);
+    }
+  </style>
+</Base>
