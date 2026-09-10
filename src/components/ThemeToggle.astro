@@ -44,58 +44,54 @@
   }
 </style>
 
-<script is:inline>
-  (function () {
-    var STORAGE_KEY = 'theme';
-    var buttons = document.querySelectorAll('[data-theme-toggle]');
-    if (!buttons.length) return;
+<script>
+  // Gebündelt als externes Modul (script-src 'self'), kein Inline-Skript.
+  const STORAGE_KEY = 'theme';
+  const buttons = document.querySelectorAll('[data-theme-toggle]');
 
-    // Spiegelt exakt die Regeln in tokens.css: explizite Wahl gewinnt,
-    // sonst hell nur bei prefers-color-scheme: light, sonst dunkel (Default).
-    function effectiveTheme() {
-      var explicit = document.documentElement.dataset.theme;
-      if (explicit === 'light' || explicit === 'dark') return explicit;
-      return window.matchMedia('(prefers-color-scheme: light)').matches
-        ? 'light'
-        : 'dark';
+  // Spiegelt exakt die Regeln in tokens.css: explizite Wahl gewinnt,
+  // sonst hell nur bei prefers-color-scheme: light, sonst dunkel (Default).
+  const effectiveTheme = () => {
+    const explicit = document.documentElement.dataset.theme;
+    if (explicit === 'light' || explicit === 'dark') return explicit;
+    return window.matchMedia('(prefers-color-scheme: light)').matches
+      ? 'light'
+      : 'dark';
+  };
+
+  const sync = () => {
+    const isDark = effectiveTheme() === 'dark';
+    buttons.forEach((btn) => {
+      btn.setAttribute('aria-pressed', String(isDark));
+      const label = btn.querySelector('[data-theme-toggle-label]');
+      if (label) label.textContent = isDark ? 'Dark' : 'Light';
+    });
+  };
+
+  const toggle = () => {
+    const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem(STORAGE_KEY, next);
+    } catch {
+      /* ohne Persistenz gilt der Wechsel für diese Sitzung */
     }
+    sync();
+  };
 
-    function sync() {
-      var isDark = effectiveTheme() === 'dark';
-      buttons.forEach(function (btn) {
-        btn.setAttribute('aria-pressed', String(isDark));
-        var label = btn.querySelector('[data-theme-toggle-label]');
-        if (label) label.textContent = isDark ? 'Dark' : 'Light';
-      });
-    }
+  buttons.forEach((btn) => btn.addEventListener('click', toggle));
 
-    function toggle() {
-      var next = effectiveTheme() === 'dark' ? 'light' : 'dark';
-      document.documentElement.dataset.theme = next;
+  window
+    .matchMedia('(prefers-color-scheme: light)')
+    .addEventListener('change', () => {
+      let stored;
       try {
-        localStorage.setItem(STORAGE_KEY, next);
-      } catch (e) {
-        /* ohne Persistenz gilt der Wechsel für diese Sitzung */
+        stored = localStorage.getItem(STORAGE_KEY);
+      } catch {
+        stored = null;
       }
-      sync();
-    }
-
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', toggle);
+      if (stored !== 'light' && stored !== 'dark') sync();
     });
 
-    window
-      .matchMedia('(prefers-color-scheme: light)')
-      .addEventListener('change', function () {
-        var stored;
-        try {
-          stored = localStorage.getItem(STORAGE_KEY);
-        } catch (e) {
-          stored = null;
-        }
-        if (stored !== 'light' && stored !== 'dark') sync();
-      });
-
-    sync();
-  })();
+  sync();
 </script>

@@ -83,7 +83,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
       <OutcomeList items={d.outcome} />
     </div>
 
-    <div class="wrap prose case__chapters">
+    <div class="wrap case__chapters">
       <slot />
     </div>
 
@@ -186,8 +186,23 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
   }
 
   .case__chapters {
-    max-width: none;
     padding-block-start: var(--space-8);
+  }
+
+  .case__chapters :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--accent-ink);
+    text-underline-offset: 0.18em;
+  }
+
+  .case__chapters :global(ul),
+  .case__chapters :global(ol) {
+    padding-inline-start: var(--space-6);
+  }
+
+  .case__chapters :global(li + li) {
+    margin-block-start: var(--space-2);
   }
 
   /* Jedes Kapitel: Mono-Marke links, Text rechts (remark-sectionize). */
