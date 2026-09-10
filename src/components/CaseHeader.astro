@@ -1,101 +1,103 @@
 ---
 /**
- * Kopf einer Case Study: Titel + Datenzeile (Kunde, Branche, Rolle,
- * Zeitraum, Team) nebeneinander.
+ * Kopf einer Case Study (Dark Studio). Reihenfolge im DOM = Leserichtung:
+ * zuerst der Zurück-Link oben links, dann die Kennung, dann Titel und Summary.
  */
 interface Props {
   title: string;
   client: string;
-  sector: string;
-  role: string;
-  period: string;
-  team: string;
   summary: string;
+  /** Laufende Nummer (aus order). */
+  index: number;
   confidential?: boolean;
+  backHref?: string;
+  backLabel?: string;
 }
-const { title, client, sector, role, period, team, summary, confidential } =
-  Astro.props;
+const {
+  title,
+  client,
+  summary,
+  index,
+  confidential,
+  backHref = '/',
+  backLabel = '← All work',
+} = Astro.props;
 
-const rows: Array<[string, string]> = [
-  ['Kunde', client],
-  ['Branche', sector],
-  ['Rolle', role],
-  ['Zeitraum', period],
-  ['Team', team],
-];
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <header class="case-header">
-  <p class="case-header__eyebrow">Case Study</p>
+  <a class="case-header__back caps caps--accent" href={backHref}>{backLabel}</a>
+
+  <p class="case-header__kind caps caps--wide">
+    Case study {pad(index)} &middot; {client}
+  </p>
+
   <h1 class="case-header__title">{title}</h1>
   <p class="case-header__summary">{summary}</p>
 
   {
     confidential && (
       <p class="case-header__flag">
-        Oberflächen abstrahiert, Kundendaten entfernt. Eine ausführlichere
-        Fassung gibt es auf Anfrage.
+        <span class="caps">Confidential</span>
+        Surfaces are abstracted and client data removed. A more detailed version
+        is available on request.
       </p>
     )
   }
-
-  <dl class="case-header__data">
-    {
-      rows.map(([label, value]) => (
-        <div>
-          <dt>{label}</dt>
-          <dd>{value}</dd>
-        </div>
-      ))
-    }
-  </dl>
 </header>
 
 <style>
-  .case-header__eyebrow {
-    font-size: var(--step--1);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ink-muted);
+  .case-header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .case-header__back {
+    align-self: flex-start;
+    text-decoration: none;
+    border-block-end: 1px solid transparent;
+    padding-block-end: 4px;
+  }
+
+  .case-header__back:hover {
+    color: var(--accent-ink);
+    border-block-end-color: var(--accent-ink);
+  }
+
+  .case-header__kind {
+    margin: var(--space-6) 0 0;
   }
 
   .case-header__title {
-    margin-block-start: var(--space-2);
+    margin: var(--space-4) 0 0;
+    max-width: 20ch;
+    font-size: var(--step-4);
+    font-weight: var(--weight-display);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
   }
 
   .case-header__summary {
-    margin-block-start: var(--space-4);
-    max-width: var(--measure);
+    margin: var(--space-6) 0 0;
+    max-width: 42ch;
     font-size: var(--step-1);
+    line-height: 1.55;
     color: var(--ink-muted);
   }
 
   .case-header__flag {
-    margin-block-start: var(--space-6);
-    max-width: var(--measure);
-    padding: var(--space-3) var(--space-4);
-    background-color: var(--signal);
-    color: var(--signal-ink);
-    border-radius: var(--radius);
+    margin: var(--space-8) 0 0;
+    max-width: 42ch;
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid var(--signal);
     font-size: var(--step--1);
-  }
-
-  .case-header__data {
-    margin-block-start: var(--space-8);
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-6) var(--space-8);
-    padding-block: var(--space-6);
-    border-block: 1px solid var(--rule);
-  }
-
-  .case-header__data dt {
-    font-size: var(--step--1);
+    line-height: 1.6;
     color: var(--ink-muted);
   }
 
-  .case-header__data dd {
-    margin-block-start: var(--space-1);
-    font-weight: 560;
+  .case-header__flag .caps {
+    display: block;
+    color: var(--ink);
   }
 </style>

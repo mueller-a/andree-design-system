@@ -61,14 +61,15 @@ if (!decorative && alt.trim() === '') {
   .figure :global(img) {
     width: 100%;
     height: auto;
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
-    background-color: var(--surface-raised);
+    background: var(--placeholder);
   }
 
   figcaption {
     margin-block-start: var(--space-3);
-    font-size: var(--step--1);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
     color: var(--ink-muted);
     max-width: var(--measure);
   }

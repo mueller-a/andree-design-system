@@ -12,15 +12,15 @@ interface Props {
 }
 
 const {
-  label = 'Oberfläche abstrahiert, Kundendaten entfernt',
+  label = 'Surface abstracted, client data removed',
   caption,
   ratio = '16 / 10',
 } = Astro.props;
 ---
 
 <figure class="redacted">
-  <div class="redacted__area" style={`--ratio: ${ratio};`} role="img" aria-label={label}>
-    <span class="redacted__label">{label}</span>
+  <div class="redacted__area placeholder" style={`--ratio: ${ratio};`} role="img" aria-label={label}>
+    <span class="redacted__label caps">{label}</span>
   </div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
@@ -32,34 +32,22 @@ const {
 
   .redacted__area {
     aspect-ratio: var(--ratio, 16 / 10);
-    display: grid;
-    place-items: center;
-    padding: var(--space-8);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
     color: var(--ink-muted);
-    background-color: var(--surface-raised);
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent 0,
-      transparent 10px,
-      var(--rule) 10px,
-      var(--rule) 11px
-    );
   }
 
   .redacted__label {
-    font-size: var(--step--1);
     text-align: center;
     padding: var(--space-2) var(--space-4);
-    background-color: var(--surface-raised);
+    background: var(--surface);
     border: 1px solid var(--rule);
-    border-radius: var(--radius);
   }
 
   figcaption {
     margin-block-start: var(--space-3);
-    font-size: var(--step--1);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
     color: var(--ink-muted);
     max-width: var(--measure);
   }
