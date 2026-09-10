@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 import CaseHeader from '../components/CaseHeader.astro';
@@ -12,9 +12,10 @@ interface Props {
 
 const { entry } = Astro.props;
 const d = entry.data;
+const ogImage = `/og/${entry.id}.png`;
 ---
 
-<Base title={d.title} description={d.summary} mainClass="case">
+<Base title={d.title} description={d.summary} ogImage={ogImage} mainClass="case">
   <article class="wrap case__body">
     <CaseHeader
       title={d.title}
@@ -33,16 +34,17 @@ const d = entry.data;
           <span>{d.coverAlt}</span>
         </div>
       ) : (
-        <Image
+        <Picture
           class="case__cover"
           src={d.cover}
           alt={d.coverAlt}
+          formats={['avif', 'webp']}
+          fallbackFormat="png"
           widths={[640, 960, 1280, 1600]}
           sizes="(min-width: 76rem) 1024px, 100vw"
           loading="eager"
           fetchpriority="high"
           decoding="async"
-          format="avif"
         />
       )
     }
@@ -74,12 +76,20 @@ const d = entry.data;
     padding-block: var(--space-16);
   }
 
+  .case__body :global(picture) {
+    display: block;
+    margin-block: var(--space-12);
+  }
+
   .case__cover {
     width: 100%;
     height: auto;
-    margin-block: var(--space-12);
     border: 1px solid var(--rule);
     border-radius: var(--radius);
+  }
+
+  div.case__cover--abstract {
+    margin-block: var(--space-12);
   }
 
   .case__cover--abstract {

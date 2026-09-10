@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 /**
@@ -41,14 +41,15 @@ const yearOf = (period: string) => {
             )}
           </span>
           <span class="project-list__thumb">
-            <Image
+            <Picture
               src={entry.data.cover}
               alt={entry.data.coverAlt}
+              formats={['avif', 'webp']}
+              fallbackFormat="png"
               widths={[480, 800, 1200]}
               sizes="(min-width: 60rem) 640px, 90vw"
               loading="lazy"
               decoding="async"
-              format="avif"
             />
           </span>
         </a>
@@ -101,6 +102,10 @@ const yearOf = (period: string) => {
     display: block;
     margin-block-start: var(--space-4);
     max-width: 40rem;
+  }
+
+  .project-list__thumb :global(picture) {
+    display: block;
   }
 
   .project-list__thumb :global(img) {
