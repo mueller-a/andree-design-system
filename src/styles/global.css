@@ -1,0 +1,179 @@
+/*
+ * Basis-Elementstile + wenige Utility-Klassen.
+ * Reihenfolge des Imports: fonts -> tokens -> reset -> global
+ */
+
+/* ---------- Grundfläche ---------- */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  font-optical-sizing: auto;
+  color: var(--ink);
+  background-color: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+
+::selection {
+  background-color: var(--signal);
+  color: var(--signal-ink);
+}
+
+/* ---------- Typografie ---------- */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 620;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink);
+}
+
+h1 {
+  font-size: var(--step-4);
+}
+h2 {
+  font-size: var(--step-3);
+}
+h3 {
+  font-size: var(--step-2);
+}
+h4 {
+  font-size: var(--step-1);
+}
+
+/* Fließtext-Block: ruhige Spalte, begrenzte Zeilenlänge. */
+.prose {
+  max-width: var(--measure);
+}
+
+.prose > * + * {
+  margin-block-start: var(--space-6);
+}
+
+.prose h2 {
+  margin-block-start: var(--space-16);
+}
+
+.prose h3 {
+  margin-block-start: var(--space-12);
+}
+
+.prose :is(h2, h3) + * {
+  margin-block-start: var(--space-4);
+}
+
+.prose ul,
+.prose ol {
+  padding-inline-start: var(--space-6);
+}
+
+.prose li + li {
+  margin-block-start: var(--space-2);
+}
+
+.prose a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+
+/* ---------- Links ---------- */
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+  transition: text-decoration-color var(--motion-fast) var(--ease);
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ---------- Fokus: immer sichtbar, nie entfernt ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* Kein Fokusring bei reiner Mausbedienung, aber Fallback für alte Engines. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---------- Skip-Link ---------- */
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--surface-raised);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform var(--motion-fast) var(--ease);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---------- Utilities ---------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.stack > * + * {
+  margin-block-start: var(--flow, var(--space-4));
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap, var(--space-4));
+  align-items: baseline;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.rule {
+  border: 0;
+  border-block-start: 1px solid var(--rule);
+}
+
+/* Display-Zahl (Statistik, Score) – bewusst KEIN Heading. */
+.stat {
+  font-family: var(--font-display);
+  font-size: var(--step-4);
+  font-weight: 640;
+  line-height: 1;
+  letter-spacing: var(--tracking-tight);
+}

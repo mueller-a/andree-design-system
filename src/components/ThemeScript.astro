@@ -1,0 +1,20 @@
+---
+/**
+ * Inline im <head>, läuft vor dem ersten Paint: setzt data-theme aus der
+ * gespeicherten Wahl, damit es beim Laden keinen Farbwechsel-Sprung gibt.
+ * Ohne gespeicherte Wahl entscheidet die CSS-Media-Query (Systemeinstellung).
+ */
+---
+
+<script is:inline>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      if (stored === "light" || stored === "dark") {
+        document.documentElement.dataset.theme = stored;
+      }
+    } catch (e) {
+      /* localStorage nicht verfügbar – Systemeinstellung greift */
+    }
+  })();
+</script>

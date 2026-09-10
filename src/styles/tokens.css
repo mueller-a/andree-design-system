@@ -1,0 +1,91 @@
+/*
+ * Design-Tokens als Custom Properties.
+ * Farbwelt aus dem Lebenslauf, damit Dokumente und Website eine Familie bilden.
+ *
+ * Regel: Jeder Farbwert ist in BEIDEN Modi definiert – kein Wert fällt aus dem
+ * hellen in den dunklen Modus durch. Der manuelle Umschalter (data-theme) hat
+ * Vorrang vor der Systemeinstellung.
+ */
+
+:root {
+  /* --- Farbe: heller Modus --- */
+  --signal: #ffd500; /* Akzent, sparsam: Linien, ein Wort, aktive Zustände */
+  --signal-ink: #1b1e1f; /* Text auf Signalflächen */
+  --ink: #1b1e1f;
+  --ink-muted: #676a6d;
+  --surface: #fafbff;
+  --surface-raised: #ffffff;
+  --rule: #e2e2e2;
+  --focus: #0a5fcc; /* eigener Fokusring, nicht der Akzent */
+
+  /* --- Typografie --- */
+  --font-display: "InterVariable", "Inter", system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --font-body: "InterVariable", "Inter", system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+
+  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.09rem);
+  --step-1: clamp(1.2rem, 1.13rem + 0.35vw, 1.4rem);
+  --step-2: clamp(1.44rem, 1.32rem + 0.6vw, 1.8rem);
+  --step-3: clamp(1.73rem, 1.53rem + 1vw, 2.3rem);
+  --step-4: clamp(2.07rem, 1.75rem + 1.6vw, 3rem);
+
+  --leading-body: 1.6;
+  --leading-tight: 1.15;
+  --tracking-tight: -0.011em;
+
+  /* --- Raum, 4er-Raster --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* --- Maße --- */
+  --measure: 68ch;
+  --wrap: 76rem;
+  --radius: 2px;
+
+  /* --- Bewegung --- */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light;
+}
+
+/* Dunkler Modus per Systemeinstellung – nur, wenn nicht manuell auf hell gestellt. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --signal: #ffd500;
+    --signal-ink: #1b1e1f;
+    --ink: #f2f3f5;
+    --ink-muted: #a7abb0;
+    --surface: #16191a;
+    --surface-raised: #1e2224;
+    --rule: #343a3d;
+    --focus: #6faaff;
+
+    color-scheme: dark;
+  }
+}
+
+/* Dunkler Modus per manuellem Umschalter – gewinnt in beide Richtungen. */
+:root[data-theme="dark"] {
+  --signal: #ffd500;
+  --signal-ink: #1b1e1f;
+  --ink: #f2f3f5;
+  --ink-muted: #a7abb0;
+  --surface: #16191a;
+  --surface-raised: #1e2224;
+  --rule: #343a3d;
+  --focus: #6faaff;
+
+  color-scheme: dark;
+}

@@ -1,0 +1,125 @@
+---
+/**
+ * Echter Button mit aria-pressed. `aria-pressed="true"` = dunkles Design aktiv.
+ * Farbe ist nicht der einzige Träger der Information: sichtbares Label + Icon.
+ * Der Zustand wird beim Laden per Inline-Skript mit dem tatsächlich wirksamen
+ * Design abgeglichen (gespeicherte Wahl oder Systemeinstellung).
+ */
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-pressed="false"
+>
+  <svg class="theme-toggle__icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path
+      class="theme-toggle__sun"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      d="M12 4V2M12 22v-2M4 12H2m20 0h-2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4"
+    ></path>
+    <circle class="theme-toggle__sun" cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    <path
+      class="theme-toggle__moon"
+      fill="currentColor"
+      d="M20 14.5A8 8 0 0 1 9.5 4a0.5 0.5 0 0 0-.7-.5 9 9 0 1 0 11.7 11.7 0.5 0.5 0 0 0-.5-.7Z"
+    ></path>
+  </svg>
+  <span class="theme-toggle__label" data-theme-toggle-label>Dunkles Design</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--step--1);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background-color: var(--surface-raised);
+    transition: border-color var(--motion-fast) var(--ease);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--ink-muted);
+  }
+
+  .theme-toggle__icon {
+    flex: none;
+  }
+
+  .theme-toggle__moon {
+    display: none;
+  }
+
+  .theme-toggle[aria-pressed="true"] .theme-toggle__sun {
+    display: none;
+  }
+
+  .theme-toggle[aria-pressed="true"] .theme-toggle__moon {
+    display: block;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var STORAGE_KEY = "theme";
+    var buttons = document.querySelectorAll("[data-theme-toggle]");
+    if (!buttons.length) return;
+
+    function effectiveTheme() {
+      var explicit = document.documentElement.dataset.theme;
+      if (explicit === "light" || explicit === "dark") return explicit;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    }
+
+    function sync() {
+      var isDark = effectiveTheme() === "dark";
+      buttons.forEach(function (btn) {
+        btn.setAttribute("aria-pressed", String(isDark));
+        var label = btn.querySelector("[data-theme-toggle-label]");
+        if (label) {
+          label.textContent = isDark ? "Helles Design" : "Dunkles Design";
+        }
+      });
+    }
+
+    function toggle() {
+      var next = effectiveTheme() === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch (e) {
+        /* ohne Persistenz weiter – der Wechsel gilt für diese Sitzung */
+      }
+      sync();
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", toggle);
+    });
+
+    // Systemwechsel nur übernehmen, solange keine explizite Wahl gespeichert ist.
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", function () {
+        var stored;
+        try {
+          stored = localStorage.getItem(STORAGE_KEY);
+        } catch (e) {
+          stored = null;
+        }
+        if (stored !== "light" && stored !== "dark") sync();
+      });
+
+    sync();
+  })();
+</script>

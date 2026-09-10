@@ -1,0 +1,23 @@
+/*
+ * Inter, self-hosted als variable woff2 (SIL Open Font License 1.1).
+ * Eine Datei pro Schnitt deckt den gesamten Gewichtsbereich ab; die
+ * optische Größenachse (opsz) wird über `font-optical-sizing: auto`
+ * in global.css genutzt – deshalb braucht es keinen separaten "Display"-Schnitt.
+ * Lizenztext: /fonts/LICENSE.txt
+ */
+
+@font-face {
+  font-family: "InterVariable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "InterVariable";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable-Italic.woff2") format("woff2");
+}
