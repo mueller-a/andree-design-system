@@ -30,7 +30,13 @@ const idx = all.findIndex((e) => e.id === entry.id);
 const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
 ---
 
-<Base title={d.title} description={d.summary} ogImage={ogImage} mainClass="case">
+<Base
+  title={d.title}
+  description={d.summary}
+  ogImage={ogImage}
+  noindex={d.confidential}
+  mainClass="case"
+>
   <article class="case">
     <div class="wrap case__head">
       <CaseHeader
