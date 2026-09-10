@@ -1,0 +1,101 @@
+---
+/**
+ * Kopf einer Case Study: Titel + Datenzeile (Kunde, Branche, Rolle,
+ * Zeitraum, Team) nebeneinander.
+ */
+interface Props {
+  title: string;
+  client: string;
+  sector: string;
+  role: string;
+  period: string;
+  team: string;
+  summary: string;
+  confidential?: boolean;
+}
+const { title, client, sector, role, period, team, summary, confidential } =
+  Astro.props;
+
+const rows: Array<[string, string]> = [
+  ['Kunde', client],
+  ['Branche', sector],
+  ['Rolle', role],
+  ['Zeitraum', period],
+  ['Team', team],
+];
+---
+
+<header class="case-header">
+  <p class="case-header__eyebrow">Case Study</p>
+  <h1 class="case-header__title">{title}</h1>
+  <p class="case-header__summary">{summary}</p>
+
+  {
+    confidential && (
+      <p class="case-header__flag">
+        Oberflächen abstrahiert, Kundendaten entfernt. Eine ausführlichere
+        Fassung gibt es auf Anfrage.
+      </p>
+    )
+  }
+
+  <dl class="case-header__data">
+    {
+      rows.map(([label, value]) => (
+        <div>
+          <dt>{label}</dt>
+          <dd>{value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</header>
+
+<style>
+  .case-header__eyebrow {
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+  }
+
+  .case-header__title {
+    margin-block-start: var(--space-2);
+  }
+
+  .case-header__summary {
+    margin-block-start: var(--space-4);
+    max-width: var(--measure);
+    font-size: var(--step-1);
+    color: var(--ink-muted);
+  }
+
+  .case-header__flag {
+    margin-block-start: var(--space-6);
+    max-width: var(--measure);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--signal);
+    color: var(--signal-ink);
+    border-radius: var(--radius);
+    font-size: var(--step--1);
+  }
+
+  .case-header__data {
+    margin-block-start: var(--space-8);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6) var(--space-8);
+    padding-block: var(--space-6);
+    border-block: 1px solid var(--rule);
+  }
+
+  .case-header__data dt {
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+
+  .case-header__data dd {
+    margin-block-start: var(--space-1);
+    font-weight: 560;
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+/**
+ * Bild mit optionaler Bildunterschrift. `alt` ist Pflicht.
+ * Dekorative Bilder: `decorative` setzen – dann alt="" und role="presentation".
+ */
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  decorative?: boolean;
+  /** Erstes Bild above the fold: auf false setzen für eager loading. */
+  lazy?: boolean;
+  widths?: number[];
+  sizes?: string;
+}
+
+const {
+  src,
+  alt,
+  caption,
+  decorative = false,
+  lazy = true,
+  widths = [640, 960, 1280, 1600],
+  sizes = '(min-width: 76rem) 1024px, 100vw',
+} = Astro.props;
+
+if (!decorative && alt.trim() === '') {
+  throw new Error(
+    'Figure: leeres alt ist nur mit `decorative` erlaubt. Sinnvollen Alt-Text ergänzen.',
+  );
+}
+---
+
+<figure class="figure">
+  <Image
+    src={src}
+    alt={decorative ? '' : alt}
+    role={decorative ? 'presentation' : undefined}
+    widths={widths}
+    sizes={sizes}
+    loading={lazy ? 'lazy' : 'eager'}
+    decoding="async"
+    format="avif"
+  />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .figure {
+    margin-block: var(--space-12);
+  }
+
+  .figure :global(img) {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background-color: var(--surface-raised);
+  }
+
+  figcaption {
+    margin-block-start: var(--space-3);
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+    max-width: var(--measure);
+  }
+</style>

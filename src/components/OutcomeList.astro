@@ -1,0 +1,48 @@
+---
+/**
+ * "Ergebnis zuerst": steht in jeder Case Study ganz oben, nicht am Ende.
+ */
+interface Props {
+  items: string[];
+  /** Überschrift-Ebene im Dokument-Outline. */
+  headingLevel?: 2 | 3;
+}
+const { items, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as const;
+---
+
+<section class="outcome" aria-labelledby="outcome-title">
+  <Heading id="outcome-title" class="outcome__title">Ergebnis</Heading>
+  <ul role="list" class="outcome__list">
+    {items.map((item) => <li>{item}</li>)}
+  </ul>
+</section>
+
+<style>
+  .outcome {
+    border-block: 1px solid var(--rule);
+    padding-block: var(--space-8);
+  }
+
+  .outcome__title {
+    font-size: var(--step-1);
+    color: var(--ink-muted);
+    margin-block-end: var(--space-4);
+  }
+
+  .outcome__list {
+    display: grid;
+    gap: var(--space-4);
+    max-width: var(--measure);
+  }
+
+  .outcome__list li {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 560;
+    line-height: 1.25;
+    letter-spacing: var(--tracking-tight);
+    padding-inline-start: var(--space-6);
+    border-inline-start: 3px solid var(--signal);
+  }
+</style>

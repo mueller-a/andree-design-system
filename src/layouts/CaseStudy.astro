@@ -1,0 +1,127 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import CaseHeader from '../components/CaseHeader.astro';
+import OutcomeList from '../components/OutcomeList.astro';
+import { site } from '../site.config';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+---
+
+<Base title={d.title} description={d.summary} mainClass="case">
+  <article class="wrap case__body">
+    <CaseHeader
+      title={d.title}
+      client={d.client}
+      sector={d.sector}
+      role={d.role}
+      period={d.period}
+      team={d.team}
+      summary={d.summary}
+      confidential={d.confidential}
+    />
+
+    {
+      d.confidential ? (
+        <div class="case__cover case__cover--abstract" role="img" aria-label={d.coverAlt}>
+          <span>{d.coverAlt}</span>
+        </div>
+      ) : (
+        <Image
+          class="case__cover"
+          src={d.cover}
+          alt={d.coverAlt}
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 76rem) 1024px, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          format="avif"
+        />
+      )
+    }
+
+    <OutcomeList items={d.outcome} />
+
+    <div class="prose case__prose">
+      <slot />
+    </div>
+
+    <footer class="case__contact">
+      <p>
+        Fragen zu diesem Projekt oder zur Umsetzung:
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+      {
+        d.confidential && (
+          <p class="case__contact-note">
+            Eine ausführlichere Fassung mit mehr Detail gibt es auf Anfrage.
+          </p>
+        )
+      }
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .case__body {
+    padding-block: var(--space-16);
+  }
+
+  .case__cover {
+    width: 100%;
+    height: auto;
+    margin-block: var(--space-12);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+
+  .case__cover--abstract {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--ink-muted);
+    background-color: var(--surface-raised);
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 10px,
+      var(--rule) 10px,
+      var(--rule) 11px
+    );
+  }
+
+  .case__cover--abstract span {
+    max-width: 40ch;
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--surface-raised);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    font-size: var(--step--1);
+  }
+
+  .case__prose {
+    margin-block-start: var(--space-16);
+  }
+
+  .case__contact {
+    margin-block-start: var(--space-16);
+    padding-block-start: var(--space-6);
+    border-block-start: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+
+  .case__contact-note {
+    margin-block-start: var(--space-2);
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+</style>

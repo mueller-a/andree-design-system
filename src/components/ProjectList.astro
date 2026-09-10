@@ -1,0 +1,124 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * Projektliste als Liste, nicht als Kachelraster: pro Zeile Titel, Kunde,
+ * Branche, Jahr. Bei Hover/Fokus erscheint das Coverbild; ohne Zeigegerät
+ * ist es immer sichtbar.
+ */
+interface Props {
+  entries: CollectionEntry<'work'>[];
+  /** Überschrift-Ebene für die Zeilentitel. */
+  headingLevel?: 2 | 3;
+}
+const { entries, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as const;
+
+const yearOf = (period: string) => {
+  const years = period.match(/\d{4}/g);
+  if (!years) return period;
+  return years[years.length - 1] === years[0]
+    ? years[0]
+    : `${years[0]}–${years[years.length - 1]}`;
+};
+---
+
+<ul class="project-list" role="list">
+  {
+    entries.map((entry) => (
+      <li class="project-list__item">
+        <a class="project-list__link" href={`/work/${entry.id}`}>
+          <Heading class="project-list__title">{entry.data.title}</Heading>
+          <span class="project-list__meta">
+            {entry.data.client}
+            <span aria-hidden="true"> · </span>
+            {entry.data.sector}
+            <span aria-hidden="true"> · </span>
+            {yearOf(entry.data.period)}
+            {entry.data.confidential && (
+              <span class="project-list__tag"> · vertraulich</span>
+            )}
+          </span>
+          <span class="project-list__thumb">
+            <Image
+              src={entry.data.cover}
+              alt={entry.data.coverAlt}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 60rem) 640px, 90vw"
+              loading="lazy"
+              decoding="async"
+              format="avif"
+            />
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .project-list {
+    margin: 0;
+    border-block-start: 1px solid var(--rule);
+  }
+
+  .project-list__item {
+    border-block-end: 1px solid var(--rule);
+  }
+
+  .project-list__link {
+    display: block;
+    text-decoration: none;
+    padding-block: var(--space-6);
+    color: var(--ink);
+  }
+
+  .project-list__title {
+    font-size: var(--step-2);
+    font-weight: 600;
+  }
+
+  .project-list__link:hover .project-list__title,
+  .project-list__link:focus-visible .project-list__title {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .project-list__meta {
+    display: block;
+    margin-block-start: var(--space-2);
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+
+  .project-list__tag {
+    color: var(--ink);
+    box-shadow: inset 0 -2px 0 0 var(--signal);
+  }
+
+  .project-list__thumb {
+    display: block;
+    margin-block-start: var(--space-4);
+    max-width: 40rem;
+  }
+
+  .project-list__thumb :global(img) {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+
+  /* Mit Zeigegerät: Cover erst bei Hover/Fokus. */
+  @media (any-hover: hover) {
+    .project-list__thumb {
+      display: none;
+    }
+
+    .project-list__link:hover .project-list__thumb,
+    .project-list__link:focus-visible .project-list__thumb {
+      display: block;
+    }
+  }
+</style>
