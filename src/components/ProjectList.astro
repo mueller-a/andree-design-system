@@ -3,55 +3,57 @@ import { Picture } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 /**
- * Projektliste als Liste, nicht als Kachelraster: pro Zeile Titel, Kunde,
- * Branche, Jahr. Bei Hover/Fokus erscheint das Coverbild; ohne Zeigegerät
- * ist es immer sichtbar.
+ * Ausgewählte Arbeiten als Karten (Dark Studio): pro Karte ein einziger Link,
+ * links Kennung/Titel/Summary/Tags, rechts das Cover. Bei confidential bleibt
+ * ein beschriftetes Flächenraster.
  */
 interface Props {
   entries: CollectionEntry<'work'>[];
-  /** Überschrift-Ebene für die Zeilentitel. */
+  /** Überschrift-Ebene für die Kartentitel. */
   headingLevel?: 2 | 3;
 }
 const { entries, headingLevel = 2 } = Astro.props;
 const Heading = `h${headingLevel}` as const;
-
-const yearOf = (period: string) => {
-  const years = period.match(/\d{4}/g);
-  if (!years) return period;
-  return years[years.length - 1] === years[0]
-    ? years[0]
-    : `${years[0]}–${years[years.length - 1]}`;
-};
 ---
 
-<ul class="project-list" role="list">
+<ul class="cards" role="list">
   {
     entries.map((entry) => (
-      <li class="project-list__item">
-        <a class="project-list__link" href={`/work/${entry.id}`}>
-          <Heading class="project-list__title">{entry.data.title}</Heading>
-          <span class="project-list__meta">
-            {entry.data.client}
-            <span aria-hidden="true"> · </span>
-            {entry.data.sector}
-            <span aria-hidden="true"> · </span>
-            {yearOf(entry.data.period)}
-            {entry.data.confidential && (
-              <span class="project-list__tag"> · vertraulich</span>
+      <li>
+        <a class="card" href={`/work/${entry.id}`}>
+          <div class="card__body">
+            <p class="caps caps--accent card__kind">
+              {entry.data.client} &middot; {entry.data.period}
+            </p>
+            <Heading class="card__title">{entry.data.title}</Heading>
+            <p class="card__summary">{entry.data.summary}</p>
+            {entry.data.tags.length > 0 && (
+              <ul class="card__tags" role="list">
+                {entry.data.tags.map((tag) => (
+                  <li class="caps">{tag}</li>
+                ))}
+              </ul>
             )}
-          </span>
-          <span class="project-list__thumb">
-            <Picture
-              src={entry.data.cover}
-              alt={entry.data.coverAlt}
-              formats={['avif', 'webp']}
-              fallbackFormat="png"
-              widths={[480, 800, 1200]}
-              sizes="(min-width: 60rem) 640px, 90vw"
-              loading="lazy"
-              decoding="async"
-            />
-          </span>
+          </div>
+
+          <div class="card__cover">
+            {entry.data.confidential ? (
+              <span class="card__cover-abstract caps" role="img" aria-label={entry.data.coverAlt}>
+                Confidential — surfaces abstracted
+              </span>
+            ) : (
+              <Picture
+                src={entry.data.cover}
+                alt={entry.data.coverAlt}
+                formats={['avif', 'webp']}
+                fallbackFormat="png"
+                widths={[360, 680, 1000]}
+                sizes="(min-width: 64rem) 340px, 100vw"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+          </div>
         </a>
       </li>
     ))
@@ -59,71 +61,107 @@ const yearOf = (period: string) => {
 </ul>
 
 <style>
-  .project-list {
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
     margin: 0;
-    border-block-start: 1px solid var(--rule);
   }
 
-  .project-list__item {
-    border-block-end: 1px solid var(--rule);
-  }
-
-  .project-list__link {
-    display: block;
-    text-decoration: none;
-    padding-block: var(--space-6);
+  .card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--space-12);
+    align-items: end;
+    padding: var(--space-10);
+    background: var(--surface-raised);
     color: var(--ink);
+    text-decoration: none;
+    transition: background var(--motion-base) var(--ease);
   }
 
-  .project-list__title {
-    font-size: var(--step-2);
-    font-weight: 600;
+  .card:hover {
+    background: var(--surface-raised-hover);
   }
 
-  .project-list__link:hover .project-list__title,
-  .project-list__link:focus-visible .project-list__title {
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .card__kind {
+    margin: 0;
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: var(--step-3);
+    font-weight: var(--weight-display);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    max-width: 40ch;
+  }
+
+  .card:hover .card__title {
     text-decoration: underline;
-    text-underline-offset: 0.15em;
+    text-decoration-color: var(--signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
   }
 
-  .project-list__meta {
+  .card__summary {
+    margin: 0;
+    max-width: 52ch;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  .card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-2) 0 0;
+  }
+
+  .card__tags li {
+    border: 1px solid var(--rule);
+    padding: 5px 8px;
+  }
+
+  .card__cover {
+    block-size: 190px;
+    background: var(--placeholder);
+    overflow: hidden;
+  }
+
+  .card__cover :global(picture),
+  .card__cover :global(img) {
     display: block;
-    margin-block-start: var(--space-2);
-    font-size: var(--step--1);
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .card__cover-abstract {
+    display: grid;
+    place-items: center;
+    block-size: 100%;
+    padding: var(--space-4);
+    text-align: center;
     color: var(--ink-muted);
   }
 
-  .project-list__tag {
-    color: var(--ink);
-    box-shadow: inset 0 -2px 0 0 var(--signal);
-  }
-
-  .project-list__thumb {
-    display: block;
-    margin-block-start: var(--space-4);
-    max-width: 40rem;
-  }
-
-  .project-list__thumb :global(picture) {
-    display: block;
-  }
-
-  .project-list__thumb :global(img) {
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
-  }
-
-  /* Mit Zeigegerät: Cover erst bei Hover/Fokus. */
-  @media (any-hover: hover) {
-    .project-list__thumb {
-      display: none;
+  @media (max-width: 64rem) {
+    .card {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+      align-items: stretch;
     }
 
-    .project-list__link:hover .project-list__thumb,
-    .project-list__link:focus-visible .project-list__thumb {
-      display: block;
+    .card__cover {
+      block-size: auto;
+      aspect-ratio: 16 / 9;
     }
   }
 </style>
