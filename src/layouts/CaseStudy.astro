@@ -223,9 +223,13 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
   .case__chapters :global(section) {
     display: grid;
     grid-template-columns: var(--meta-col) minmax(0, 1fr);
-    gap: var(--space-12);
+    gap: var(--space-10);
     align-items: start;
-    padding-block-start: var(--space-16);
+    padding-block-start: var(--space-12);
+  }
+
+  .case__chapters :global(section:first-of-type) {
+    padding-block-start: 0;
   }
 
   .case__chapters :global(section > *) {
@@ -256,8 +260,14 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     color: var(--ink);
   }
 
-  .case__chapters :global(section > * + *) {
-    margin-block-start: var(--space-5, 1.25rem);
+  /* Erstes Element in Spalte 2 (die ###-Kapitelüberschrift) fluchtet mit der
+     Mono-Marke; Abstand gibt's erst zwischen den Elementen danach. */
+  .case__chapters :global(section > h2 + *) {
+    margin-block-start: 0;
+  }
+
+  .case__chapters :global(section > h2 + * ~ *) {
+    margin-block-start: var(--space-4);
   }
 
   .case__chapters :global(section p) {
