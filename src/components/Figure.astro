@@ -15,6 +15,12 @@ interface Props {
   lazy?: boolean;
   widths?: number[];
   sizes?: string;
+  /**
+   * Als Kapitel-Trenner: bricht aus der Zweispalten-Kapitelspalte aus und
+   * nutzt die volle Breite von `.case__chapters section` statt der
+   * Textspalte. Nur innerhalb von CaseStudy-Kapiteln wirksam.
+   */
+  bleed?: boolean;
 }
 
 const {
@@ -25,6 +31,7 @@ const {
   lazy = true,
   widths = [640, 960, 1280, 1600],
   sizes = '(min-width: 76rem) 1024px, 100vw',
+  bleed = false,
 } = Astro.props;
 
 if (!decorative && alt.trim() === '') {
@@ -34,7 +41,7 @@ if (!decorative && alt.trim() === '') {
 }
 ---
 
-<figure class="figure">
+<figure class:list={['figure', { 'figure--bleed': bleed }]}>
   <Picture
     src={src}
     alt={decorative ? '' : alt}
@@ -62,6 +69,14 @@ if (!decorative && alt.trim() === '') {
     width: 100%;
     height: auto;
     background: var(--placeholder);
+  }
+
+  /* Bleed-Bilder sind oft transparent (Device-Mockups); ein bewusster
+     Flächenton statt des Lade-Streifenmusters. */
+  .figure--bleed :global(img) {
+    box-sizing: border-box;
+    background: var(--surface-raised);
+    padding: var(--space-8);
   }
 
   figcaption {

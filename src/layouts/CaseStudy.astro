@@ -255,6 +255,15 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     margin-block-start: var(--space-3);
   }
 
+  /* Kapitel-Trenner: Figure mit `bleed` nutzt die volle Sektionsbreite statt
+     der Textspalte, auch wenn sie als erstes Element nach der Mono-Marke
+     steht. */
+  .case__chapters :global(section > .figure--bleed) {
+    grid-column: 1 / -1;
+    max-width: none;
+    margin-block-start: var(--space-8);
+  }
+
   .case__chapters :global(section p) {
     font-size: var(--step-0);
     line-height: 1.7;
