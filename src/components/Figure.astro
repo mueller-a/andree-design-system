@@ -29,7 +29,7 @@ const {
   caption,
   decorative = false,
   lazy = true,
-  widths = [640, 960, 1280, 1600],
+  widths = [640, 960, 1280, 1600, 2000],
   sizes = '(min-width: 76rem) 1024px, 100vw',
   bleed = false,
 } = Astro.props;
@@ -71,11 +71,11 @@ if (!decorative && alt.trim() === '') {
     background: var(--placeholder);
   }
 
-  /* Bleed-Bilder sind oft transparent (Device-Mockups); ein bewusster
-     Flächenton statt des Lade-Streifenmusters. */
+  /* Bleed-Bilder sind oft transparent (Device-Mockups); transparent statt
+     des Lade-Streifenmusters, damit der echte Seitenhintergrund durchscheint. */
   .figure--bleed :global(img) {
     box-sizing: border-box;
-    background: var(--surface-raised);
+    background: transparent;
     padding: var(--space-8);
   }
 
