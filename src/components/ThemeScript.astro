@@ -1,20 +1,18 @@
 ---
 /**
- * Inline im <head>, läuft vor dem ersten Paint: setzt data-theme aus der
- * gespeicherten Wahl, damit es beim Laden keinen Farbwechsel-Sprung gibt.
- * Ohne gespeicherte Wahl entscheidet die CSS-Media-Query (Systemeinstellung).
+ * Läuft vor dem ersten Paint: setzt data-theme aus der gespeicherten Wahl,
+ * damit es beim Laden keinen Farbwechsel-Sprung gibt. Ohne gespeicherte Wahl
+ * entscheidet die CSS-Media-Query (Systemeinstellung).
+ *
+ * Als externe Datei unter /public statt inline: Astros experimentelle CSP
+ * berechnet auf den on-demand-Seiten (/work/<slug>, /zugang) einen anderen
+ * Hash für denselben Inline-Code als auf den statischen Seiten, das Skript
+ * wurde dort geblockt und der Light-Mode ging beim Navigieren verloren.
+ * Eine externe same-origin-Datei braucht keinen Hash (script-src 'self'
+ * deckt sie ab), und `is:inline` verhindert, dass Astro daraus ein
+ * `type="module"`-Skript macht, das erst nach dem Parsen liefe und den
+ * Theme-Sprung wieder sichtbar machen würde.
  */
 ---
 
-<script is:inline>
-  (function () {
-    try {
-      var stored = localStorage.getItem("theme");
-      if (stored === "light" || stored === "dark") {
-        document.documentElement.dataset.theme = stored;
-      }
-    } catch (e) {
-      /* localStorage nicht verfügbar – Systemeinstellung greift */
-    }
-  })();
-</script>
+<script is:inline src="/theme-init.js"></script>
