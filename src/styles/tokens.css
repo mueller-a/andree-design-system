@@ -89,7 +89,7 @@
 /* Heller Modus per Systemeinstellung – nur, wenn nicht manuell auf dunkel gestellt. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --accent-ink: #7a5e00;   /* 5.6:1 auf #fafbff – Gelb als Text */
+    --accent-ink: #9e6500;   /* 4.71:1 auf #fafbff – Gelb als Text */
     --surface: #fafbff;
     --surface-raised: #ffffff;
     --surface-raised-hover: #f4f5f8;
@@ -110,7 +110,7 @@
 
 /* Heller Modus per manuellem Umschalter – gewinnt in beide Richtungen. */
 :root[data-theme="light"] {
-  --accent-ink: #7a5e00;
+  --accent-ink: #9e6500;
   --surface: #fafbff;
   --surface-raised: #ffffff;
   --surface-raised-hover: #f4f5f8;
