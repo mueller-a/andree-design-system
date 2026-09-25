@@ -25,7 +25,11 @@ interface Props {
    * Dunkle Variante desselben Inhalts (z. B. ein Diagramm mit dunklem statt
    * hellem Grund). Wenn gesetzt, rendert Figure beide Bilder und blendet die
    * passende Variante rein per CSS um, exakt nach demselben `data-theme`-
-   * Mechanismus wie die Farb-Tokens, kein JavaScript nötig.
+   * Mechanismus wie die Farb-Tokens, kein JavaScript nötig. Die Umschaltung
+   * ist bewusst gegenläufig zum Seiten-Theme: `srcDark` zeigt im Light Mode
+   * (Kontrast zum hellen Seitengrund), `src` im Dark Mode (Kontrast zum
+   * dunklen Seitengrund) – sonst verschwimmt der jeweils helle Bildrand mit
+   * dem gleichfarbigen Seitengrund.
    */
   srcDark?: ImageMetadata;
 }
@@ -60,7 +64,9 @@ if (!decorative && alt.trim() === '') {
     sizes={sizes}
     loading={lazy ? 'lazy' : 'eager'}
     decoding="async"
-    class:list={srcDark ? ['figure__variant', 'figure__variant--light'] : undefined}
+    pictureAttributes={
+      srcDark ? { class: 'figure__variant figure__variant--light' } : undefined
+    }
   />
   {
     srcDark && (
@@ -74,7 +80,7 @@ if (!decorative && alt.trim() === '') {
         sizes={sizes}
         loading={lazy ? 'lazy' : 'eager'}
         decoding="async"
-        class:list={['figure__variant', 'figure__variant--dark']}
+        pictureAttributes={{ class: 'figure__variant figure__variant--dark' }}
       />
     )
   }
@@ -104,27 +110,31 @@ if (!decorative && alt.trim() === '') {
     padding: var(--space-8);
   }
 
-  /* Hell/Dunkel-Bildpaar: Default zeigt Hell, Dunkel-Variante ausgeblendet.
-     Umschaltung folgt exakt dem Theme-Vertrag aus tokens.css (System via
-     prefers-color-scheme, manueller Umschalter über data-theme gewinnt in
-     beide Richtungen). */
-  .figure :global(.figure__variant--dark) {
+  /* Hell/Dunkel-Bildpaar: bewusst gegenläufig zum Seiten-Theme, nicht
+     passend dazu. `src` (heller Bildgrund) zeigt im Dark Mode, wo er als
+     Fläche gegen den dunklen Seitengrund abhebt; `srcDark` (dunkler
+     Bildgrund) zeigt im Light Mode, sonst verschwimmt sein heller Rand mit
+     dem hellen Seitengrund ("White Space"-Problem). Default zeigt darum
+     srcDark, Umschaltung folgt sonst dem Theme-Vertrag aus tokens.css
+     (System via prefers-color-scheme, manueller Umschalter über data-theme
+     gewinnt in beide Richtungen). */
+  .figure :global(picture.figure__variant--light) {
     display: none;
   }
 
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light']) .figure__variant--light) {
+    :global(:root:not([data-theme='light']) picture.figure__variant--dark) {
       display: none;
     }
-    :global(:root:not([data-theme='light']) .figure__variant--dark) {
+    :global(:root:not([data-theme='light']) picture.figure__variant--light) {
       display: block;
     }
   }
 
-  :global(:root[data-theme='dark'] .figure__variant--light) {
+  :global(:root[data-theme='dark'] picture.figure__variant--dark) {
     display: none;
   }
-  :global(:root[data-theme='dark'] .figure__variant--dark) {
+  :global(:root[data-theme='dark'] picture.figure__variant--light) {
     display: block;
   }
 

@@ -73,7 +73,26 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
           loading="eager"
           fetchpriority="high"
           decoding="async"
+          pictureAttributes={
+            d.coverDark ? { class: 'leitbild__variant leitbild__variant--light' } : undefined
+          }
         />
+        {
+          d.coverDark && (
+            <Picture
+              src={d.coverDark}
+              alt={d.coverAlt}
+              formats={['avif', 'webp']}
+              fallbackFormat="png"
+              widths={[720, 1080, 1440, 1920]}
+              sizes="(min-width: 77.5rem) 1120px, 100vw"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              pictureAttributes={{ class: 'leitbild__variant leitbild__variant--dark' }}
+            />
+          )
+        }
       </div>
     </div>
 
@@ -177,6 +196,29 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     block-size: 100%;
     object-fit: cover;
     object-position: top center;
+  }
+
+  /* Hell/Dunkel-Cover, gegenläufig zum Seiten-Theme wie bei Figure.astro:
+     coverDark im Light Mode, cover im Dark Mode, sonst verschwimmt der
+     jeweils helle Bildrand mit dem gleichfarbigen Seitengrund. */
+  .case__leitbild :global(picture.leitbild__variant--light) {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light']) picture.leitbild__variant--dark) {
+      display: none;
+    }
+    :global(:root:not([data-theme='light']) picture.leitbild__variant--light) {
+      display: block;
+    }
+  }
+
+  :global(:root[data-theme='dark'] picture.leitbild__variant--dark) {
+    display: none;
+  }
+  :global(:root[data-theme='dark'] picture.leitbild__variant--light) {
+    display: block;
   }
 
   @media (max-width: 48rem) {
