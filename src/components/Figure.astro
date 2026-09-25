@@ -21,6 +21,13 @@ interface Props {
    * Textspalte. Nur innerhalb von CaseStudy-Kapiteln wirksam.
    */
   bleed?: boolean;
+  /**
+   * Dunkle Variante desselben Inhalts (z. B. ein Diagramm mit dunklem statt
+   * hellem Grund). Wenn gesetzt, rendert Figure beide Bilder und blendet die
+   * passende Variante rein per CSS um, exakt nach demselben `data-theme`-
+   * Mechanismus wie die Farb-Tokens, kein JavaScript nötig.
+   */
+  srcDark?: ImageMetadata;
 }
 
 const {
@@ -32,6 +39,7 @@ const {
   widths = [640, 960, 1280, 1600, 2000],
   sizes = '(min-width: 76rem) 1024px, 100vw',
   bleed = false,
+  srcDark,
 } = Astro.props;
 
 if (!decorative && alt.trim() === '') {
@@ -52,7 +60,24 @@ if (!decorative && alt.trim() === '') {
     sizes={sizes}
     loading={lazy ? 'lazy' : 'eager'}
     decoding="async"
+    class:list={srcDark ? ['figure__variant', 'figure__variant--light'] : undefined}
   />
+  {
+    srcDark && (
+      <Picture
+        src={srcDark}
+        alt={decorative ? '' : alt}
+        role={decorative ? 'presentation' : undefined}
+        formats={['avif', 'webp']}
+        fallbackFormat="png"
+        widths={widths}
+        sizes={sizes}
+        loading={lazy ? 'lazy' : 'eager'}
+        decoding="async"
+        class:list={['figure__variant', 'figure__variant--dark']}
+      />
+    )
+  }
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
@@ -77,6 +102,30 @@ if (!decorative && alt.trim() === '') {
     box-sizing: border-box;
     background: transparent;
     padding: var(--space-8);
+  }
+
+  /* Hell/Dunkel-Bildpaar: Default zeigt Hell, Dunkel-Variante ausgeblendet.
+     Umschaltung folgt exakt dem Theme-Vertrag aus tokens.css (System via
+     prefers-color-scheme, manueller Umschalter über data-theme gewinnt in
+     beide Richtungen). */
+  .figure :global(.figure__variant--dark) {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light']) .figure__variant--light) {
+      display: none;
+    }
+    :global(:root:not([data-theme='light']) .figure__variant--dark) {
+      display: block;
+    }
+  }
+
+  :global(:root[data-theme='dark'] .figure__variant--light) {
+    display: none;
+  }
+  :global(:root[data-theme='dark'] .figure__variant--dark) {
+    display: block;
   }
 
   figcaption {
