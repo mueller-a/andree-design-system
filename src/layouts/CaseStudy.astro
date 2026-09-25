@@ -184,18 +184,17 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
   /* ---------- Leitbild ---------- */
 
   .case__leitbild {
-    aspect-ratio: 2.4;
-    overflow: hidden;
     background: var(--placeholder);
   }
 
-  .case__leitbild :global(picture),
+  .case__leitbild :global(picture) {
+    display: block;
+  }
+
   .case__leitbild :global(img) {
     display: block;
     inline-size: 100%;
-    block-size: 100%;
-    object-fit: cover;
-    object-position: top center;
+    block-size: auto;
   }
 
   /* Hell/Dunkel-Cover, gegenläufig zum Seiten-Theme wie bei Figure.astro:
@@ -221,11 +220,6 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     display: block;
   }
 
-  @media (max-width: 48rem) {
-    .case__leitbild {
-      aspect-ratio: 16 / 10;
-    }
-  }
 
   /* ---------- Outcome + Kapitel ---------- */
 
