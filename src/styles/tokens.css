@@ -16,7 +16,7 @@
   --surface-raised-hover: #20353f;
 
   --ink: #f2f3f5;               /* Überschriften, Primärtext */
-  --ink-muted: #b7bfcc;         /* Fließtext, Labels */
+  --ink-muted: #e4e9f0;         /* Fließtext, Labels */
   --ink-faint: #8a97a3;         /* Footer, Randnotizen */
   --rule: rgba(183, 191, 204, 0.22);
 
