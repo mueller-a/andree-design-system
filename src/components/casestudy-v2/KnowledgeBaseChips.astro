@@ -1,0 +1,46 @@
+---
+interface Props {
+  chips: string[];
+}
+const { chips } = Astro.props;
+---
+
+<div class="kb-chips">
+  <p class="kb-chips__label">Knowledge base</p>
+  <ul class="kb-chips__list" role="list">
+    {chips.map((chip) => <li class="kb-chips__chip">{chip}</li>)}
+  </ul>
+</div>
+
+<style>
+  .kb-chips {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .kb-chips__label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .kb-chips__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .kb-chips__chip {
+    font-size: var(--step--1);
+    padding: 7px 12px;
+    border: 1px solid var(--rule);
+    color: var(--ink-muted);
+  }
+</style>
