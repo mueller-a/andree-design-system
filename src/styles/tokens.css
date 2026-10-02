@@ -73,7 +73,7 @@
   --measure: 40ch;      /* enge Textspalte (Meta, Hinweise) */
   --measure-wide: 66ch; /* Fließtext-Spalte (Profil, Kapitel) */
   --rail: 3px;          /* gelbe Markierungskante unter Abschnittsmarken */
-  --wrap: 77.5rem;      /* 1240px Rahmenbreite des Entwurfs */
+  --wrap: 105rem;       /* 1680px Rahmenbreite, seitenweit */
   --gutter: 3.75rem;    /* 60px seitliches Padding */
   --meta-col: 12.5rem;  /* 200px Labelspalte im Detail */
   --radius: 0;          /* keine Radien in dieser Richtung */
