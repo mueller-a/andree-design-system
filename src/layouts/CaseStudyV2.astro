@@ -6,8 +6,10 @@
  * wie das alte CaseStudy.astro direkt aus der Content-Collection-Entry,
  * keine Neueingabe pro Seite.
  *
- * Erwartet zwei Slots:
+ * Erwartet folgende Slots:
  * - `tldr`: die <TldrStrip />-Komponente der aufrufenden Seite.
+ * - `afterTldr` (optional): z. B. eine <PhaseTimeline />, zwischen TL;DR und
+ *   Cover-Bild. Nur von Seiten genutzt, die das brauchen (z. B. PRINCE).
  * - Standard-Slot: die <Chapter />-Blöcke.
  *
  * Jede Seite, die dieses Layout nutzt, braucht weiterhin ihre eigene feste
@@ -67,6 +69,8 @@ const ogImage = `/og/${entry.id}.png`;
       </section>
 
       <slot name="tldr" />
+
+      <slot name="afterTldr" />
 
       <div class="kaluza-case__figure--top">
         <Figure src={d.cover} srcDark={d.coverDark} alt={d.coverAlt} lazy={false} bleed />
