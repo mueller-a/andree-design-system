@@ -1,0 +1,233 @@
+---
+/**
+ * Geteilte Hülle für die neugestalteten Case-Study-Seiten
+ * (design_handoff_accessibility_case_study): Zurück-Link, Hero, Meta-Grid,
+ * Cover-Bild, Reference, Next-Case-Study-Link. Übernimmt dieselben Felder
+ * wie das alte CaseStudy.astro direkt aus der Content-Collection-Entry,
+ * keine Neueingabe pro Seite.
+ *
+ * Erwartet zwei Slots:
+ * - `tldr`: die <TldrStrip />-Komponente der aufrufenden Seite.
+ * - Standard-Slot: die <Chapter />-Blöcke.
+ *
+ * Jede Seite, die dieses Layout nutzt, braucht weiterhin ihre eigene feste
+ * Route in src/pages/work/<slug>.astro (siehe dort für die Begründung,
+ * besonders `export const prerender = false` bei confidential-Einträgen).
+ */
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import Figure from '../components/Figure.astro';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+
+const all = (await getCollection('work', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const idx = all.findIndex((e) => e.id === entry.id);
+const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
+
+const meta: Array<[string, string]> = [
+  ['Client', d.client],
+  ['Sector', d.sector],
+  ['Role', d.role],
+  ['Period', d.period],
+  ['Team', d.team],
+];
+
+const ogImage = `/og/${entry.id}.png`;
+---
+
+<Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.confidential} mainClass="kaluza-case">
+  <div class="wrap">
+    <a class="kaluza-case__back caps caps--accent" href="/">← All work</a>
+
+    <article class="kaluza-case__article">
+      <section class="kaluza-case__hero">
+        <p class="caps kaluza-case__eyebrow">
+          Case study {String(d.order).padStart(2, '0')} · {d.client}
+        </p>
+        <h1 class="kaluza-case__title">{d.title}</h1>
+        <p class="kaluza-case__lead">{d.summary}</p>
+        <dl class="kaluza-case__meta">
+          {
+            meta.map(([k, v]) => (
+              <div class="kaluza-case__meta-cell">
+                <dt class="caps">{k}</dt>
+                <dd>{v}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <slot name="tldr" />
+
+      <div class="kaluza-case__figure--top">
+        <Figure src={d.cover} srcDark={d.coverDark} alt={d.coverAlt} lazy={false} bleed />
+      </div>
+
+      <slot />
+
+      {
+        d.reference && (
+          <p class="kaluza-case__reference">
+            <span class="caps caps--wide">Reference</span>
+            <a href={d.reference.url} target="_blank" rel="external noopener noreferrer">
+              {d.reference.label}
+            </a>
+          </p>
+        )
+      }
+
+      {
+        next && (
+          <a class="kaluza-case__next" href={`/work/${next.id}`}>
+            <span class="kaluza-case__next-body">
+              <span class="caps caps--wide">Next case study</span>
+              <span class="kaluza-case__next-title">{next.data.title}</span>
+            </span>
+            <span class="kaluza-case__next-arrow caps--accent" aria-hidden="true">→</span>
+          </a>
+        )
+      }
+    </article>
+  </div>
+</Base>
+
+<style>
+  .kaluza-case__back {
+    display: inline-block;
+    margin-block: var(--space-10) var(--space-10);
+    text-decoration: none;
+  }
+
+  .kaluza-case__article {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+    padding-block-end: var(--space-32);
+  }
+
+  /* ---------- Hero ---------- */
+
+  .kaluza-case__hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .kaluza-case__eyebrow {
+    margin: 0;
+    color: var(--ink-faint);
+  }
+
+  .kaluza-case__title {
+    margin: 0;
+    font-weight: var(--weight-display);
+    font-size: clamp(2.75rem, 6.4vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    max-width: 24ch;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .kaluza-case__lead {
+    margin: 0;
+    font-size: clamp(1.19rem, 1.8vw, 1.5rem);
+    line-height: 1.5;
+    max-width: 45ch;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .kaluza-case__meta {
+    margin: var(--space-6) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: 1px;
+    background: var(--rule);
+  }
+
+  .kaluza-case__meta-cell {
+    background: var(--surface-raised);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .kaluza-case__meta-cell dt {
+    margin: 0;
+  }
+
+  .kaluza-case__meta-cell dd {
+    margin: 0;
+    font-size: var(--step-0);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .kaluza-case__figure--top {
+    margin-block-start: calc(var(--space-24) * -1 + var(--space-8));
+  }
+
+  /* ---------- Reference + Next ---------- */
+
+  .kaluza-case__reference {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    align-items: baseline;
+    margin: 0;
+  }
+
+  .kaluza-case__reference a {
+    color: var(--accent-ink);
+    text-decoration-color: var(--accent-ink);
+  }
+
+  .kaluza-case__next {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-10) 0;
+    border-block: 1px solid var(--rule);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background var(--motion-base) var(--ease);
+  }
+
+  .kaluza-case__next:hover {
+    background: var(--surface-raised);
+  }
+
+  .kaluza-case__next-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .kaluza-case__next-title {
+    font-size: var(--step-2);
+    font-weight: var(--weight-display);
+    letter-spacing: -0.02em;
+  }
+
+  .kaluza-case__next-arrow {
+    font-size: var(--step-2);
+  }
+
+  @media (max-width: 48rem) {
+    .kaluza-case__meta {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
