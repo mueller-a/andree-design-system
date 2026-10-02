@@ -43,6 +43,7 @@ const meta: Array<[string, string]> = [
 ];
 
 const ogImage = `/og/${entry.id}.png`;
+const hasAfterTldr = Astro.slots.has('afterTldr');
 ---
 
 <Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.confidential} mainClass="kaluza-case">
@@ -70,7 +71,16 @@ const ogImage = `/og/${entry.id}.png`;
 
       <slot name="tldr" />
 
-      <slot name="afterTldr" />
+      {
+        hasAfterTldr && (
+          <div class="kaluza-case__after-tldr">
+            <div class="kaluza-case__after-tldr-spacer" aria-hidden="true" />
+            <div class="kaluza-case__after-tldr-content">
+              <slot name="afterTldr" />
+            </div>
+          </div>
+        )
+      }
 
       <div class="kaluza-case__figure--top">
         <Figure src={d.cover} srcDark={d.coverDark} alt={d.coverAlt} lazy={false} bleed />
@@ -176,6 +186,25 @@ const ogImage = `/og/${entry.id}.png`;
     font-size: var(--step-0);
     line-height: 1.5;
     color: var(--ink);
+  }
+
+  /* Spiegelt TldrStrips Label-Spalte/Body-Aufteilung (1 1 200px / 999 1
+     560px), damit darunter platzierter Slot-Inhalt (z. B. PhaseTimeline)
+     exakt unter den TL;DR-Spalten anfängt, nicht an der vollen Breite. */
+  .kaluza-case__after-tldr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8) var(--space-16);
+  }
+
+  .kaluza-case__after-tldr-spacer {
+    flex: 1 1 200px;
+    max-width: 260px;
+  }
+
+  .kaluza-case__after-tldr-content {
+    flex: 999 1 560px;
+    min-width: 0;
   }
 
   .kaluza-case__figure--top {
