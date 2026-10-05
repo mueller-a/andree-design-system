@@ -4,8 +4,9 @@ import type { CollectionEntry } from 'astro:content';
 
 /**
  * Ausgewählte Arbeiten als Karten (Dark Studio): pro Karte ein einziger Link,
- * links Kennung/Titel/Summary/Tags, rechts das Cover. Bei confidential bleibt
- * ein beschriftetes Flächenraster.
+ * links Kennung/Titel/Summary/Tags, rechts das Cover. Bei `gate !== 'none'`
+ * bleibt ein beschriftetes Flächenraster statt des echten Covers, unabhängig
+ * davon, ob der Kundenname (`confidential`) genannt werden darf.
  */
 interface Props {
   entries: CollectionEntry<'work'>[];
@@ -37,9 +38,9 @@ const Heading = `h${headingLevel}` as const;
           </div>
 
           <div class="card__cover">
-            {entry.data.confidential ? (
+            {entry.data.gate !== 'none' ? (
               <span class="card__cover-abstract caps">
-                Confidential. Surfaces abstracted.
+                Image restricted. Enter an access code to view it.
               </span>
             ) : (
               <>

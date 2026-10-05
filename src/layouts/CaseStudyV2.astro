@@ -20,6 +20,7 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 import Figure from '../components/Figure.astro';
+import GatedImage from '../components/GatedImage.astro';
 
 interface Props {
   entry: CollectionEntry<'work'>;
@@ -46,7 +47,7 @@ const ogImage = `/og/${entry.id}.png`;
 const hasAfterTldr = Astro.slots.has('afterTldr');
 ---
 
-<Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.confidential} mainClass="kaluza-case">
+<Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.gate === 'full'} mainClass="kaluza-case">
   <div class="wrap">
     <a class="kaluza-case__back caps caps--accent" href="/">← All work</a>
 
@@ -83,7 +84,13 @@ const hasAfterTldr = Astro.slots.has('afterTldr');
       }
 
       <div class="kaluza-case__figure--top">
-        <Figure src={d.cover} srcDark={d.coverDark} alt={d.coverAlt} lazy={false} bleed />
+        {
+          d.gate === 'none' ? (
+            <Figure src={d.cover} srcDark={d.coverDark} alt={d.coverAlt} lazy={false} bleed />
+          ) : (
+            <GatedImage src={`${entry.id}/cover.png`} alt={d.coverRealAlt ?? d.coverAlt} lazy={false} bleed />
+          )
+        }
       </div>
 
       <slot />

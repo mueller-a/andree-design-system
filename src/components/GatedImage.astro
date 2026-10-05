@@ -1,0 +1,112 @@
+---
+import { isAuthorized } from '../lib/access';
+
+/**
+ * Bild hinter dem Zugangscode (`gate: images`/`full`). Ohne gültiges Cookie
+ * steht gar keine Bild-URL im ausgelieferten HTML, nur ein öffentlicher,
+ * WCAG-tauglicher Platzhalter: echter Text (keine reine `aria-label`-Fläche),
+ * ausreichender Kontrast über bestehende Theme-Tokens, und ein echter Link
+ * zu `/zugang`. Erfordert eine Seite mit `export const prerender = false`,
+ * sonst wird beim Build nie geprüft und der Platzhalter bliebe immer stehen.
+ *
+ * `src` ist der Pfad relativ zu `private/work/`, z. B.
+ * "prince-preclinical-platform/prince-design-system.png" – dieselbe Struktur,
+ * die der Endpunkt unter /api/case-image/ erwartet.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  /** aspect-ratio als CSS-Wert für den Platzhalter, z. B. "16 / 10". */
+  ratio?: string;
+  lazy?: boolean;
+  /** Wie Figure.astro: transparenter Grund + Innenabstand für Device-Mockups. */
+  bleed?: boolean;
+}
+
+const { src, alt, caption, ratio = '16 / 10', lazy = true, bleed = false } = Astro.props;
+
+if (alt.trim() === '') {
+  throw new Error('GatedImage: alt darf nicht leer sein, auch gesperrte Bilder brauchen einen Alt-Text.');
+}
+
+const unlocked = isAuthorized(Astro.cookies);
+const imageUrl = unlocked ? `/api/case-image/${src}` : null;
+---
+
+<figure class:list={['gated-image', { 'gated-image--bleed': bleed }]}>
+  {
+    imageUrl ? (
+      <img class="gated-image__img" src={imageUrl} alt={alt} loading={lazy ? 'lazy' : 'eager'} decoding="async" />
+    ) : (
+      <div class="gated-image__locked" style={`--ratio: ${ratio};`}>
+        <p class="gated-image__locked-text">
+          <span class="gated-image__locked-label caps">Image restricted</span>
+          {alt}
+          <a href="/zugang">Enter an access code to view it.</a>
+        </p>
+      </div>
+    )
+  }
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .gated-image {
+    margin-block: var(--space-12);
+  }
+
+  .gated-image__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: var(--placeholder);
+  }
+
+  /* Device-Mockups mit transparentem Grund: siehe Figure.astro. */
+  .gated-image--bleed .gated-image__img {
+    box-sizing: border-box;
+    background: transparent;
+    padding: var(--space-8);
+  }
+
+  .gated-image__locked {
+    aspect-ratio: var(--ratio, 16 / 10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    box-sizing: border-box;
+    background: var(--surface-raised);
+    border: 1px solid var(--rule);
+  }
+
+  .gated-image__locked-text {
+    margin: 0;
+    max-width: var(--measure-wide);
+    text-align: center;
+    font-size: var(--step-0);
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+
+  .gated-image__locked-label {
+    display: block;
+    margin-block-end: var(--space-3);
+    color: var(--ink);
+  }
+
+  .gated-image__locked-text a {
+    color: var(--accent-ink);
+  }
+
+  figcaption {
+    margin-block-start: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    line-height: 1.6;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    color: var(--ink-muted);
+  }
+</style>

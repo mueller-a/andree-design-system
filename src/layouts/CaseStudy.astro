@@ -34,7 +34,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
   title={d.title}
   description={d.summary}
   ogImage={ogImage}
-  noindex={d.confidential}
+  noindex={d.gate === 'full'}
   mainClass="case"
 >
   <article class="case">
