@@ -21,6 +21,8 @@ import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 import Figure from '../components/Figure.astro';
 import GatedImage from '../components/GatedImage.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { creativeWorkJsonLd } from '../lib/jsonld';
 
 interface Props {
   entry: CollectionEntry<'work'>;
@@ -50,6 +52,7 @@ const hasAfterTldr = Astro.slots.has('afterTldr');
 <Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.gate === 'full'} mainClass="kaluza-case">
   <Fragment slot="head">
     <link rel="alternate" type="text/markdown" href={`/work/${entry.id}.md`} title="Markdown version" />
+    <JsonLd data={creativeWorkJsonLd(entry)} />
   </Fragment>
   <div class="wrap">
     <a class="kaluza-case__back caps caps--accent" href="/">← All work</a>

@@ -1,0 +1,18 @@
+---
+/**
+ * Strukturierte Daten als <script type="application/ld+json">. Dieser
+ * type-Wert macht das Element für CSP-`script-src` irrelevant (kein
+ * ausführbares Skript), daher keine Anpassung an astro.config.mjs nötig.
+ *
+ * `</` wird escaped, damit kein eingebetteter String ein schließendes
+ * </script> vortäuschen und den Rest der Seite in den Skript-Inhalt ziehen
+ * kann.
+ */
+interface Props {
+  data: Record<string, unknown> | Record<string, unknown>[];
+}
+const { data } = Astro.props;
+const json = JSON.stringify(data).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" set:html={json} is:inline />

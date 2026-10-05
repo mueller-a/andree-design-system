@@ -5,6 +5,8 @@ import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 import CaseHeader from '../components/CaseHeader.astro';
 import OutcomeList from '../components/OutcomeList.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { creativeWorkJsonLd } from '../lib/jsonld';
 
 interface Props {
   entry: CollectionEntry<'work'>;
@@ -39,6 +41,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
 >
   <Fragment slot="head">
     <link rel="alternate" type="text/markdown" href={`/work/${entry.id}.md`} title="Markdown version" />
+    <JsonLd data={creativeWorkJsonLd(entry)} />
   </Fragment>
   <article class="case">
     <div class="wrap case__head">
