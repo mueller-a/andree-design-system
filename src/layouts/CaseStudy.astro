@@ -37,6 +37,9 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
   noindex={d.gate === 'full'}
   mainClass="case"
 >
+  <Fragment slot="head">
+    <link rel="alternate" type="text/markdown" href={`/work/${entry.id}.md`} title="Markdown version" />
+  </Fragment>
   <article class="case">
     <div class="wrap case__head">
       <CaseHeader
@@ -100,6 +103,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
       <OutcomeList items={d.outcome} />
     </div>
 
+    <!-- md-twin:start -->
     <div class="wrap case__chapters">
       <slot />
     </div>
@@ -118,6 +122,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
         </p>
       )
     }
+    <!-- md-twin:end -->
 
     {
       next && (

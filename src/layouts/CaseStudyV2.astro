@@ -48,6 +48,9 @@ const hasAfterTldr = Astro.slots.has('afterTldr');
 ---
 
 <Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.gate === 'full'} mainClass="kaluza-case">
+  <Fragment slot="head">
+    <link rel="alternate" type="text/markdown" href={`/work/${entry.id}.md`} title="Markdown version" />
+  </Fragment>
   <div class="wrap">
     <a class="kaluza-case__back caps caps--accent" href="/">← All work</a>
 
@@ -70,6 +73,7 @@ const hasAfterTldr = Astro.slots.has('afterTldr');
         </dl>
       </section>
 
+      <!-- md-twin:start -->
       <slot name="tldr" />
 
       {
@@ -105,6 +109,7 @@ const hasAfterTldr = Astro.slots.has('afterTldr');
           </p>
         )
       }
+      <!-- md-twin:end -->
 
       {
         next && (
