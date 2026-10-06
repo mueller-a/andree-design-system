@@ -1,0 +1,83 @@
+---
+/**
+ * Layout-Komponente für ein nummeriertes Kapitel: Label-Spalte links,
+ * Inhalt rechts. Komponiert ChapterLabel, LeadSentence und InShort, anstatt
+ * sie selbst zu zeichnen – jede Atom-Komponente bleibt einzeln nutz- und
+ * dokumentierbar (siehe /design-system).
+ *
+ * Aufbau nach DESIGN_SYSTEM_SPEC.md Abschnitt 1.4/2.7: Label-Spalte
+ * flex 1 1 200px / max-width 260px, Inhalt flex 999 1 560px / max-width
+ * 960px, Umbruch per flex-wrap statt Media Query.
+ */
+import ChapterLabel from './ChapterLabel.astro';
+import LeadSentence from './LeadSentence.astro';
+import InShort from './InShort.astro';
+
+interface Props {
+  id: string;
+  label: string;
+  lead: string;
+  leadAccent?: string;
+  /** `chapter` (Default) für nummerierte Kapitel, `summary` für TL;DR. */
+  leadSize?: 'chapter' | 'summary';
+  inShort?: string[];
+}
+const { id, label, lead, leadAccent, leadSize = 'chapter', inShort } = Astro.props;
+---
+
+<section id={id} class="chapter">
+  <div class="chapter__label-col">
+    <ChapterLabel label={label} />
+  </div>
+  <div class="chapter__body">
+    <LeadSentence accent={leadAccent} size={leadSize}>{lead}</LeadSentence>
+
+    {inShort && inShort.length > 0 && <InShort points={inShort} />}
+
+    <div class="chapter__content">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .chapter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-10) var(--space-16);
+    scroll-margin-top: 110px;
+  }
+
+  .chapter__label-col {
+    flex: 1 1 200px;
+    max-width: var(--chapter-label-col);
+  }
+
+  .chapter__body {
+    flex: 999 1 560px;
+    min-width: 0;
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+
+  .chapter__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    font-size: var(--text-body);
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .chapter__content :global(p) {
+    margin: 0;
+  }
+
+  @media (max-width: 48rem) {
+    .chapter__label-col {
+      max-width: none;
+    }
+  }
+</style>

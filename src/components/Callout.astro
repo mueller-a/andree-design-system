@@ -1,0 +1,61 @@
+---
+/**
+ * `limit` (Default): volle Breite, Text --ink, 18px. Für "was die Validierung
+ * nicht gelöst hat" am Ende eines Kapitels.
+ * `confidential`: max-width 520px, Text --text, 16px. Für den NDA-Hinweis im
+ * CaseHero.
+ */
+interface Props {
+  label: string;
+  variant?: 'limit' | 'confidential';
+}
+const { label, variant = 'limit' } = Astro.props;
+---
+
+<div class:list={['callout', `callout--${variant}`]}>
+  <p class="callout__label">{label}</p>
+  <div class="callout__body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .callout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    border-left: var(--rail) solid var(--mark);
+    padding: 0.25rem 0 0.25rem var(--space-6);
+  }
+
+  .callout__label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .callout__body {
+    line-height: 1.6;
+  }
+
+  .callout__body :global(p) {
+    margin: 0;
+  }
+
+  .callout--limit .callout__body {
+    font-size: var(--text-body);
+    color: var(--ink);
+  }
+
+  .callout--confidential {
+    max-width: 520px;
+  }
+
+  .callout--confidential .callout__body {
+    font-size: 1rem;
+    color: var(--text);
+  }
+</style>

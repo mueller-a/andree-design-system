@@ -1,0 +1,91 @@
+---
+interface Phase {
+  date: string;
+  title: string;
+  body: string;
+  /**
+   * Phase liegt außerhalb von Andrees direkter Beteiligung (vor Einstieg
+   * oder nach Abgang): gestrichelte Linie, hohler Punkt.
+   */
+  before?: boolean;
+}
+interface Props {
+  phases: Phase[];
+}
+const { phases } = Astro.props;
+---
+
+<ol class="timeline" role="list">
+  {
+    phases.map((phase) => (
+      <li class:list={['timeline__item', { 'timeline__item--before': phase.before }]}>
+        <span class="timeline__dot" aria-hidden="true" />
+        <span class="timeline__date">{phase.date}</span>
+        <h3 class="timeline__title">{phase.title}</h3>
+        <span class="timeline__body">{phase.body}</span>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .timeline {
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+    gap: var(--space-9) var(--space-7);
+  }
+
+  .timeline__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--mark);
+  }
+
+  .timeline__item--before {
+    border-top-style: dashed;
+  }
+
+  .timeline__dot {
+    position: absolute;
+    top: -6px;
+    left: 0;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--mark);
+  }
+
+  .timeline__item--before .timeline__dot {
+    background: var(--bg);
+    border: 1px solid var(--mark);
+    box-sizing: border-box;
+  }
+
+  .timeline__date {
+    font-family: var(--font-mono);
+    font-size: var(--text-label-date);
+    letter-spacing: var(--tracking-case-caps-date);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .timeline__title {
+    margin: 0;
+    font-size: var(--text-title-s);
+    font-weight: var(--weight-medium);
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .timeline__body {
+    font-size: var(--text-body-xs);
+    line-height: 1.55;
+    color: var(--muted);
+  }
+</style>

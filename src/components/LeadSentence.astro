@@ -1,0 +1,50 @@
+---
+/**
+ * Leitsatz pro Kapitel. Zweiter Teil optional in --accent, z. B.
+ * "Aussage, <span>akzentuierter Rest.</span>".
+ *
+ * Überschriften-Hierarchie (entschieden, siehe /design-system): H1 ist der
+ * Hero-Titel, LeadSentence ist H2 (die einzige Überschrift pro Kapitel,
+ * semantisch aussagekräftig). ChapterLabel ("01 · Situation") ist bewusst
+ * KEINE Überschrift, sondern ein reines <p>: für Screenreader-Nutzer, die
+ * per Überschriftenliste navigieren, wäre "01 · Situation" ohne Kontext
+ * wenig hilfreich, der Leitsatz dagegen trägt den Inhalt.
+ */
+interface Props {
+  accent?: string;
+  /** `chapter` (Default, 34-54px) für nummerierte Kapitel, `summary` (26-38px) für TL;DR. */
+  size?: 'chapter' | 'summary';
+}
+const { accent, size = 'chapter' } = Astro.props;
+---
+
+<h2 class:list={['lead-sentence', `lead-sentence--${size}`]}>
+  <slot />
+  {accent && <span class="lead-sentence__accent"> {accent}</span>}
+</h2>
+
+<style>
+  .lead-sentence {
+    margin: 0;
+    font-weight: var(--weight-subhead);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .lead-sentence--chapter {
+    font-size: var(--text-chapter);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-case-chapter);
+  }
+
+  .lead-sentence--summary {
+    font-size: var(--text-summary);
+    line-height: 1.28;
+    letter-spacing: var(--tracking-case-quote);
+    text-wrap: pretty;
+  }
+
+  .lead-sentence__accent {
+    color: var(--accent);
+  }
+</style>

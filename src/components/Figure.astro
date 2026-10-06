@@ -16,11 +16,11 @@ interface Props {
   widths?: number[];
   sizes?: string;
   /**
-   * Als Kapitel-Trenner: bricht aus der Zweispalten-Kapitelspalte aus und
-   * nutzt die volle Breite von `.case__chapters section` statt der
-   * Textspalte. Nur innerhalb von CaseStudy-Kapiteln wirksam.
+   * `column`: sitzt in der Textspalte, max 960px (Default).
+   * `bleed`: volle Containerbreite, transparenter Grund statt Lade-Muster
+   * (für Device-Mockups mit eigenem Rand). Siehe DESIGN_SYSTEM_SPEC.md 2.16.
    */
-  bleed?: boolean;
+  variant?: 'column' | 'bleed';
   /**
    * Dunkle Variante desselben Inhalts (z. B. ein Diagramm mit dunklem statt
    * hellem Grund). Wenn gesetzt, rendert Figure beide Bilder und blendet die
@@ -42,7 +42,7 @@ const {
   lazy = true,
   widths = [640, 960, 1280, 1600, 2000],
   sizes = '(min-width: 76rem) 1024px, 100vw',
-  bleed = false,
+  variant = 'column',
   srcDark,
 } = Astro.props;
 
@@ -53,7 +53,7 @@ if (!decorative && alt.trim() === '') {
 }
 ---
 
-<figure class:list={['figure', { 'figure--bleed': bleed }]}>
+<figure class:list={['figure', { 'figure--bleed': variant === 'bleed' }]}>
   <Picture
     src={src}
     alt={decorative ? '' : alt}
@@ -141,10 +141,10 @@ if (!decorative && alt.trim() === '') {
   figcaption {
     margin-block-start: var(--space-4);
     font-family: var(--font-mono);
-    font-size: var(--step--2);
+    font-size: var(--text-label);
     line-height: 1.6;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
-    color: var(--text);
+    letter-spacing: var(--tracking-case-caps);
+    color: var(--muted);
   }
 </style>

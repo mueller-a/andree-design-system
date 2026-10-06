@@ -1,0 +1,58 @@
+---
+interface Props {
+  href: string;
+  title: string;
+}
+const { href, title } = Astro.props;
+---
+
+<a class="next-case" href={href}>
+  <span class="next-case__body">
+    <span class="next-case__label">Next case study</span>
+    <span class="next-case__title">{title}</span>
+  </span>
+  <span class="next-case__arrow" aria-hidden="true">→</span>
+</a>
+
+<style>
+  .next-case {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-10) 0;
+    border-block: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background var(--motion-base) var(--ease);
+  }
+
+  .next-case:hover {
+    background: var(--bg);
+  }
+
+  .next-case__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .next-case__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .next-case__title {
+    font-size: var(--text-next);
+    font-weight: var(--weight-subhead);
+    letter-spacing: -0.02em;
+  }
+
+  .next-case__arrow {
+    font-size: var(--text-title-m);
+    color: var(--accent);
+  }
+</style>

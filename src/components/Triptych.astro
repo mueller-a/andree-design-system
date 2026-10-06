@@ -1,0 +1,61 @@
+---
+/** Problem / Approach / Result, oder jede andere 3-(bis mehr-)spaltige Kurzfassung. */
+interface Column {
+  label: string;
+  body: string;
+}
+interface Props {
+  columns: Column[];
+}
+const { columns } = Astro.props;
+---
+
+<div class="triptych">
+  {
+    columns.map((col) => (
+      <div class="triptych__cell">
+        <span class="triptych__label">{col.label}</span>
+        <span class="triptych__body">{col.body}</span>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .triptych {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 1px;
+    background: var(--border);
+    border-block: 1px solid var(--border);
+  }
+
+  .triptych__cell {
+    /* Zellen bewusst --bg, nicht --surface: die Fugen-Technik soll hier nur
+       feine Linien zeigen, keine zusätzlich abgesetzte Kartenfläche. */
+    background: var(--bg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Spec will erste/letzte Zelle ohne äußeres Padding. Bewusst weggelassen:
+     das Grid bricht per auto-fit zeilenweise um (keine Media Query, siehe
+     Projektregel), und "erste/letzte Zelle" wäre nach einem Umbruch nicht
+     mehr die visuell äußerste Zelle. Einheitliches Padding ist robuster. */
+
+  .triptych__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .triptych__body {
+    font-size: var(--text-title-m);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+</style>

@@ -1,0 +1,92 @@
+---
+import MetaGrid from './MetaGrid.astro';
+import Callout from './Callout.astro';
+
+interface Props {
+  backHref?: string;
+  backLabel?: string;
+  kicker: string;
+  title: string;
+  lead: string;
+  meta: Array<[string, string]>;
+  /** Zeigt einen Callout variant="confidential" direkt unter der Lede. */
+  confidentialNote?: string;
+}
+const {
+  backHref = '/',
+  backLabel = '← All work',
+  kicker,
+  title,
+  lead,
+  meta,
+  confidentialNote,
+} = Astro.props;
+---
+
+<div class="case-hero">
+  <a class="case-hero__back" href={backHref}>{backLabel}</a>
+  <p class="case-hero__kicker">{kicker}</p>
+  <h1 class="case-hero__title">{title}</h1>
+  <p class="case-hero__lead">{lead}</p>
+  {
+    confidentialNote && (
+      <Callout label="Confidential" variant="confidential">
+        <p>{confidentialNote}</p>
+      </Callout>
+    )
+  }
+  <MetaGrid items={meta} />
+</div>
+
+<style>
+  .case-hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .case-hero__back {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-label-l);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .case-hero__back:hover {
+    color: var(--ink);
+  }
+
+  .case-hero__kicker {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-label-l);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .case-hero__title {
+    margin: 0;
+    /* Spec will Gewicht 300 (--weight-subhead), nicht das allgemeine
+       --weight-display (200), das für den Startseiten-H1 genutzt wird. */
+    font-weight: var(--weight-subhead);
+    font-size: var(--text-display);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-case-display);
+    max-width: 24ch;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .case-hero__lead {
+    margin: 0;
+    font-size: var(--text-lede);
+    line-height: 1.5;
+    max-width: 45ch;
+    color: var(--text);
+    text-wrap: pretty;
+  }
+</style>

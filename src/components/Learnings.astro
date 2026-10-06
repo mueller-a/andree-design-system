@@ -1,0 +1,78 @@
+---
+interface Item {
+  title: string;
+  body: string;
+}
+interface Props {
+  items: Item[];
+}
+const { items } = Astro.props;
+---
+
+<ol class="learnings" role="list">
+  {
+    items.map((item, i) => (
+      <li class="learnings__item">
+        <span class="learnings__number" aria-hidden="true">
+          {String(i + 1).padStart(2, '0')}
+        </span>
+        <div class="learnings__text">
+          <h3 class="learnings__title">{item.title}</h3>
+          <p class="learnings__body">{item.body}</p>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .learnings {
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .learnings__item {
+    background: var(--surface);
+    padding: var(--space-8);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+  }
+
+  .learnings__number {
+    flex: 0 0 48px;
+    padding-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-label-l);
+    letter-spacing: var(--tracking-case-caps);
+    color: var(--accent);
+  }
+
+  .learnings__text {
+    flex: 1 1 300px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .learnings__title {
+    margin: 0;
+    font-size: var(--text-learning);
+    font-weight: var(--weight-subhead);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+
+  .learnings__body {
+    margin: 0;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--muted);
+  }
+</style>

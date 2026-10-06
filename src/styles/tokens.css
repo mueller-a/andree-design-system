@@ -55,6 +55,7 @@
   --weight-subhead: 300;
   --weight-body: 400;
   --weight-strong: 600;
+  --weight-medium: 500; /* Case-Study-Tokens: title-l, title-s, DefinitionRows-Hervorhebung */
 
   --step--2: clamp(0.63rem, 0.61rem + 0.1vw, 0.69rem);  /* Caps-Labels */
   --step--1: clamp(0.81rem, 0.78rem + 0.15vw, 0.88rem);

@@ -1,20 +1,20 @@
 ---
 /**
- * Geteilte Hülle für die neugestalteten Case-Study-Seiten
- * (design_handoff_accessibility_case_study): Zurück-Link, Hero, Meta-Grid,
- * Cover-Bild, Reference, Next-Case-Study-Link. Übernimmt dieselben Felder
- * wie das alte CaseStudy.astro direkt aus der Content-Collection-Entry,
- * keine Neueingabe pro Seite.
+ * Geteilte Hülle für die Case-Study-Seiten, komponiert aus den Atomen in
+ * src/components/ (CaseHero, Figure/GatedImage, ReferenceLink, NextCase).
+ * Übernimmt Titel/Summary/Meta/Cover/Reference direkt aus der
+ * Content-Collection-Entry, keine Neueingabe pro Seite.
  *
  * Erwartet folgende Slots:
- * - `tldr`: die <TldrStrip />-Komponente der aufrufenden Seite.
- * - `afterTldr` (optional): z. B. eine <PhaseTimeline />, zwischen TL;DR und
+ * - `tldr`: die <Chapter label="TL;DR">-Komponente der aufrufenden Seite
+ *   (Lead-Absatz + <Triptych/> + optional <StatRow/>).
+ * - `afterTldr` (optional): z. B. eine <Timeline />, zwischen TL;DR und
  *   Cover-Bild. Nur von Seiten genutzt, die das brauchen (z. B. PRINCE).
  * - Standard-Slot: die <Chapter />-Blöcke.
  *
  * Jede Seite, die dieses Layout nutzt, braucht weiterhin ihre eigene feste
  * Route in src/pages/work/<slug>.astro (siehe dort für die Begründung,
- * besonders `export const prerender = false` bei confidential-Einträgen).
+ * besonders `export const prerender = false` bei gate !== 'none').
  */
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
@@ -22,6 +22,9 @@ import Base from './Base.astro';
 import Figure from '../components/Figure.astro';
 import GatedImage from '../components/GatedImage.astro';
 import JsonLd from '../components/JsonLd.astro';
+import CaseHero from '../components/CaseHero.astro';
+import ReferenceLink from '../components/ReferenceLink.astro';
+import NextCase from '../components/NextCase.astro';
 import { creativeWorkJsonLd } from '../lib/jsonld';
 
 interface Props {
@@ -49,235 +52,84 @@ const ogImage = `/og/${entry.id}.png`;
 const hasAfterTldr = Astro.slots.has('afterTldr');
 ---
 
-<Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.gate === 'full'} mainClass="kaluza-case">
+<Base title={d.title} description={d.summary} ogImage={ogImage} noindex={d.gate === 'full'} mainClass="case-study-page">
   <Fragment slot="head">
     <link rel="alternate" type="text/markdown" href={`/work/${entry.id}.md`} title="Markdown version" />
     <JsonLd data={creativeWorkJsonLd(entry)} />
   </Fragment>
   <div class="wrap">
-    <a class="kaluza-case__back caps caps--accent" href="/">← All work</a>
-
-    <article class="kaluza-case__article">
-      <section class="kaluza-case__hero">
-        <p class="caps kaluza-case__eyebrow">
-          Case study {String(d.order).padStart(2, '0')} · {d.client}
-        </p>
-        <h1 class="kaluza-case__title">{d.title}</h1>
-        <p class="kaluza-case__lead">{d.summary}</p>
-        <dl class="kaluza-case__meta">
-          {
-            meta.map(([k, v]) => (
-              <div class="kaluza-case__meta-cell">
-                <dt class="caps">{k}</dt>
-                <dd>{v}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </section>
+    <article class="case-study">
+      <CaseHero
+        kicker={`Case study ${String(d.order).padStart(2, '0')} · ${d.client}`}
+        title={d.title}
+        lead={d.summary}
+        meta={meta}
+      />
 
       <!-- md-twin:start -->
       <slot name="tldr" />
 
       {
         hasAfterTldr && (
-          <div class="kaluza-case__after-tldr">
-            <div class="kaluza-case__after-tldr-spacer" aria-hidden="true" />
-            <div class="kaluza-case__after-tldr-content">
+          <div class="case-study__after-tldr">
+            <div class="case-study__after-tldr-spacer" aria-hidden="true" />
+            <div class="case-study__after-tldr-content">
               <slot name="afterTldr" />
             </div>
           </div>
         )
       }
 
-      <div class="kaluza-case__figure--top">
+      <div class="case-study__cover">
         {
           d.gate === 'none' ? (
-            <Figure src={d.cover} srcDark={d.coverDark} alt={d.coverAlt} lazy={false} bleed />
+            <Figure src={d.cover} srcDark={d.coverDark} alt={d.coverAlt} lazy={false} variant="bleed" />
           ) : (
-            <GatedImage src={`${entry.id}/cover.png`} alt={d.coverRealAlt ?? d.coverAlt} lazy={false} bleed />
+            <GatedImage src={`${entry.id}/cover.png`} alt={d.coverRealAlt ?? d.coverAlt} lazy={false} variant="bleed" />
           )
         }
       </div>
 
       <slot />
 
-      {
-        d.reference && (
-          <p class="kaluza-case__reference">
-            <span class="caps caps--wide">Reference</span>
-            <a href={d.reference.url} target="_blank" rel="external noopener noreferrer">
-              {d.reference.label}
-            </a>
-          </p>
-        )
-      }
+      {d.reference && <ReferenceLink href={d.reference.url} label={d.reference.label} />}
       <!-- md-twin:end -->
 
-      {
-        next && (
-          <a class="kaluza-case__next" href={`/work/${next.id}`}>
-            <span class="kaluza-case__next-body">
-              <span class="caps caps--wide">Next case study</span>
-              <span class="kaluza-case__next-title">{next.data.title}</span>
-            </span>
-            <span class="kaluza-case__next-arrow caps--accent" aria-hidden="true">→</span>
-          </a>
-        )
-      }
+      {next && <NextCase href={`/work/${next.id}`} title={next.data.title} />}
     </article>
   </div>
 </Base>
 
 <style>
-  .kaluza-case__back {
-    display: inline-block;
-    margin-block: var(--space-10) var(--space-10);
-    text-decoration: none;
-  }
-
-  .kaluza-case__article {
+  .case-study {
     display: flex;
     flex-direction: column;
     gap: var(--space-24);
-    padding-block-end: var(--space-32);
+    padding-block: var(--space-10) var(--space-32);
   }
 
-  /* ---------- Hero ---------- */
-
-  .kaluza-case__hero {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-
-  .kaluza-case__eyebrow {
-    margin: 0;
-    color: var(--muted);
-  }
-
-  .kaluza-case__title {
-    margin: 0;
-    font-weight: var(--weight-display);
-    font-size: clamp(2.75rem, 6.4vw, 5.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.035em;
-    max-width: 24ch;
-    color: var(--ink);
-    text-wrap: balance;
-  }
-
-  .kaluza-case__lead {
-    margin: 0;
-    font-size: clamp(1.19rem, 1.8vw, 1.5rem);
-    line-height: 1.5;
-    max-width: 45ch;
-    color: var(--text);
-    text-wrap: pretty;
-  }
-
-  .kaluza-case__meta {
-    margin: var(--space-6) 0 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
-    gap: 1px;
-    background: var(--border);
-  }
-
-  .kaluza-case__meta-cell {
-    background: var(--bg);
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .kaluza-case__meta-cell dt {
-    margin: 0;
-  }
-
-  .kaluza-case__meta-cell dd {
-    margin: 0;
-    font-size: var(--step-0);
-    line-height: 1.5;
-    color: var(--ink);
-  }
-
-  /* Spiegelt TldrStrips Label-Spalte/Body-Aufteilung (1 1 200px / 999 1
-     560px), damit darunter platzierter Slot-Inhalt (z. B. PhaseTimeline)
-     exakt unter den TL;DR-Spalten anfängt, nicht an der vollen Breite. */
-  .kaluza-case__after-tldr {
+  /* Spiegelt Triptychs Label-Spalte/Body-Aufteilung (1 1 200px / 999 1
+     560px), damit darunter platzierter Slot-Inhalt (z. B. Timeline) exakt
+     unter den TL;DR-Spalten anfängt, nicht an der vollen Breite. */
+  .case-study__after-tldr {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-8) var(--space-16);
   }
 
-  .kaluza-case__after-tldr-spacer {
+  .case-study__after-tldr-spacer {
     flex: 1 1 200px;
-    max-width: 260px;
+    max-width: var(--chapter-label-col);
   }
 
-  .kaluza-case__after-tldr-content {
+  .case-study__after-tldr-content {
     flex: 999 1 560px;
     min-width: 0;
   }
 
-  .kaluza-case__figure--top {
+  .case-study__cover {
     margin-block-start: calc(var(--space-24) * -1 + var(--space-8));
     max-width: 68.75rem;
     margin-inline: auto;
-  }
-
-  /* ---------- Reference + Next ---------- */
-
-  .kaluza-case__reference {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-6);
-    align-items: baseline;
-    margin: 0;
-  }
-
-  .kaluza-case__reference a {
-    color: var(--accent);
-    text-decoration-color: var(--accent);
-  }
-
-  .kaluza-case__next {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-8);
-    padding: var(--space-10) 0;
-    border-block: 1px solid var(--border);
-    text-decoration: none;
-    color: var(--ink);
-    transition: background var(--motion-base) var(--ease);
-  }
-
-  .kaluza-case__next:hover {
-    background: var(--bg);
-  }
-
-  .kaluza-case__next-body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .kaluza-case__next-title {
-    font-size: var(--step-2);
-    font-weight: var(--weight-display);
-    letter-spacing: -0.02em;
-  }
-
-  .kaluza-case__next-arrow {
-    font-size: var(--step-2);
-  }
-
-  @media (max-width: 48rem) {
-    .kaluza-case__meta {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 </style>

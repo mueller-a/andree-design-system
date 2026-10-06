@@ -1,0 +1,35 @@
+---
+interface Props {
+  href: string;
+  label: string;
+}
+const { href, label } = Astro.props;
+---
+
+<p class="reference-link">
+  <span class="reference-link__label">Reference</span>
+  <a href={href} target="_blank" rel="external noopener noreferrer">{label}</a>
+</p>
+
+<style>
+  .reference-link {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    align-items: baseline;
+    margin: 0;
+  }
+
+  .reference-link__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .reference-link a {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+</style>

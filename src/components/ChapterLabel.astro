@@ -1,0 +1,26 @@
+---
+/**
+ * Kapitel-Kennung, z. B. "01 · Situation". TL;DR bekommt keine Nummer, einfach
+ * den Text ohne Ziffer übergeben.
+ */
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<p class="chapter-label">{label}</p>
+
+<style>
+  .chapter-label {
+    margin: 0;
+    display: inline-block;
+    padding-bottom: 10px;
+    border-bottom: var(--rail) solid var(--mark);
+    font-family: var(--font-mono);
+    font-size: var(--text-label-l);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+</style>
