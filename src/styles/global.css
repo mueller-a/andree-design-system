@@ -11,15 +11,15 @@ body {
   font-weight: var(--weight-body);
   line-height: var(--leading-body);
   color: var(--ink);
-  background-color: var(--surface);
+  background-color: var(--bg);
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background-color: var(--signal);
-  color: var(--signal-ink);
+  background-color: var(--mark);
+  color: var(--mark-ink);
 }
 
 /* ---------- Typografie ---------- */
@@ -66,7 +66,7 @@ h4 {
   line-height: 1.4;
   text-transform: uppercase;
   letter-spacing: var(--tracking-caps);
-  color: var(--ink-muted);
+  color: var(--text);
 }
 
 .caps--wide {
@@ -74,11 +74,11 @@ h4 {
 }
 
 .caps--accent {
-  color: var(--accent-ink);
+  color: var(--accent);
 }
 
 .caps--faint {
-  color: var(--ink-faint);
+  color: var(--muted);
 }
 
 /* ---------- Fließtext ---------- */
@@ -113,7 +113,7 @@ h4 {
 a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: var(--rule);
+  text-decoration-color: var(--border);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
   transition: text-decoration-color var(--motion-fast) var(--ease),
@@ -121,7 +121,7 @@ a {
 }
 
 a:hover {
-  text-decoration-color: var(--signal);
+  text-decoration-color: var(--mark);
   text-decoration-thickness: 2px;
 }
 
@@ -130,7 +130,7 @@ a:hover {
   width: max-content;
   max-width: 100%;
   padding-block-end: var(--space-2);
-  border-block-end: var(--rail) solid var(--signal);
+  border-block-end: var(--rail) solid var(--mark);
 }
 
 /* ----------------------------------------------------------------------------
@@ -143,18 +143,18 @@ a:hover {
 :focus-visible {
   outline: 3px solid transparent !important;
   outline-offset: 0 !important;
-  color: var(--signal-ink) !important;
-  background-color: var(--signal) !important;
+  color: var(--mark-ink) !important;
+  background-color: var(--mark) !important;
   box-shadow:
-    0 -2px var(--signal),
-    0 4px var(--signal-ink) !important;
+    0 -2px var(--mark),
+    0 4px var(--mark-ink) !important;
   text-decoration: none !important;
 }
 
 /* Kinder eines fokussierten Blocklinks (Karten, „Next case study") mitziehen. */
 :focus-visible :where(*) {
-  color: var(--signal-ink) !important;
-  border-color: var(--signal-ink) !important;
+  color: var(--mark-ink) !important;
+  border-color: var(--mark-ink) !important;
   background-color: transparent !important;
 }
 
@@ -164,22 +164,22 @@ a:hover {
 
 /* Auf gelbem Grund (CTA-Band) invertiert der Fokus – sonst gelb auf gelb. */
 .home__cta :focus-visible {
-  color: var(--signal) !important;
-  background-color: var(--signal-ink) !important;
-  border-color: var(--signal) !important;
+  color: var(--mark) !important;
+  background-color: var(--mark-ink) !important;
+  border-color: var(--mark) !important;
   box-shadow:
-    0 -2px var(--signal-ink),
-    0 4px var(--signal) !important;
+    0 -2px var(--mark-ink),
+    0 4px var(--mark) !important;
 }
 
 .home__cta :focus-visible :where(*) {
-  color: var(--signal) !important;
-  border-color: var(--signal) !important;
+  color: var(--mark) !important;
+  border-color: var(--mark) !important;
 }
 
 /* Der gelbe Punkt im Umschalter würde auf gelbem Grund verschwinden. */
 .theme-toggle:focus-visible .theme-toggle__dot {
-  background-color: var(--signal-ink) !important;
+  background-color: var(--mark-ink) !important;
 }
 
 /* ---------- Skip-Link ---------- */
@@ -190,9 +190,9 @@ a:hover {
   left: var(--space-2);
   z-index: 100;
   padding: var(--space-2) var(--space-4);
-  background-color: var(--surface-raised);
+  background-color: var(--bg);
   color: var(--ink);
-  border: 1px solid var(--accent-ink);
+  border: 1px solid var(--accent);
   text-decoration: none;
   transform: translateY(-150%);
   transition: transform var(--motion-fast) var(--ease);
@@ -229,7 +229,7 @@ a:hover {
   place-items: center;
   padding: var(--space-8);
   background: var(--placeholder);
-  color: var(--ink-muted);
+  color: var(--text);
   text-align: center;
 }
 
@@ -248,7 +248,7 @@ a:hover {
 
 .rule {
   border: 0;
-  border-block-start: 1px solid var(--rule);
+  border-block-start: 1px solid var(--border);
 }
 
 /* Einmaliges, dezentes Aufblenden – nur mit erlaubter Bewegung. */

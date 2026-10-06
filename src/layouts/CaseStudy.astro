@@ -155,7 +155,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 1px;
     margin: 0 0 var(--space-14);
-    background: var(--rule);
+    background: var(--border);
   }
 
   .case__meta-cell {
@@ -163,7 +163,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     flex-direction: column;
     gap: var(--space-3);
     padding: var(--space-6) var(--space-4);
-    background: var(--surface-raised);
+    background: var(--bg);
   }
 
   .case__meta-cell dt {
@@ -272,13 +272,13 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     max-width: 100%;
     margin: 0;
     padding-block: var(--space-1) var(--space-2);
-    border-block-end: var(--rail) solid var(--signal);
+    border-block-end: var(--rail) solid var(--mark);
     font-family: var(--font-mono);
     font-size: var(--step--2);
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: var(--tracking-caps-wide);
-    color: var(--ink-muted);
+    color: var(--text);
   }
 
   .case__chapters :global(section > h3) {
@@ -311,7 +311,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
   .case__chapters :global(section p) {
     font-size: var(--step-0);
     line-height: 1.7;
-    color: var(--ink-muted);
+    color: var(--text);
   }
 
   @media (max-width: 48rem) {
@@ -339,14 +339,14 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     gap: var(--space-8);
     margin-block-start: var(--space-24);
     padding: var(--space-10) var(--gutter);
-    border-block-start: 1px solid var(--rule);
+    border-block-start: 1px solid var(--border);
     text-decoration: none;
     color: var(--ink);
     transition: background var(--motion-base) var(--ease);
   }
 
   .case__next:hover {
-    background: var(--surface-raised);
+    background: var(--bg);
   }
 
   .case__next-body {
@@ -363,7 +363,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
 
   .case__next-arrow {
     font-size: var(--step-2);
-    color: var(--accent-ink);
+    color: var(--accent);
   }
 
   .case__ref {
@@ -373,11 +373,11 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
     align-items: baseline;
     margin-block-start: var(--space-16);
     padding-block-start: var(--space-6);
-    border-block-start: 1px solid var(--rule);
+    border-block-start: 1px solid var(--border);
   }
 
   .case__ref a {
-    color: var(--accent-ink);
-    text-decoration-color: var(--accent-ink);
+    color: var(--accent);
+    text-decoration-color: var(--accent);
   }
 </style>

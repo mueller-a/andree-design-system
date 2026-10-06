@@ -95,14 +95,14 @@ const Heading = `h${headingLevel}` as const;
     gap: var(--space-12);
     align-items: end;
     padding: var(--space-10);
-    background: var(--surface-raised);
+    background: var(--bg);
     color: var(--ink);
     text-decoration: none;
     transition: background var(--motion-base) var(--ease);
   }
 
   .card:hover {
-    background: var(--surface-raised-hover);
+    background: var(--bg-hover);
   }
 
   .card__body {
@@ -126,7 +126,7 @@ const Heading = `h${headingLevel}` as const;
 
   .card:hover .card__title {
     text-decoration: underline;
-    text-decoration-color: var(--signal);
+    text-decoration-color: var(--mark);
     text-decoration-thickness: 2px;
     text-underline-offset: 0.2em;
   }
@@ -134,7 +134,7 @@ const Heading = `h${headingLevel}` as const;
   .card__summary {
     margin: 0;
     max-width: 52ch;
-    color: var(--ink-muted);
+    color: var(--text);
     line-height: 1.6;
   }
 
@@ -146,7 +146,7 @@ const Heading = `h${headingLevel}` as const;
   }
 
   .card__tags li {
-    border: 1px solid var(--rule);
+    border: 1px solid var(--border);
     padding: 5px 8px;
   }
 
@@ -171,7 +171,7 @@ const Heading = `h${headingLevel}` as const;
     block-size: 100%;
     padding: var(--space-4);
     text-align: center;
-    color: var(--ink-muted);
+    color: var(--text);
   }
 
   /* Hell/Dunkel-Cover, gegenläufig zum Seiten-Theme wie bei Figure.astro und
