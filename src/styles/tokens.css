@@ -159,8 +159,14 @@
   }
 }
 
-/* Heller Modus per manuellem Umschalter – gewinnt in beide Richtungen. */
-:root[data-theme="light"] {
+/*
+ * Heller Modus per manuellem Umschalter – gewinnt in beide Richtungen.
+ * Bewusst `[data-theme="light"]` statt `:root[data-theme="light"]`: so
+ * greift die Regel auch auf einem verschachtelten Container, nicht nur auf
+ * <html>. Nötig für /design-system, wo beide Modi nebeneinander auf einer
+ * Seite gezeigt werden, unabhängig vom Seiten-weiten Theme.
+ */
+[data-theme="light"] {
   --mark: #e0b000;
   --accent: #7a5f00;
 
@@ -183,4 +189,34 @@
   --focus: #0a5fcc;
 
   color-scheme: light;
+}
+
+/*
+ * Dunkler Modus erzwungen auf einem verschachtelten Container, auch wenn
+ * Root/System hell ist. Gleicher Grund wie oben: /design-system zeigt beide
+ * Modi nebeneinander. Werte identisch zum :root-Default.
+ */
+[data-theme="dark"] {
+  --mark: #f5c518;
+  --accent: #f5c518;
+
+  --bg: #14232d;
+  --bg-glass: rgba(20, 35, 45, 0.94);
+  --surface: #1c2c36;
+  --surface-hover: #22333d;
+
+  --ink: #ffffff;
+  --text: #dfe5e8;
+  --muted: #c9d1d6;
+  --border: rgba(183, 191, 204, 0.22);
+  --border-strong: #3a4b56;
+
+  --placeholder: repeating-linear-gradient(
+    135deg,
+    rgba(183, 191, 204, 0.14) 0 8px,
+    rgba(183, 191, 204, 0.05) 8px 16px
+  );
+  --focus: #6faaff;
+
+  color-scheme: dark;
 }
