@@ -1,4 +1,9 @@
 ---
+/**
+ * Einfache Tag-Liste (kein Ablauf wie FlowChips, keine Pfeile/Reihenfolge).
+ * Kein Teil von DESIGN_SYSTEM_SPEC.md, eigenständig für Kaluzas
+ * Knowledge-Base-Verweis.
+ */
 interface Props {
   chips: string[];
   /** Kurzer Kontext, was die Knowledge Base ist und wofür sie da ist. */
@@ -33,15 +38,15 @@ const { chips, description } = Astro.props;
   .kb-chips__label {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: var(--step--2);
-    letter-spacing: var(--tracking-caps);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
     text-transform: uppercase;
     color: var(--muted);
   }
 
   .kb-chips__description {
     margin: 0;
-    font-size: var(--step--1);
+    font-size: 0.9375rem;
     line-height: 1.5;
     color: var(--text);
   }
@@ -56,9 +61,9 @@ const { chips, description } = Astro.props;
   }
 
   .kb-chips__chip {
-    font-size: var(--step--1);
+    font-size: 0.9375rem;
     padding: 7px 12px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-strong);
     color: var(--text);
   }
 </style>
