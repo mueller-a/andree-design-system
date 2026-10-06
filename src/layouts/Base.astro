@@ -4,17 +4,39 @@ import '../styles/tokens.css';
 import '../styles/reset.css';
 import '../styles/global.css';
 
-import { site } from '../site.config';
 import ThemeScript from '../components/ThemeScript.astro';
 import SkipLink from '../components/SkipLink.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface SiteInfo {
+  name: string;
+  role: string;
+  url: string;
+  lang: string;
+  locale: string;
+  description: string;
+  ogDefault: string;
+  email: string;
+  linkedin: string;
+}
+
 interface Props {
+  /** Seiten-/Kontaktdaten. App-spezifisch, kommt immer vom Aufrufer. */
+  site: SiteInfo;
+  /** Hauptnavigation (Header). */
+  nav: NavItem[];
+  /** Rechtliche Navigation (Footer). */
+  footerNav: NavItem[];
   /** Seitentitel ohne Namenszusatz. Für die Startseite leer lassen. */
   title?: string;
   description?: string;
-  /** Pfad zu einem Open-Graph-Bild (1200×630). Standard: Seiten-Default. */
+  /** Pfad zu einem Open-Graph-Bild (1200×630). Standard: site.ogDefault. */
   ogImage?: string;
   /** Setzt die Seite auf noindex (geschützte Bereiche). */
   noindex?: boolean;
@@ -23,6 +45,9 @@ interface Props {
 }
 
 const {
+  site,
+  nav,
+  footerNav,
   title,
   description = site.description,
   ogImage = site.ogDefault,
@@ -82,12 +107,12 @@ const ogImageUrl = new URL(ogImage, site.url).href;
 
   <body>
     <SkipLink />
-    <SiteHeader path={Astro.url.pathname} />
+    <SiteHeader path={Astro.url.pathname} siteName={site.name} nav={nav} />
 
     <main id="main" class={mainClass}>
       <slot />
     </main>
 
-    <SiteFooter />
+    <SiteFooter email={site.email} linkedin={site.linkedin} footerNav={footerNav} />
   </body>
 </html>

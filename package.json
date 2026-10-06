@@ -1,0 +1,16 @@
+{
+  "name": "@andree/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Dark Studio: tokens, Astro components and layouts shared across Andree Müller's sites.",
+  "exports": {
+    "./styles/*.css": "./src/styles/*.css",
+    "./components/*.astro": "./src/components/*.astro",
+    "./layouts/*.astro": "./src/layouts/*.astro",
+    "./lib/*": "./src/lib/*.ts"
+  },
+  "peerDependencies": {
+    "astro": "^5.14.1"
+  }
+}

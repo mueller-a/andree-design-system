@@ -1,5 +1,16 @@
 ---
-import { footerNav, site } from '../site.config';
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  email: string;
+  linkedin: string;
+  footerNav: NavItem[];
+}
+
+const { email, linkedin, footerNav } = Astro.props;
 
 const year = new Date().getFullYear();
 ---
@@ -7,10 +18,10 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="wrap site-footer__inner">
     <span class="site-footer__contact">
-      <a class="site-footer__email" href={`mailto:${site.email}`}>{site.email}</a>
+      <a class="site-footer__email" href={`mailto:${email}`}>{email}</a>
       <a
         class="site-footer__ext"
-        href={site.linkedin}
+        href={linkedin}
         target="_blank"
         rel="me external noopener noreferrer"
       >

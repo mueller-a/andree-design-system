@@ -1,7 +1,27 @@
 ---
 import Base from './Base.astro';
 
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface SiteInfo {
+  name: string;
+  role: string;
+  url: string;
+  lang: string;
+  locale: string;
+  description: string;
+  ogDefault: string;
+  email: string;
+  linkedin: string;
+}
+
 interface Props {
+  site: SiteInfo;
+  nav: NavItem[];
+  footerNav: NavItem[];
   title: string;
   description?: string;
   /** Kleine Mono-Marke im linken Rail, z. B. "Legal". */
@@ -14,7 +34,8 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, description, kicker, lead, updated, lang, noindex } = Astro.props;
+const { site, nav, footerNav, title, description, kicker, lead, updated, lang, noindex } =
+  Astro.props;
 
 const updatedLocale = lang === 'de' ? 'de-DE' : 'en-GB';
 const updatedLabel = updated
@@ -25,7 +46,15 @@ const updatedLabel = updated
 const updatedWord = lang === 'de' ? 'Stand' : 'Updated';
 ---
 
-<Base title={title} description={description} noindex={noindex} mainClass="textpage">
+<Base
+  site={site}
+  nav={nav}
+  footerNav={footerNav}
+  title={title}
+  description={description}
+  noindex={noindex}
+  mainClass="textpage"
+>
   <div class="wrap textpage__grid">
     <aside class="textpage__rail">
       {kicker && <p class="caps caps--wide rail-mark">{kicker}</p>}

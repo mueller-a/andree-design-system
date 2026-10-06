@@ -1,13 +1,21 @@
 ---
-import { nav, site } from '../site.config';
 import ThemeToggle from './ThemeToggle.astro';
+
+interface NavItem {
+  href: string;
+  label: string;
+}
 
 interface Props {
   /** Aktueller Pfad, für aria-current in der Navigation. */
   path: string;
+  /** Name/Marke links im Header. */
+  siteName: string;
+  /** Hauptnavigation rechts. */
+  nav: NavItem[];
 }
 
-const { path } = Astro.props;
+const { path, siteName, nav } = Astro.props;
 
 const norm = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
 const current = norm(path);
@@ -22,7 +30,7 @@ const isCurrent = (href: string) => {
 
 <header class="site-header">
   <div class="wrap site-header__inner">
-    <a class="site-header__mark" href="/" rel="home">{site.name}</a>
+    <a class="site-header__mark" href="/" rel="home">{siteName}</a>
 
     <nav class="site-header__nav" aria-label="Primary">
       <ul role="list">

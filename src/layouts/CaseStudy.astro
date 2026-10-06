@@ -6,13 +6,35 @@ import Base from './Base.astro';
 import CaseHeader from '../components/CaseHeader.astro';
 import OutcomeList from '../components/OutcomeList.astro';
 import JsonLd from '../components/JsonLd.astro';
-import { creativeWorkJsonLd } from '../lib/jsonld';
+
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface SiteInfo {
+  name: string;
+  role: string;
+  url: string;
+  lang: string;
+  locale: string;
+  description: string;
+  ogDefault: string;
+  email: string;
+  linkedin: string;
+}
 
 interface Props {
   entry: CollectionEntry<'work'>;
+  site: SiteInfo;
+  nav: NavItem[];
+  footerNav: NavItem[];
+  /** CreativeWork-JSON-LD, von der Seite berechnet (bindet das Layout nicht
+   * an die App-spezifische Content-Collection). */
+  jsonLd: Record<string, unknown>;
 }
 
-const { entry } = Astro.props;
+const { entry, site, nav, footerNav, jsonLd } = Astro.props;
 const d = entry.data;
 const ogImage = `/og/${entry.id}.png`;
 
@@ -33,6 +55,9 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
 ---
 
 <Base
+  site={site}
+  nav={nav}
+  footerNav={footerNav}
   title={d.title}
   description={d.summary}
   ogImage={ogImage}
@@ -41,7 +66,7 @@ const next = all.length > 1 ? all[(idx + 1) % all.length] : null;
 >
   <Fragment slot="head">
     <link rel="alternate" type="text/markdown" href={`/work/${entry.id}.md`} title="Markdown version" />
-    <JsonLd data={creativeWorkJsonLd(entry)} />
+    <JsonLd data={jsonLd} />
   </Fragment>
   <article class="case">
     <div class="wrap case__head">
