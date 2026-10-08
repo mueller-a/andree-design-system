@@ -36,7 +36,13 @@ const { phases } = Astro.props;
     list-style: none;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
-    gap: 1.75rem 1.25rem;
+    /* Column-gap bewusst 0, nicht der Spec-Wert (20px): die Linien
+       benachbarter Items sollen sich zu EINER durchgehenden Linie mit
+       Punkten verbinden, nicht als getrennte Segmente wirken. Row-gap
+       bleibt 28px, sonst würde eine umgebrochene Zeile ohne Abstand direkt
+       unter dem Text der vorigen Zeile kleben. Entscheidung nach Vergleich
+       PRINCE/DMPK, siehe DESIGN_SYSTEM_SPEC.md 2.17. */
+    gap: 1.75rem 0;
   }
 
   .timeline__item {
