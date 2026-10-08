@@ -2,7 +2,8 @@
 interface Phase {
   date: string;
   title: string;
-  body: string;
+  /** Ohne Body bleibt die Phase auf Datum + Titel beschränkt. */
+  body?: string;
   /**
    * Phase liegt außerhalb von Andrees direkter Beteiligung (vor Einstieg
    * oder nach Abgang): gestrichelte Linie, hohler Punkt.
@@ -22,7 +23,7 @@ const { phases } = Astro.props;
         <span class="timeline__dot" aria-hidden="true" />
         <span class="timeline__date">{phase.date}</span>
         <h3 class="timeline__title">{phase.title}</h3>
-        <span class="timeline__body">{phase.body}</span>
+        {phase.body && <span class="timeline__body">{phase.body}</span>}
       </li>
     ))
   }

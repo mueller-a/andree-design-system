@@ -1,0 +1,80 @@
+---
+/**
+ * Nummerierte Liste von Initiativen, optional mit "Now"-Badge für die
+ * aktuell priorisierten. Siehe DESIGN_SYSTEM_SPEC.md (DMPK-Handoff).
+ */
+interface Initiative {
+  num: string;
+  title: string;
+  now?: boolean;
+}
+interface Props {
+  initiatives: Initiative[];
+}
+const { initiatives } = Astro.props;
+---
+
+<ol class="initiative-list" role="list">
+  {
+    initiatives.map((item) => (
+      <li class="initiative-list__item">
+        <span class="initiative-list__num" aria-hidden="true">
+          {item.num}
+        </span>
+        <span class="initiative-list__title">{item.title}</span>
+        {item.now && <span class="initiative-list__badge">Now</span>}
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .initiative-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .initiative-list__item {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: baseline;
+    padding: var(--space-5) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .initiative-list__num {
+    font-weight: var(--weight-subhead);
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .initiative-list__title {
+    font-size: var(--text-body);
+    line-height: 1.45;
+    color: var(--ink);
+  }
+
+  .initiative-list__badge {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--mark);
+  }
+
+  @media (max-width: 36rem) {
+    .initiative-list__item {
+      grid-template-columns: 48px minmax(0, 1fr);
+    }
+
+    .initiative-list__badge {
+      grid-column: 2;
+    }
+  }
+</style>

@@ -3,7 +3,9 @@ import FlowChips from './FlowChips.astro';
 
 interface Step {
   number: string;
-  title: string;
+  /** Ohne Titel entfällt die <h3>-Zeile, nur die Nummer + der Text bleiben
+   * (z. B. für eine knappe Outcome-Liste ohne eigene Überschrift pro Punkt). */
+  title?: string;
   body: string;
   /** Variante `loop`: statt Fließtext eine FlowChips-Reihe. */
   chips?: string[];
@@ -27,7 +29,7 @@ const { label, steps } = Astro.props;
             {step.number}
           </span>
           <div class="process-steps__content">
-            <h3 class="process-steps__title">{step.title}</h3>
+            {step.title && <h3 class="process-steps__title">{step.title}</h3>}
             {step.chips ? (
               <FlowChips chips={step.chips} loop={step.loop} />
             ) : (

@@ -1,0 +1,102 @@
+---
+/**
+ * Envisioned-Journey-Phasen als Fugen-Grid, jede Phase mit Teilschritten und
+ * der beteiligten Persona. Siehe DESIGN_SYSTEM_SPEC.md (DMPK-Handoff).
+ */
+interface Phase {
+  num: string;
+  phase: string;
+  steps: string[];
+  who: string;
+}
+interface Props {
+  /** Kopf-Label, z. B. "Envisioned journey, from order to release". */
+  label?: string;
+  journey: Phase[];
+}
+const { label, journey } = Astro.props;
+---
+
+<div class="journey-strip">
+  {label && <p class="journey-strip__label">{label}</p>}
+  <ol class="journey-strip__grid" role="list">
+    {
+      journey.map((phase) => (
+        <li class="journey-strip__cell">
+          <span class="journey-strip__phase">
+            {phase.num} · {phase.phase}
+          </span>
+          <ul class="journey-strip__steps" role="list">
+            {phase.steps.map((step) => (
+              <li>{step}</li>
+            ))}
+          </ul>
+          <span class="journey-strip__who">{phase.who}</span>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .journey-strip {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .journey-strip__label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .journey-strip__grid {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .journey-strip__cell {
+    background: var(--bg);
+    padding: 1.25rem 1.125rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    border-top: 3px solid var(--mark);
+  }
+
+  .journey-strip__phase {
+    font-family: var(--font-mono);
+    font-size: var(--text-label-date);
+    letter-spacing: var(--tracking-case-caps-date);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .journey-strip__steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--text);
+  }
+
+  .journey-strip__who {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+</style>

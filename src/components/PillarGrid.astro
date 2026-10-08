@@ -1,0 +1,126 @@
+---
+/**
+ * Drei (oder mehr) Säulen des Zielbilds, jede mit zugeordneten Personas.
+ * Siehe DESIGN_SYSTEM_SPEC.md, Abschnitt "Neue Komponenten" (DMPK-Handoff).
+ */
+interface Person {
+  name: string;
+  role: string;
+}
+interface Pillar {
+  num: string;
+  title: string;
+  desc: string;
+  people: Person[];
+}
+interface Props {
+  /** Kopf-Label, z. B. "Three building blocks, nine personas". */
+  label?: string;
+  pillars: Pillar[];
+}
+const { label, pillars } = Astro.props;
+---
+
+<div class="pillar-grid">
+  {label && <p class="pillar-grid__label">{label}</p>}
+  <div class="pillar-grid__grid">
+    {
+      pillars.map((pillar) => (
+        <div class="pillar-grid__cell">
+          <span class="pillar-grid__num">{pillar.num}</span>
+          <span class="pillar-grid__title">{pillar.title}</span>
+          <span class="pillar-grid__desc">{pillar.desc}</span>
+          <ul class="pillar-grid__people" role="list">
+            {pillar.people.map((person) => (
+              <li class="pillar-grid__person">
+                <span class="pillar-grid__person-name">{person.name}</span>
+                <span class="pillar-grid__person-role">{person.role}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .pillar-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .pillar-grid__label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .pillar-grid__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .pillar-grid__cell {
+    background: var(--surface);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  .pillar-grid__num {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .pillar-grid__title {
+    font-size: var(--text-title-l);
+    font-weight: var(--weight-medium);
+    line-height: 1.25;
+    color: var(--ink);
+  }
+
+  .pillar-grid__desc {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .pillar-grid__people {
+    margin: 0.375rem 0 0;
+    padding: 0.875rem 0 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .pillar-grid__person {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pillar-grid__person-name {
+    font-size: var(--text-body-xs);
+    font-weight: var(--weight-medium);
+    color: var(--ink);
+  }
+
+  .pillar-grid__person-role {
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+</style>

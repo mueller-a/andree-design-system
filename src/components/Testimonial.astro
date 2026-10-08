@@ -4,29 +4,46 @@ interface Quote {
   role: string;
 }
 interface Props {
-  items: Quote[];
+  items?: Quote[];
+  /**
+   * `quote` (Default): ein oder mehrere wörtliche Zitate mit Rolle.
+   * `paraphrase`: eine Zusammenfassung ohne Rollenangabe, kein wörtliches
+   * Zitat -> <p> statt <blockquote>, keine <figcaption>.
+   */
+  variant?: 'quote' | 'paraphrase';
+  /** Nur für `variant="paraphrase"`. */
+  text?: string;
 }
-const { items } = Astro.props;
+const { items = [], variant = 'quote', text } = Astro.props;
 ---
 
-<div class="testimonial">
-  {
-    items.map((item) => (
-      <figure class="testimonial__item">
-        <span class="testimonial__mark" aria-hidden="true">
-          “
-        </span>
-        <blockquote class="testimonial__quote">
-          <p>{item.quote}</p>
-        </blockquote>
-        <figcaption class="testimonial__role">
-          <span class="testimonial__role-line" aria-hidden="true" />
-          {item.role}
-        </figcaption>
-      </figure>
-    ))
-  }
-</div>
+{
+  variant === 'paraphrase' ? (
+    <div class="testimonial testimonial--paraphrase">
+      <span class="testimonial__mark" aria-hidden="true">
+        “
+      </span>
+      <p class="testimonial__paraphrase-text">{text}</p>
+    </div>
+  ) : (
+    <div class="testimonial">
+      {items.map((item) => (
+        <figure class="testimonial__item">
+          <span class="testimonial__mark" aria-hidden="true">
+            “
+          </span>
+          <blockquote class="testimonial__quote">
+            <p>{item.quote}</p>
+          </blockquote>
+          <figcaption class="testimonial__role">
+            <span class="testimonial__role-line" aria-hidden="true" />
+            {item.role}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  )
+}
 
 <style>
   .testimonial {
@@ -96,6 +113,35 @@ const { items } = Astro.props;
 
     .testimonial__mark {
       font-size: 80px;
+    }
+  }
+
+  /* Paraphrase: eigener Rahmen statt geteiltem Top-Border + Item-Bottom-Border,
+     da es immer genau ein Element ist, kein <figure>/<figcaption> (siehe
+     DESIGN_SYSTEM_SPEC.md, "Testimonial-Variante paraphrase"). */
+  .testimonial--paraphrase {
+    margin: var(--space-4) 0;
+    padding: var(--space-12) 0 var(--space-10);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: var(--space-2) var(--space-6);
+  }
+
+  .testimonial__paraphrase-text {
+    margin: 0;
+    font-weight: var(--weight-subhead);
+    font-size: var(--text-quote);
+    line-height: 1.22;
+    letter-spacing: var(--tracking-case-quote);
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 40rem) {
+    .testimonial--paraphrase {
+      grid-template-columns: 48px minmax(0, 1fr);
     }
   }
 </style>
