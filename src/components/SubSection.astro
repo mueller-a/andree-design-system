@@ -4,8 +4,8 @@
  * SubSections). Siehe DESIGN_SYSTEM_SPEC.md (DMPK-Handoff).
  */
 interface Props {
-  /** z. B. "02.1" */
-  num: string;
+  /** z. B. "02.1". Weglassen, wenn das Chapter nicht durchnummeriert ist. */
+  num?: string;
   title: string;
 }
 const { num, title } = Astro.props;
@@ -13,7 +13,7 @@ const { num, title } = Astro.props;
 
 <div class="subsection">
   <div class="subsection__head">
-    <span class="subsection__num">{num}</span>
+    {num && <span class="subsection__num">{num}</span>}
     <h3 class="subsection__title">{title}</h3>
   </div>
   <div class="subsection__body">

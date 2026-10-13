@@ -1,0 +1,216 @@
+---
+/**
+ * Schematisches Zwei-Spalten-Diagramm: eine Suche mit immer offenen
+ * Facettengruppen links, eine Detailseite mit immer sichtbarem Kopfblock und
+ * eingeklappten Zeilen rechts. Platzhalterlabels, keine echten Daten.
+ *
+ * A11y: der Diagrammteil selbst ist für Screenreader als ein Objekt mit
+ * `role="img"` + `aria-label` zusammengefasst (wie ein <img alt="…">), damit
+ * nicht jedes einzelne Label einzeln durch die Virtual-Buffer-Navigation
+ * läuft. Der sichtbare Text bleibt für Sehende vollständig lesbar, ist aber
+ * `aria-hidden`, um Doppelverlesen zu vermeiden. Die Bildunterschrift sitzt
+ * in einer echten <figcaption>, außerhalb des zusammengefassten Objekts.
+ */
+interface FacetGroup {
+  label: string;
+  items: string[];
+}
+interface Props {
+  ariaLabel: string;
+  caption: string;
+  searchLabel: string;
+  searchField: string;
+  groups: FacetGroup[];
+  studyLabel: string;
+  studyAlwaysVisible: string[];
+  collapsedLabel: string;
+  collapsedCount: number;
+}
+const {
+  ariaLabel,
+  caption,
+  searchLabel,
+  searchField,
+  groups,
+  studyLabel,
+  studyAlwaysVisible,
+  collapsedLabel,
+  collapsedCount,
+} = Astro.props;
+---
+
+<figure class="facet-diagram-figure">
+  <div class="facet-diagram" role="img" aria-label={ariaLabel}>
+    <div class="facet-diagram__inner" aria-hidden="true">
+      <div class="facet-diagram__panel">
+        <span class="facet-diagram__panel-label">{searchLabel}</span>
+        <div class="facet-diagram__field">{searchField}</div>
+        <div class="facet-diagram__groups">
+          {
+            groups.map((group) => (
+              <div class="facet-diagram__group">
+                <span class="facet-diagram__group-label">{group.label}</span>
+                <ul class="facet-diagram__chips">
+                  {group.items.map((item) => (
+                    <li class="facet-diagram__chip">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="facet-diagram__panel">
+        <span class="facet-diagram__panel-label">{studyLabel}</span>
+        <ul class="facet-diagram__always">
+          {studyAlwaysVisible.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+        <ul class="facet-diagram__collapsed">
+          {
+            Array.from({ length: collapsedCount }).map(() => (
+              <li class="facet-diagram__collapsed-row">
+                <span>{collapsedLabel}</span>
+                <span class="facet-diagram__chevron">⌄</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .facet-diagram-figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .facet-diagram {
+    background: var(--surface);
+  }
+
+  .facet-diagram__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .facet-diagram__panel {
+    flex: 1 1 300px;
+    background: var(--surface);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .facet-diagram__panel-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .facet-diagram__field {
+    padding: var(--space-4) var(--space-6);
+    border: 1px solid var(--border-strong);
+    font-size: var(--text-body-s);
+    color: var(--muted);
+  }
+
+  .facet-diagram__groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .facet-diagram__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .facet-diagram__group-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .facet-diagram__chips {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .facet-diagram__chip {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--border-strong);
+    font-size: var(--text-body-xs);
+    color: var(--text);
+  }
+
+  .facet-diagram__always {
+    margin: 0;
+    padding: var(--space-6);
+    border: 1px solid var(--border-strong);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    font-size: var(--text-body-s);
+    color: var(--ink);
+  }
+
+  .facet-diagram__collapsed {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border);
+  }
+
+  .facet-diagram__collapsed-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--text-body-s);
+    color: var(--text);
+  }
+
+  .facet-diagram__chevron {
+    color: var(--accent);
+  }
+
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-case-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 36rem) {
+    .facet-diagram__panel {
+      flex-basis: 100%;
+    }
+  }
+</style>
