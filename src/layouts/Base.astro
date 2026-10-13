@@ -4,6 +4,7 @@ import '../styles/tokens.css';
 import '../styles/reset.css';
 import '../styles/global.css';
 
+import Analytics from '@vercel/analytics/astro';
 import ThemeScript from '../components/ThemeScript.astro';
 import SkipLink from '../components/SkipLink.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -114,5 +115,6 @@ const ogImageUrl = new URL(ogImage, site.url).href;
     </main>
 
     <SiteFooter email={site.email} linkedin={site.linkedin} footerNav={footerNav} />
+    <Analytics />
   </body>
 </html>

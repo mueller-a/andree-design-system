@@ -12,5 +12,8 @@
   },
   "peerDependencies": {
     "astro": "^5.14.1"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
