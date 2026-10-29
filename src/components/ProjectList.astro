@@ -212,9 +212,11 @@ const Heading = `h${headingLevel}` as const;
     padding: 5px 8px;
   }
 
+  /* Desktop: das Cover übernimmt die Höhe der Textspalte, statt eigener
+     Proportionen. Mobil setzt unten wieder ein festes Seitenverhältnis. */
   .card__cover {
+    align-self: stretch;
     block-size: auto;
-    aspect-ratio: 4 / 3;
     background: var(--placeholder);
     overflow: hidden;
   }
