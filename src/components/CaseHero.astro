@@ -9,7 +9,7 @@ interface Props {
   title: string;
   lead: string;
   meta: Array<[string, string]>;
-  /** Zeigt einen Callout variant="confidential" direkt unter der Lede. */
+  /** Zeigt einen Callout variant="quiet" mit Label "Confidential" direkt unter der Lede. */
   confidentialNote?: string;
 }
 const {
@@ -30,7 +30,7 @@ const {
   <p class="case-hero__lead">{lead}</p>
   {
     confidentialNote && (
-      <Callout label="Confidential" variant="confidential">
+      <Callout label="Confidential" variant="quiet">
         <p>{confidentialNote}</p>
       </Callout>
     )

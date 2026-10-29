@@ -115,6 +115,7 @@
 
   /* --- Maße --- */
   --measure: 40ch;      /* enge Textspalte (Meta, Hinweise) */
+  --measure-narrow: 32.5rem; /* 520px, schmale Hinweise (Callout quiet) */
   --measure-wide: 66ch; /* Fließtext-Spalte (Profil, Kapitel) */
   --rail: 3px;          /* gelbe Markierungskante unter Abschnittsmarken */
   --wrap: 105rem;       /* 1680px Rahmenbreite, seitenweit */
