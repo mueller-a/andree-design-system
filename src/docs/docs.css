@@ -7,6 +7,11 @@
  * Portfolio-Seite /design-system bei 320px horizontal scrollen lassen.
  */
 
+/* `hidden` muss gewinnen, auch gegen display: grid/flex der Doku-Klassen. */
+.docs-page [hidden] {
+  display: none !important;
+}
+
 .docs-page {
   display: grid;
   gap: var(--space-16);
@@ -398,10 +403,6 @@ a.docs-chip:hover {
 
 .docs-list__item--undocumented h3 {
   color: var(--text);
-}
-
-.docs-list__pending {
-  color: var(--muted) !important;
 }
 
 /* ---------- Komponentenseite ---------- */

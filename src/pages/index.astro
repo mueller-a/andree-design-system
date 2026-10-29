@@ -1,0 +1,197 @@
+---
+/**
+ * Übersicht: was das System ist, Installation, Foundations als Kacheln und
+ * die vollständige, flache Komponentenliste. Auch noch nicht dokumentierte
+ * Komponenten stehen darin, unverlinkt: Die Liste zeigt, was das Paket
+ * wirklich enthält, und wie weit die Doku ist.
+ *
+ * Filter sind Progressive Enhancement: ohne JavaScript ausgeblendet, alle
+ * Einträge sichtbar.
+ */
+import DocsLayout from '../docs/DocsLayout.astro';
+import { componentList, layers } from '../docs/components';
+import { foundations, REPO_URL } from '../docs/site';
+import pkg from '../../package.json';
+
+const entries = await componentList();
+const total = entries.length;
+const documented = entries.filter((e) => e.doc).length;
+
+const groups = [
+  ...layers.map((l) => ({
+    ...l,
+    count: entries.filter((e) => e.doc?.data.layer === l.value).length,
+  })),
+  { value: 'undocumented', label: 'Not documented yet', count: total - documented },
+];
+
+const installTag = `v${pkg.version}`;
+---
+
+<DocsLayout>
+  <header class="docs-header">
+    <p class="docs-kicker">Design system · version {pkg.version}</p>
+    <h1>Dark Studio</h1>
+    <p class="docs-lead">
+      Design tokens, Astro components and layouts shared across Andree Joachim
+      Müller’s sites. It started inside the portfolio and has been its own
+      repository since version 0.2.0.
+    </p>
+  </header>
+
+  <section class="docs-section" aria-labelledby="install">
+    <h2 id="install">Install</h2>
+    <div class="docs-prose">
+      <p>The package is not on npm. Install it from a Git tag:</p>
+      <pre><code>pnpm add github:mueller-a/andree-design-system#{installTag}</code></pre>
+      <p>Then build a page on the base layout:</p>
+      <pre><code>{`---
+import Base from '@andree/design-system/layouts/Base.astro';
+---
+
+<Base site={site} nav={nav} footerNav={nav} title="Hello">
+  <h1>Hello</h1>
+</Base>`}</code></pre>
+      <p>
+        <code>Base</code> loads the tokens, the reset and the global styles
+        itself. The app has to provide the fonts and <code>theme-init.js</code>
+        in its <code>public</code> folder. The
+        <a href={`${REPO_URL}#readme`}>README</a> lists every requirement and the
+        four export paths.
+      </p>
+    </div>
+  </section>
+
+  <section class="docs-section" aria-labelledby="foundations">
+    <h2 id="foundations">Foundations</h2>
+    <ul class="docs-tiles" role="list">
+      {
+        foundations.map((f) => (
+          <li class="docs-tile">
+            <h3>
+              <a href={`/foundations/${f.slug}`}>{f.title}</a>
+            </h3>
+            <p>{f.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="docs-section" aria-labelledby="components">
+    <h2 id="components">Components</h2>
+    <p class="docs-note">
+      All {total} components in the package, in alphabetical order.
+      {documented} of them are documented so far. The others are listed
+      without a page until their documentation is written.
+    </p>
+
+    <div class="docs-filters" data-filters hidden>
+      <div>
+        <label class="docs-filters__search-label" for="component-search">Search components</label>
+        <input
+          type="search"
+          id="component-search"
+          autocomplete="off"
+          aria-describedby="component-search-hint"
+        />
+        <p class="docs-note" id="component-search-hint">Matches name and summary.</p>
+      </div>
+      <fieldset>
+        <legend>Layer</legend>
+        <div class="docs-filters__options">
+          {
+            groups.map((g) => (
+              <label class="docs-filters__option">
+                <input type="checkbox" name="layer" value={g.value} checked />
+                {g.label} ({g.count})
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+      <p class="docs-count" role="status" data-count></p>
+    </div>
+
+    <ul class="docs-list" role="list" data-list>
+      {
+        entries.map(({ name, doc }) => (
+          <li
+            class:list={['docs-list__item', { 'docs-list__item--undocumented': !doc }]}
+            data-group={doc ? doc.data.layer : 'undocumented'}
+            data-search={`${name} ${doc?.data.summary ?? ''}`.toLowerCase()}
+          >
+            <h3>
+              {doc ? <a href={`/components/${doc.data.slug}`}>{name}</a> : name}
+            </h3>
+            <ul class="docs-chips" role="list">
+              {doc ? (
+                <>
+                  <li class="docs-chip">
+                    <span class="visually-hidden">Layer: </span>
+                    {doc.data.layer}
+                  </li>
+                  <li class="docs-chip">
+                    <span class="visually-hidden">Status: </span>
+                    {doc.data.status}
+                  </li>
+                </>
+              ) : (
+                <li class="docs-chip">
+                  <span class="visually-hidden">Status: </span>
+                  not documented yet
+                </li>
+              )}
+            </ul>
+            {doc && <p>{doc.data.summary}</p>}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="docs-note" data-empty hidden>No components match these filters.</p>
+  </section>
+</DocsLayout>
+
+<script>
+  // Filter nach Ebene und Text. Ohne JavaScript bleibt alles sichtbar und die
+  // Filter ausgeblendet. Die Trefferzahl geht nach jeder Änderung an die
+  // Live-Region, sonst merkt ein Screenreader nicht, dass die Liste kürzer wurde.
+  const filters = document.querySelector<HTMLElement>('[data-filters]');
+  const list = document.querySelector<HTMLElement>('[data-list]');
+  const count = document.querySelector<HTMLElement>('[data-count]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+
+  if (filters && list && count && empty) {
+    const items = [...list.querySelectorAll<HTMLElement>(':scope > li')];
+    const search = filters.querySelector<HTMLInputElement>('input[type="search"]');
+    const boxes = [...filters.querySelectorAll<HTMLInputElement>('input[name="layer"]')];
+    const total = items.length;
+
+    const apply = (announce: boolean) => {
+      const query = (search?.value ?? '').trim().toLowerCase();
+      const groups = new Set(boxes.filter((b) => b.checked).map((b) => b.value));
+      let shown = 0;
+      for (const item of items) {
+        const visible =
+          groups.has(item.dataset.group ?? '') &&
+          (query === '' || (item.dataset.search ?? '').includes(query));
+        item.hidden = !visible;
+        if (visible) shown += 1;
+      }
+      empty.hidden = shown > 0;
+      const text = `${shown} of ${total} components`;
+      // Beim ersten Setzen nicht ansagen, nur nach echten Änderungen.
+      if (announce || count.textContent === '') count.textContent = text;
+    };
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    search?.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => apply(true), 300);
+    });
+    for (const box of boxes) box.addEventListener('change', () => apply(true));
+
+    apply(false);
+    filters.hidden = false;
+  }
+</script>

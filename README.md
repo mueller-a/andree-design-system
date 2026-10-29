@@ -72,6 +72,10 @@ Tokens ohne `Base` nutzt.
   Dateien `Archivo-Variable.woff2`, `Archivo-Variable-ext.woff2`,
   `IBMPlexMono-Regular.woff2` und `IBMPlexMono-Regular-ext.woff2` müssen in der App
   unter `public/fonts/` liegen.
+- **Theme-Skript:** `ThemeScript.astro` (von `Base.astro` eingebunden) lädt
+  `/theme-init.js`. Die Datei muss in der App unter `public/` liegen, sonst
+  bleibt die Theme-Wahl beim Laden nicht erhalten. Vorlage: `public/theme-init.js`
+  in diesem Repo.
 - **Gelbe Flächen:** Container mit `--mark` als Hintergrund bekommen
   `class="on-mark"`, damit der Fokus dort invertiert statt Gelb auf Gelb zu
   zeigen.
