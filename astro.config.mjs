@@ -12,8 +12,15 @@ import mdx from '@astrojs/mdx';
  * als Live-Beispiel einbetten können.
  */
 export default defineConfig({
+  // Muss mit SITE_URL in src/docs/site.ts übereinstimmen.
+  site: 'https://andree-design-system.vercel.app',
   output: 'static',
   integrations: [mdx()],
+  // Keine Syntaxhervorhebung: Shiki bringt eigene, fest eingebaute Farben mit,
+  // die die Tokens umgehen und deren Kontrast in beiden Themes ungeprüft ist.
+  markdown: {
+    syntaxHighlight: false,
+  },
   build: {
     format: 'directory',
   },

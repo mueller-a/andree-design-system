@@ -13,9 +13,10 @@
  * 6. Warnung: `status: draft` bei einer Komponente, die älter ist als die
  *    aktuelle Paketversion.
  *
- * Punkt 1 gilt schrittweise: Komponenten in UNDOCUMENTED erzeugen nur eine
- * Warnung. Die Liste darf nur schrumpfen. Wer eine Komponente dokumentiert,
- * streicht sie hier, sonst schlägt die Prüfung fehl. Neue Komponenten kommen
+ * Punkt 1 gilt schrittweise: Komponenten in content/undocumented.json erzeugen
+ * nur eine Warnung. Die Liste darf nur schrumpfen. Wer eine Komponente
+ * dokumentiert, streicht sie dort, sonst schlägt die Prüfung fehl. Dieselbe
+ * Datei speist die Komponentenliste der Doku-Seite. Neue Komponenten kommen
  * nicht auf die Liste, sie brauchen von Anfang an eine Doku.
  *
  * Exit-Code 1 bei Fehlern, Warnungen allein brechen nichts.
@@ -25,44 +26,10 @@ import { parse } from 'yaml';
 
 const COMPONENTS_DIR = 'src/components';
 const DOCS_DIR = 'content/components';
+/** Gemeinsame Quelle mit der Komponentenliste der Doku-Seite. */
+const UNDOCUMENTED_FILE = 'content/undocumented.json';
 
-const UNDOCUMENTED = new Set([
-  'CardGrid',
-  'CaseHeader',
-  'CaseHero',
-  'Chapter',
-  'ChapterLabel',
-  'DefinitionRows',
-  'FacetDiagram',
-  'Figure',
-  'FlowChips',
-  'GatedImage',
-  'InitiativeList',
-  'JourneyStrip',
-  'JsonLd',
-  'KnowledgeBaseChips',
-  'LeadSentence',
-  'Learnings',
-  'MetaGrid',
-  'NextCase',
-  'OutcomeList',
-  'PillarGrid',
-  'ProcessSteps',
-  'ProjectList',
-  'Prose',
-  'Redacted',
-  'ReferenceLink',
-  'SiteFooter',
-  'SkipLink',
-  'StatRow',
-  'SubSection',
-  'Testimonial',
-  'ThemePreview',
-  'ThemeScript',
-  'ThemeToggle',
-  'Timeline',
-  'Triptych',
-]);
+const UNDOCUMENTED = new Set(JSON.parse(await readFile(UNDOCUMENTED_FILE, 'utf8')));
 
 const errors = [];
 const warnings = [];
@@ -198,7 +165,7 @@ const documented = new Set(docs.map((d) => d.data.name));
 for (const name of componentNames) {
   if (documented.has(name)) {
     if (UNDOCUMENTED.has(name)) {
-      errors.push(`${name}: ist dokumentiert, steht aber noch in UNDOCUMENTED (scripts/docs-check.mjs), bitte streichen`);
+      errors.push(`${name}: ist dokumentiert, steht aber noch in content/undocumented.json, bitte streichen`);
     }
   } else if (UNDOCUMENTED.has(name)) {
     warnings.push(`${name}: noch keine Doku-Datei`);
@@ -208,7 +175,7 @@ for (const name of componentNames) {
 }
 for (const name of UNDOCUMENTED) {
   if (!componentSet.has(name)) {
-    errors.push(`${name}: steht in UNDOCUMENTED, die Komponente existiert aber nicht`);
+    errors.push(`${name}: steht in content/undocumented.json, die Komponente existiert aber nicht`);
   }
 }
 

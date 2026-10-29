@@ -1,0 +1,464 @@
+/*
+ * Styles nur für die Doku-Seite. Ausschließlich bestehende Tokens.
+ *
+ * Reflow (1.4.10): Kein gestapeltes Flex-Layout mit `align-items: flex-start`,
+ * und breite Tabellen stehen in einem eigenen, per Tastatur scrollbaren
+ * Container statt die Seite zu verbreitern. Genau diese Kombination hatte die
+ * Portfolio-Seite /design-system bei 320px horizontal scrollen lassen.
+ */
+
+.docs-page {
+  display: grid;
+  gap: var(--space-16);
+  padding-block: var(--space-12) var(--space-24);
+  /* Lange Token-Namen, Typen, Pfade und URLs brechen um statt überzustehen. */
+  overflow-wrap: anywhere;
+}
+
+.docs-page > * {
+  min-width: 0;
+}
+
+/* ---------- Kopf einer Seite ---------- */
+
+.docs-header {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--measure-wide);
+}
+
+.docs-kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.docs-lead {
+  margin: 0;
+  font-size: var(--text-lede);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* ---------- Abschnitte und Fließtext ---------- */
+
+.docs-section {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.docs-section > * {
+  min-width: 0;
+}
+
+.docs-prose {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--measure-wide);
+}
+
+.docs-prose > * {
+  margin: 0;
+}
+
+.docs-note {
+  margin: 0;
+  max-width: var(--measure-wide);
+  color: var(--muted);
+  font-size: var(--step--1);
+}
+
+/* ---------- Code ---------- */
+
+.docs-page code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.docs-page pre {
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  /* Umbruch statt Scrollen: ein Codeblock darf die Seite nicht verbreitern. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: var(--step--1);
+  line-height: 1.6;
+}
+
+.docs-page pre code {
+  font-size: inherit;
+}
+
+/* ---------- Chips ---------- */
+
+.docs-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.docs-chip {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border-strong);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+a.docs-chip {
+  text-decoration: none;
+}
+
+a.docs-chip:hover {
+  color: var(--ink);
+  border-color: var(--mark);
+}
+
+/* ---------- Tabellen ---------- */
+
+.docs-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/*
+ * Der globale Fokusstil füllt das fokussierte Element gelb und färbt alle
+ * Kinder um. Für einen ganzen Tabellen-Container ist das zu viel: hier ein
+ * Rahmen in --focus, Inhalt unverändert lesbar.
+ */
+.docs-table-scroll:focus-visible {
+  background-color: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  outline: 3px solid var(--focus) !important;
+  outline-offset: 2px !important;
+}
+
+.docs-table-scroll:focus-visible :where(*) {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.docs-table-scroll:focus-visible .docs-swatch {
+  background-color: var(--swatch) !important;
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+}
+
+.docs-table caption {
+  text-align: start;
+  padding-block-end: var(--space-3);
+  color: var(--muted);
+}
+
+.docs-table th,
+.docs-table td {
+  text-align: start;
+  vertical-align: top;
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  border-block-end: 1px solid var(--border);
+}
+
+.docs-table thead th {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-weight: var(--weight-body);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.docs-table tbody th {
+  font-weight: var(--weight-body);
+  color: var(--ink);
+}
+
+.docs-swatch {
+  display: inline-block;
+  inline-size: var(--space-6);
+  block-size: var(--space-6);
+  margin-inline-end: var(--space-2);
+  vertical-align: middle;
+  background: var(--swatch);
+  border: 1px solid var(--border-strong);
+}
+
+/* ---------- Kacheln ---------- */
+
+.docs-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.docs-tile {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  padding: var(--space-6);
+  background: var(--surface);
+}
+
+.docs-tile h3 {
+  margin: 0;
+  font-size: var(--step-1);
+}
+
+.docs-tile p {
+  margin: 0;
+  color: var(--text);
+  font-size: var(--step--1);
+}
+
+/* ---------- Seiten mit Seitennavigation ---------- */
+
+.docs-with-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-12);
+}
+
+.docs-subnav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin: 0;
+}
+
+.docs-subnav a {
+  display: inline-block;
+  padding-block: var(--space-1);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.docs-subnav a:hover {
+  color: var(--ink);
+}
+
+.docs-subnav a[aria-current='page'] {
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 0 var(--mark);
+}
+
+@media (min-width: 64rem) {
+  .docs-with-nav {
+    grid-template-columns: 12rem minmax(0, 1fr);
+  }
+
+  .docs-subnav ul {
+    flex-direction: column;
+  }
+
+  .docs-subnav {
+    position: sticky;
+    top: var(--space-8);
+    align-self: start;
+  }
+}
+
+/* ---------- Live-Vorschau ---------- */
+
+.docs-preview {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.docs-preview__stage {
+  padding: var(--space-8);
+  border: 1px solid var(--border);
+  min-width: 0;
+}
+
+.docs-preview figcaption {
+  color: var(--muted);
+  font-size: var(--step--1);
+}
+
+/* ---------- Komponentenliste ---------- */
+
+.docs-filters {
+  display: grid;
+  gap: var(--space-6);
+  max-width: var(--measure-wide);
+}
+
+.docs-filters fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.docs-filters legend,
+.docs-filters label.docs-filters__search-label {
+  display: block;
+  margin-block-end: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.docs-filters__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+}
+
+.docs-filters__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--space-6);
+}
+
+.docs-filters__option input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  accent-color: var(--accent);
+}
+
+.docs-filters input[type='search'] {
+  inline-size: 100%;
+  max-inline-size: 28rem;
+  padding: var(--space-3);
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+}
+
+.docs-count {
+  margin: 0;
+  color: var(--text);
+}
+
+.docs-list {
+  display: grid;
+  margin: 0;
+  border-block-start: 1px solid var(--border);
+}
+
+.docs-list__item {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-6);
+  border-block-end: 1px solid var(--border);
+}
+
+.docs-list__item h3 {
+  margin: 0;
+  font-size: var(--step-1);
+}
+
+.docs-list__item h3 a {
+  text-decoration-color: var(--mark);
+  text-underline-offset: 0.2em;
+}
+
+.docs-list__item p {
+  margin: 0;
+  max-width: var(--measure-wide);
+  color: var(--text);
+}
+
+.docs-list__item--undocumented h3 {
+  color: var(--text);
+}
+
+.docs-list__pending {
+  color: var(--muted) !important;
+}
+
+/* ---------- Komponentenseite ---------- */
+
+.docs-import {
+  display: grid;
+  gap: var(--space-3);
+  max-width: var(--measure-wide);
+}
+
+.docs-import__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.docs-import__row pre {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.docs-button {
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  transition: border-color var(--motion-base) var(--ease);
+}
+
+.docs-button:hover {
+  color: var(--ink);
+  border-color: var(--mark);
+}
+
+.docs-body {
+  display: grid;
+  gap: var(--space-6);
+  max-width: var(--measure-wide);
+}
+
+.docs-body > * {
+  margin: 0;
+  min-width: 0;
+}
+
+.docs-body h2 {
+  margin-block-start: var(--space-8);
+}
+
+.docs-body h3 {
+  margin-block-start: var(--space-4);
+}
+
+.docs-body ul,
+.docs-body ol {
+  display: grid;
+  gap: var(--space-2);
+  padding-inline-start: var(--space-6);
+}
+
+.docs-pager ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-12);
+  margin: 0;
+}
+
+.docs-pager a {
+  display: inline-block;
+  padding-block: var(--space-2);
+}

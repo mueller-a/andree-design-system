@@ -1,0 +1,31 @@
+---
+/**
+ * Rahmen jeder Doku-Seite: das eigene Base-Layout des Pakets (SkipLink,
+ * SiteHeader, main, SiteFooter) plus die Doku-Styles. Die Doku-Seite nutzt
+ * das System also so, wie es eine konsumierende App tun würde.
+ */
+import Base from '../layouts/Base.astro';
+import { site, nav, navAliases, footerNav } from './site';
+import './docs.css';
+
+interface Props {
+  /** Seitentitel ohne Namenszusatz. Für die Startseite leer lassen. */
+  title?: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+---
+
+<Base
+  site={site}
+  nav={nav}
+  navAliases={navAliases}
+  footerNav={footerNav}
+  title={title}
+  description={description}
+  mainClass="docs-main"
+>
+  <div class="wrap docs-page">
+    <slot />
+  </div>
+</Base>

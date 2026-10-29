@@ -1,0 +1,70 @@
+---
+/**
+ * Erklärung zur Barrierefreiheit der Doku-Seite. SiteFooter verlinkt fest auf
+ * /accessibility, deshalb muss die Seite auf jeder Site existieren, die Base
+ * nutzt. Nur belegbare Aussagen.
+ */
+import DocsLayout from '../docs/DocsLayout.astro';
+import { site, PORTFOLIO_URL } from '../docs/site';
+---
+
+<DocsLayout
+  title="Accessibility"
+  description="How this documentation site is built and checked for accessibility."
+>
+  <header class="docs-header">
+    <h1>Accessibility</h1>
+    <p class="docs-lead">
+      This site documents a design system whose components are built to WCAG
+      2.2 Level AA. The site itself is held to the same target.
+    </p>
+  </header>
+
+  <section class="docs-section" aria-labelledby="checks">
+    <h2 id="checks">How it is checked</h2>
+    <div class="docs-prose">
+      <p>
+        Every page runs through axe-core in the light and the dark theme before
+        a change is committed. A page with any reported violation fails that
+        check.
+      </p>
+      <p>
+        Pages are built without horizontal scrolling at a width of 320px. Wide
+        tables scroll inside their own container, which can be reached and
+        scrolled with the keyboard.
+      </p>
+      <p>
+        Motion follows the system setting: with reduced motion requested,
+        transitions and animations are cut to a minimum.
+      </p>
+    </div>
+  </section>
+
+  <section class="docs-section" aria-labelledby="limits">
+    <h2 id="limits">Known limitations</h2>
+    <div class="docs-prose">
+      <p>
+        The links in the site navigation are 21 to 22px high. They meet 2.5.8
+        Target Size (Minimum) through the spacing between them, not through
+        their own size.
+      </p>
+      <p>
+        Automated checks find only part of all accessibility problems. Live
+        previews on component pages show the components as they are, including
+        known issues listed in each component's notes.
+      </p>
+    </div>
+  </section>
+
+  <section class="docs-section" aria-labelledby="feedback">
+    <h2 id="feedback">Feedback</h2>
+    <div class="docs-prose">
+      <p>
+        If something on this site does not work for you, write to
+        <a href={`mailto:${site.email}`}>{site.email}</a>. The
+        <a href={`${PORTFOLIO_URL}/accessibility`}>accessibility statement of the portfolio</a>
+        covers the sites built on this system.
+      </p>
+    </div>
+  </section>
+</DocsLayout>
