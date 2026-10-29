@@ -8,11 +8,52 @@
  */
 
 /* `hidden` muss gewinnen, auch gegen display: grid/flex der Doku-Klassen. */
-.docs-page [hidden] {
+.docs-shell [hidden] {
   display: none !important;
 }
 
+/* ---------- Rahmen: Seitenleiste, Inhalt, Inhaltsverzeichnis ----------
+   Mobil eine Spalte mit Disclosure über dem Inhalt. Ab 64rem Seitenleiste
+   und Inhalt, ab 90rem auf Komponentenseiten zusätzlich das
+   Inhaltsverzeichnis. Im Quelltext steht die Seitenleiste nach dem Inhalt
+   (siehe DocsLayout), das Grid ordnet sie links an. */
+
+.docs-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'disclosure'
+    'content';
+}
+
+.docs-shell > * {
+  min-width: 0;
+}
+
+.docs-disclosure {
+  grid-area: disclosure;
+  display: grid;
+  gap: var(--space-4);
+  padding-block-start: var(--space-8);
+}
+
+.docs-disclosure__toggle {
+  justify-self: start;
+}
+
+.docs-disclosure__panel {
+  padding: var(--space-6);
+  background: var(--surface);
+}
+
+.docs-sidebar,
+.docs-jump,
+.docs-toc {
+  display: none;
+}
+
 .docs-page {
+  grid-area: content;
   display: grid;
   gap: var(--space-16);
   padding-block: var(--space-12) var(--space-24);
@@ -22,6 +63,123 @@
 
 .docs-page > * {
   min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .docs-shell {
+    grid-template-columns: calc(var(--meta-col) + var(--space-8)) minmax(0, 1fr);
+    grid-template-areas: 'sidebar content';
+    column-gap: var(--space-12);
+  }
+
+  .docs-disclosure {
+    display: none;
+  }
+
+  .docs-jump {
+    display: block;
+  }
+
+  .docs-sidebar {
+    display: block;
+    grid-area: sidebar;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    /* Eigene Scrollfläche, damit eine lange Liste die Seite nicht verlängert.
+       Die Links darin sind fokussierbar, Tab scrollt die Fläche mit. */
+    max-block-size: 100vh;
+    overflow-y: auto;
+    padding-block: var(--space-12);
+    padding-inline-end: var(--space-2);
+  }
+}
+
+@media (min-width: 90rem) {
+  .docs-shell--toc {
+    grid-template-columns:
+      calc(var(--meta-col) + var(--space-8))
+      minmax(0, 1fr)
+      var(--meta-col);
+    grid-template-areas: 'sidebar content toc';
+  }
+
+  .docs-toc {
+    display: block;
+    grid-area: toc;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-block-size: 100vh;
+    overflow-y: auto;
+    padding-block: var(--space-12);
+  }
+}
+
+/* Weiches Scrollen zu Ankern nur, wenn Bewegung erwünscht ist. */
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ---------- Navigation (Seitenleiste und Disclosure) ---------- */
+
+.docs-nav__list {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+}
+
+.docs-nav__list .docs-nav__list {
+  margin-block-start: var(--space-2);
+}
+
+.docs-nav > .docs-nav__list {
+  gap: var(--space-6);
+}
+
+.docs-nav__group {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.docs-nav__link {
+  display: block;
+  padding: var(--space-1) var(--space-3);
+  border-inline-start: var(--rail) solid transparent;
+  color: var(--text);
+  text-decoration: none;
+  font-size: var(--step--1);
+}
+
+.docs-nav > .docs-nav__list > li > .docs-nav__link {
+  padding-inline-start: var(--space-3);
+}
+
+.docs-nav__link:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--mark);
+}
+
+/* Aktuell: Rail-Kante links UND Akzentfarbe, nicht nur Farbe. */
+.docs-nav__link[aria-current='page'] {
+  color: var(--accent);
+  border-inline-start-color: var(--mark);
+}
+
+.docs-nav__more {
+  display: block;
+  margin-block-start: var(--space-3);
+  padding-inline-start: calc(var(--space-3) + var(--rail));
+  font-size: var(--step--1);
+  color: var(--muted);
 }
 
 /* ---------- Kopf einer Seite ---------- */
@@ -244,53 +402,6 @@ a.docs-chip:hover {
   margin: 0;
   color: var(--text);
   font-size: var(--step--1);
-}
-
-/* ---------- Seiten mit Seitennavigation ---------- */
-
-.docs-with-nav {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-12);
-}
-
-.docs-subnav ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-6);
-  margin: 0;
-}
-
-.docs-subnav a {
-  display: inline-block;
-  padding-block: var(--space-1);
-  color: var(--text);
-  text-decoration: none;
-}
-
-.docs-subnav a:hover {
-  color: var(--ink);
-}
-
-.docs-subnav a[aria-current='page'] {
-  color: var(--accent);
-  box-shadow: inset 0 -2px 0 0 var(--mark);
-}
-
-@media (min-width: 64rem) {
-  .docs-with-nav {
-    grid-template-columns: 12rem minmax(0, 1fr);
-  }
-
-  .docs-subnav ul {
-    flex-direction: column;
-  }
-
-  .docs-subnav {
-    position: sticky;
-    top: var(--space-8);
-    align-self: start;
-  }
 }
 
 /* ---------- Live-Vorschau ---------- */

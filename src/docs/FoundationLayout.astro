@@ -1,5 +1,6 @@
 ---
-/** Rahmen einer Foundations-Seite: Kopf, Seitennavigation, Inhalt. */
+/** Rahmen einer Foundations-Seite: Kopf und Inhalt. Die Navigation zwischen
+ *  den Foundations übernimmt die Seitenleiste. */
 import DocsLayout from './DocsLayout.astro';
 import { foundations } from './site';
 
@@ -18,25 +19,7 @@ if (!current) throw new Error(`FoundationLayout: unbekannte Foundation "${slug}"
     <p class="docs-lead">{current.summary}</p>
   </header>
 
-  <div class="docs-with-nav">
-    <nav class="docs-subnav" aria-label="Foundations">
-      <ul role="list">
-        {
-          foundations.map((f) => (
-            <li>
-              <a
-                href={`/foundations/${f.slug}`}
-                aria-current={f.slug === slug ? 'page' : undefined}
-              >
-                {f.title}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-    <div class="docs-page__content docs-section">
-      <slot />
-    </div>
+  <div class="docs-section">
+    <slot />
   </div>
 </DocsLayout>

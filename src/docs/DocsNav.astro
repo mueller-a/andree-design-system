@@ -1,0 +1,78 @@
+---
+/**
+ * Seitennavigation der Doku: Overview, Foundations, die dokumentierten
+ * Komponenten alphabetisch, darunter der Hinweis auf die noch offenen.
+ *
+ * Wird zweimal gerendert (Disclosure unter 64rem, Seitenleiste ab 64rem),
+ * von denen je Breite nur eine angezeigt wird. `prefix` hält die IDs der
+ * beiden Instanzen eindeutig.
+ */
+import { componentList } from './components';
+import { foundations } from './site';
+
+interface Props {
+  prefix: string;
+  /** ID des <nav>, Ziel des Skip-Links bzw. von aria-controls. */
+  id: string;
+}
+const { prefix, id } = Astro.props;
+
+const norm = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
+const path = norm(Astro.url.pathname);
+const current = (href: string) => (norm(href) === path ? 'page' : undefined);
+
+const entries = await componentList();
+const documented = entries.filter((e) => e.doc);
+const pending = entries.length - documented.length;
+---
+
+<nav class="docs-nav" id={id} aria-label="Documentation">
+  <ul class="docs-nav__list" role="list">
+    <li>
+      <a class="docs-nav__link" href="/" aria-current={current('/')}>Overview</a>
+    </li>
+    <li>
+      <span class="docs-nav__group" id={`${prefix}-foundations`}>Foundations</span>
+      <ul class="docs-nav__list" role="list" aria-labelledby={`${prefix}-foundations`}>
+        {
+          foundations.map((f) => (
+            <li>
+              <a
+                class="docs-nav__link"
+                href={`/foundations/${f.slug}`}
+                aria-current={current(`/foundations/${f.slug}`)}
+              >
+                {f.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </li>
+    <li>
+      <span class="docs-nav__group" id={`${prefix}-components`}>Components</span>
+      <ul class="docs-nav__list" role="list" aria-labelledby={`${prefix}-components`}>
+        {
+          documented.map(({ doc }) => (
+            <li>
+              <a
+                class="docs-nav__link"
+                href={`/components/${doc!.data.slug}`}
+                aria-current={current(`/components/${doc!.data.slug}`)}
+              >
+                {doc!.data.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        pending > 0 && (
+          <a class="docs-nav__more" href="/#components">
+            {pending} more not documented yet
+          </a>
+        )
+      }
+    </li>
+  </ul>
+</nav>

@@ -1,10 +1,21 @@
 ---
 /**
  * Rahmen jeder Doku-Seite: das eigene Base-Layout des Pakets (SkipLink,
- * SiteHeader, main, SiteFooter) plus die Doku-Styles. Die Doku-Seite nutzt
- * das System also so, wie es eine konsumierende App tun würde.
+ * SiteHeader, main, SiteFooter) plus Seitennavigation und Doku-Styles. Die
+ * Doku-Seite nutzt das System also so, wie es eine konsumierende App täte.
+ *
+ * Quelltext-Reihenfolge in <main>: Skip-Link zur Navigation, Disclosure
+ * (nur unter 64rem), Inhalt, Inhaltsverzeichnis, Seitenleiste (ab 64rem).
+ * Die Seitenleiste steht bewusst NACH dem Inhalt: Base' Skip-Link zielt fest
+ * auf <main id="main">, und er soll beim Inhalt landen, nicht in der Leiste.
+ * Das Grid setzt sie optisch nach links; der zweite Skip-Link führt zu ihr.
+ *
+ * Unter 64rem steht die Navigation als Disclosure VOR dem Inhalt, zugeklappt
+ * ein einziger Tab-Stopp. Je Breite ist nur eine der beiden Instanzen
+ * sichtbar und im Accessibility-Baum.
  */
 import Base from '../layouts/Base.astro';
+import DocsNav from './DocsNav.astro';
 import { site, nav, navAliases, footerNav } from './site';
 import './docs.css';
 
@@ -14,6 +25,7 @@ interface Props {
   description?: string;
 }
 const { title, description } = Astro.props;
+const hasToc = Astro.slots.has('toc');
 ---
 
 <Base
@@ -25,7 +37,58 @@ const { title, description } = Astro.props;
   description={description}
   mainClass="docs-main"
 >
-  <div class="wrap docs-page">
-    <slot />
+  <div class:list={['wrap', 'docs-shell', { 'docs-shell--toc': hasToc }]}>
+    <a class="skip-link docs-jump" href="#docs-nav">Skip to documentation navigation</a>
+
+    <div class="docs-disclosure" data-disclosure>
+      <button
+        type="button"
+        class="docs-button docs-disclosure__toggle"
+        aria-expanded="false"
+        aria-controls="docs-nav-panel"
+        data-disclosure-toggle
+        hidden
+      >
+        Documentation menu
+      </button>
+      <div class="docs-disclosure__panel" id="docs-nav-panel" data-disclosure-panel>
+        <DocsNav prefix="m" id="docs-nav-mobile" />
+      </div>
+    </div>
+
+    <div class="docs-page">
+      <slot />
+    </div>
+
+    <slot name="toc" />
+
+    <div class="docs-sidebar">
+      <DocsNav prefix="d" id="docs-nav" />
+    </div>
   </div>
 </Base>
+
+<script>
+  // Disclosure unter 64rem. Ohne JavaScript bleibt die Navigation offen und
+  // der Button verborgen. Öffnen verschiebt den Fokus nicht; Escape schließt
+  // und setzt den Fokus zurück auf den Button.
+  const root = document.querySelector<HTMLElement>('[data-disclosure]');
+  const toggle = root?.querySelector<HTMLButtonElement>('[data-disclosure-toggle]');
+  const panel = root?.querySelector<HTMLElement>('[data-disclosure-panel]');
+
+  if (root && toggle && panel) {
+    const set = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+    set(false);
+    toggle.hidden = false;
+    toggle.addEventListener('click', () => set(toggle.getAttribute('aria-expanded') !== 'true'));
+    root.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        set(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>
