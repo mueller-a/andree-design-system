@@ -5,10 +5,10 @@ interface Phase {
   /** Ohne Body bleibt die Phase auf Datum + Titel beschränkt. */
   body?: string;
   /**
-   * Phase liegt außerhalb von Andrees direkter Beteiligung (vor Einstieg
-   * oder nach Abgang): gestrichelte Linie, hohler Punkt.
+   * Phase wird zur Einordnung gezeigt und liegt außerhalb des dokumentierten
+   * Zeitraums: gestrichelte Linie, hohler Punkt.
    */
-  before?: boolean;
+  context?: boolean;
 }
 interface Props {
   phases: Phase[];
@@ -19,7 +19,7 @@ const { phases } = Astro.props;
 <ol class="timeline" role="list">
   {
     phases.map((phase) => (
-      <li class:list={['timeline__item', { 'timeline__item--before': phase.before }]}>
+      <li class:list={['timeline__item', { 'timeline__item--context': phase.context }]}>
         <span class="timeline__dot" aria-hidden="true" />
         <span class="timeline__date">{phase.date}</span>
         <h3 class="timeline__title">{phase.title}</h3>
@@ -54,7 +54,7 @@ const { phases } = Astro.props;
     border-top: 1px solid var(--mark);
   }
 
-  .timeline__item--before {
+  .timeline__item--context {
     border-top-style: dashed;
   }
 
@@ -68,7 +68,7 @@ const { phases } = Astro.props;
     background: var(--mark);
   }
 
-  .timeline__item--before .timeline__dot {
+  .timeline__item--context .timeline__dot {
     background: var(--bg);
     border: 1px solid var(--mark);
     box-sizing: border-box;
