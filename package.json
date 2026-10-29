@@ -24,7 +24,8 @@
     "./styles/*.css": "./src/styles/*.css",
     "./components/*.astro": "./src/components/*.astro",
     "./layouts/*.astro": "./src/layouts/*.astro",
-    "./lib/*": "./src/lib/*.ts"
+    "./lib/*": "./src/lib/*.ts",
+    "./docs/*": "./docs/*"
   },
   "scripts": {
     "dev": "astro dev",

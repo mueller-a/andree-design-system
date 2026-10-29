@@ -32,6 +32,7 @@ Astro bringt das konsumierende Projekt selbst mit (`peerDependencies`: `astro ^5
 | `@andree/design-system/components/*.astro` | Einzelkomponenten, z. B. `Chapter.astro`, `Figure.astro` |
 | `@andree/design-system/layouts/*.astro` | `Base`, `TextPage`, `CaseStudy`, `CaseStudyV2` |
 | `@andree/design-system/lib/*` | TypeScript-Hilfen, aktuell `access` (Zugangscode-Gate) |
+| `@andree/design-system/docs/*` | Maschinenlesbare Doku: `llms.txt`, Markdown je Komponente und Foundation |
 
 ## Minimalbeispiel
 
@@ -65,6 +66,30 @@ Tokens ohne `Base` nutzt.
 
 `Base`, `TextPage`, `CaseStudy` und `CaseStudyV2` erwarten `site`, `nav` und
 `footerNav` als Props. Keine App-Konfiguration ist im Paket fest verdrahtet.
+
+## Using this with an AI coding assistant
+
+Das Paket liefert eine maschinenlesbare Fassung seiner Doku mit, damit ein
+Werkzeug wie Claude Code im konsumierenden Projekt die Regeln kennt, ohne dass
+etwas verlinkt oder kopiert werden muss:
+
+- `node_modules/@andree/design-system/docs/llms.txt`: Index mit Installation,
+  Ebenen, Foundations und allen dokumentierten Komponenten
+- `node_modules/@andree/design-system/docs/components/<slug>.md`: je Komponente
+  Props, Slots und Accessibility als YAML-Frontmatter, dazu Zweck, Aufbau,
+  Regeln und Codebeispiele
+- `node_modules/@andree/design-system/docs/foundations/<name>.md`: Tokens als
+  Tabellen
+- `node_modules/@andree/design-system/docs/llms-full.txt`: alles in einer Datei
+
+Auflösbar auch über den Export `@andree/design-system/docs/*`. Dieselben Dateien
+liegen auf der Doku-Seite unter `/llms.txt`, `/llms-full.txt` und
+`/components/<slug>.md`.
+
+Für ein neues Projekt `docs/CLAUDE-snippet.md` in dessen `CLAUDE.md` kopieren.
+Der Baustein sagt dem Werkzeug, wo es nachliest, dass es nur dokumentierte
+Komponenten verwendet und Komponenten mit `layer: portfolio` außerhalb des
+Portfolios nicht einsetzt.
 
 ## Voraussetzungen in der konsumierenden App
 
@@ -108,7 +133,8 @@ pnpm dev         # Doku-Seite (sobald src/pages existiert)
 pnpm build
 pnpm check
 pnpm lint
-pnpm docs:check  # Doku gegen Komponenten-Code prüfen
+pnpm docs:build  # docs/ (llms.txt, Markdown) neu erzeugen, danach committen
+pnpm docs:check  # Doku gegen Komponenten-Code und docs/ gegen die Quelle prüfen
 pnpm verify      # alles zusammen
 ```
 
@@ -126,7 +152,11 @@ jede dokumentierte Prop im `interface Props` steht. Noch nicht dokumentierte
 Komponenten stehen dort in `UNDOCUMENTED` und erzeugen nur eine Warnung. Wer
 eine Komponente dokumentiert, streicht sie aus der Liste.
 
-`content/` liegt außerhalb von `files` und wird nicht mit ausgeliefert.
+`content/` liegt außerhalb von `files` und wird nicht mit ausgeliefert. Was
+ausgeliefert wird, ist die daraus erzeugte Fassung unter `docs/`. Sie wird
+committet, nicht beim Install gebaut: Das Paket kommt per Git-Tag, und pnpm
+blockiert Lebenszyklus-Skripte standardmäßig. `docs:check` meldet, wenn `docs/`
+nicht mehr zur Quelle passt.
 
 ## Versionen
 
