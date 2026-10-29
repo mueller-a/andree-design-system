@@ -6,6 +6,10 @@
  * Wird zweimal gerendert (Disclosure unter 64rem, Seitenleiste ab 64rem),
  * von denen je Breite nur eine angezeigt wird. `prefix` hält die IDs der
  * beiden Instanzen eindeutig.
+ *
+ * Das Filterfeld filtert nur die Komponentenliste dieser Navigation, nach
+ * dem Namen: Summaries stehen hier nicht, ein Treffer über die Summary wäre
+ * nicht nachvollziehbar. Ohne JavaScript ausgeblendet.
  */
 import { componentList } from './components';
 import { foundations } from './site';
@@ -51,10 +55,15 @@ const pending = entries.length - documented.length;
     </li>
     <li>
       <span class="docs-nav__group" id={`${prefix}-components`}>Components</span>
-      <ul class="docs-nav__list" role="list" aria-labelledby={`${prefix}-components`}>
+      <div class="docs-nav__filter" data-nav-filter hidden>
+        <label for={`${prefix}-filter`}>Filter components</label>
+        <input type="search" id={`${prefix}-filter`} autocomplete="off" />
+        <p class="docs-nav__count" role="status" data-nav-count></p>
+      </div>
+      <ul class="docs-nav__list" role="list" aria-labelledby={`${prefix}-components`} data-nav-list>
         {
           documented.map(({ doc }) => (
-            <li>
+            <li data-name={doc!.data.name.toLowerCase()}>
               <a
                 class="docs-nav__link"
                 href={`/components/${doc!.data.slug}`}
@@ -76,3 +85,36 @@ const pending = entries.length - documented.length;
     </li>
   </ul>
 </nav>
+
+<script>
+  // Ein Filter je Navigations-Instanz. Trefferzahl nach jeder Änderung an die
+  // Live-Region; beim ersten Setzen keine Ansage.
+  for (const nav of document.querySelectorAll<HTMLElement>('.docs-nav')) {
+    const box = nav.querySelector<HTMLElement>('[data-nav-filter]');
+    const input = box?.querySelector<HTMLInputElement>('input');
+    const count = box?.querySelector<HTMLElement>('[data-nav-count]');
+    const list = nav.querySelector<HTMLElement>('[data-nav-list]');
+    if (!box || !input || !count || !list) continue;
+
+    const items = [...list.querySelectorAll<HTMLElement>(':scope > li')];
+    const apply = (announce: boolean) => {
+      const query = input.value.trim().toLowerCase();
+      let shown = 0;
+      for (const item of items) {
+        const visible = query === '' || (item.dataset.name ?? '').includes(query);
+        item.hidden = !visible;
+        if (visible) shown += 1;
+      }
+      const text = `${shown} of ${items.length} components`;
+      if (announce || count.textContent === '') count.textContent = text;
+    };
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => apply(true), 300);
+    });
+    apply(false);
+    box.hidden = false;
+  }
+</script>
