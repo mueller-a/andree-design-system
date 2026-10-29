@@ -147,3 +147,21 @@ import Chapter from '@andree/design-system/components/Chapter.astro';
 - Until 0.3.0 the label was fixed to “In short” and the three-point limit was not enforced.
 - InShort is still filed as `portfolio`: it is built to sit under a chapter’s lead sentence. [confirm: whether InShort moves to `primitive` now that the label is a prop]
 - Marker size and the 22px marker column are set in px instead of tokens.
+
+## Tokens
+
+Tokens used in the styles of InShort itself. Components it renders bring their own.
+
+- `--mark` (Colour, foundations/colour.md)
+- `--surface` (Colour, foundations/colour.md)
+- `--ink` (Colour, foundations/colour.md)
+- `--muted` (Colour, foundations/colour.md)
+- `--font-mono` (Typography, foundations/typography.md)
+- `--text-body-s` (Typography, foundations/typography.md)
+- `--text-label` (Typography, foundations/typography.md)
+- `--tracking-case-caps` (Typography, foundations/typography.md)
+- `--space-2` (Spacing, foundations/spacing.md)
+- `--space-3` (Spacing, foundations/spacing.md)
+- `--space-4` (Spacing, foundations/spacing.md)
+- `--space-6` (Spacing, foundations/spacing.md)
+- `--space-8` (Spacing, foundations/spacing.md)

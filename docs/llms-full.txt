@@ -37,6 +37,8 @@ Every component has a layer. It says whether the component can be used outside t
 
 35 more components are in the package but not documented yet, so this list is not the full package content. They are not listed here. Do not use one without asking first.
 
+Each component file lists its rules under Rules. Every rule has an ID such as `callout.body.max-three-sentences`; cite the ID when a rule decides how a component is used.
+
 # Foundation: Colour
 
 > Colour tokens in both themes and the contrast of every text colour on every surface.
@@ -411,6 +413,25 @@ import Callout from '@andree/design-system/components/Callout.astro';
 - Until 0.3.0 the variants were called `limit` and `confidential`, after their portfolio uses. `limit` became `default`, `confidential` became `quiet`.
 - CaseHero renders a `quiet` Callout labelled “Confidential” itself when it receives a confidentiality note.
 
+## Tokens
+
+Tokens used in the styles of Callout itself. Components it renders bring their own.
+
+- `--mark` (Colour, foundations/colour.md)
+- `--ink` (Colour, foundations/colour.md)
+- `--text` (Colour, foundations/colour.md)
+- `--muted` (Colour, foundations/colour.md)
+- `--font-mono` (Typography, foundations/typography.md)
+- `--text-body` (Typography, foundations/typography.md)
+- `--text-body-xs` (Typography, foundations/typography.md)
+- `--text-label` (Typography, foundations/typography.md)
+- `--tracking-case-caps` (Typography, foundations/typography.md)
+- `--space-1` (Spacing, foundations/spacing.md)
+- `--space-2` (Spacing, foundations/spacing.md)
+- `--space-6` (Spacing, foundations/spacing.md)
+- `--measure-narrow` (Layout, foundations/layout.md)
+- `--rail` (Layout, foundations/layout.md)
+
 # Component: InShort
 
 ```yaml
@@ -562,6 +583,24 @@ import Chapter from '@andree/design-system/components/Chapter.astro';
 - Until 0.3.0 the label was fixed to “In short” and the three-point limit was not enforced.
 - InShort is still filed as `portfolio`: it is built to sit under a chapter’s lead sentence. [confirm: whether InShort moves to `primitive` now that the label is a prop]
 - Marker size and the 22px marker column are set in px instead of tokens.
+
+## Tokens
+
+Tokens used in the styles of InShort itself. Components it renders bring their own.
+
+- `--mark` (Colour, foundations/colour.md)
+- `--surface` (Colour, foundations/colour.md)
+- `--ink` (Colour, foundations/colour.md)
+- `--muted` (Colour, foundations/colour.md)
+- `--font-mono` (Typography, foundations/typography.md)
+- `--text-body-s` (Typography, foundations/typography.md)
+- `--text-label` (Typography, foundations/typography.md)
+- `--tracking-case-caps` (Typography, foundations/typography.md)
+- `--space-2` (Spacing, foundations/spacing.md)
+- `--space-3` (Spacing, foundations/spacing.md)
+- `--space-4` (Spacing, foundations/spacing.md)
+- `--space-6` (Spacing, foundations/spacing.md)
+- `--space-8` (Spacing, foundations/spacing.md)
 
 # Component: SiteHeader
 
@@ -765,3 +804,22 @@ const nav = [
 - Until 0.3.0, `/` was current on every path under `/work`, written into the component. Since 0.3.0 that takes `aliases={{ '/': ['/work'] }}`, or `navAliases` on `Base` and the layouts built on it.
 - Until 0.3.0, ThemeToggle was a toggle with `aria-pressed`, which announced the light theme as off while it was on.
 - The skip link is not part of SiteHeader. `Base.astro` renders SkipLink before it.
+
+## Tokens
+
+Tokens used in the styles of SiteHeader itself. Components it renders bring their own.
+
+- `--mark` (Colour, foundations/colour.md)
+- `--accent` (Colour, foundations/colour.md)
+- `--ink` (Colour, foundations/colour.md)
+- `--text` (Colour, foundations/colour.md)
+- `--border` (Colour, foundations/colour.md)
+- `--font-mono` (Typography, foundations/typography.md)
+- `--weight-strong` (Typography, foundations/typography.md)
+- `--step--2` (Typography, foundations/typography.md)
+- `--step--1` (Typography, foundations/typography.md)
+- `--tracking-caps` (Typography, foundations/typography.md)
+- `--space-1` (Spacing, foundations/spacing.md)
+- `--space-4` (Spacing, foundations/spacing.md)
+- `--space-6` (Spacing, foundations/spacing.md)
+- `--space-8` (Spacing, foundations/spacing.md)

@@ -198,3 +198,22 @@ const nav = [
 - Until 0.3.0, `/` was current on every path under `/work`, written into the component. Since 0.3.0 that takes `aliases={{ '/': ['/work'] }}`, or `navAliases` on `Base` and the layouts built on it.
 - Until 0.3.0, ThemeToggle was a toggle with `aria-pressed`, which announced the light theme as off while it was on.
 - The skip link is not part of SiteHeader. `Base.astro` renders SkipLink before it.
+
+## Tokens
+
+Tokens used in the styles of SiteHeader itself. Components it renders bring their own.
+
+- `--mark` (Colour, foundations/colour.md)
+- `--accent` (Colour, foundations/colour.md)
+- `--ink` (Colour, foundations/colour.md)
+- `--text` (Colour, foundations/colour.md)
+- `--border` (Colour, foundations/colour.md)
+- `--font-mono` (Typography, foundations/typography.md)
+- `--weight-strong` (Typography, foundations/typography.md)
+- `--step--2` (Typography, foundations/typography.md)
+- `--step--1` (Typography, foundations/typography.md)
+- `--tracking-caps` (Typography, foundations/typography.md)
+- `--space-1` (Spacing, foundations/spacing.md)
+- `--space-4` (Spacing, foundations/spacing.md)
+- `--space-6` (Spacing, foundations/spacing.md)
+- `--space-8` (Spacing, foundations/spacing.md)

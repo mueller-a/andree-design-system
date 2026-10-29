@@ -162,3 +162,22 @@ import Callout from '@andree/design-system/components/Callout.astro';
 
 - Until 0.3.0 the variants were called `limit` and `confidential`, after their portfolio uses. `limit` became `default`, `confidential` became `quiet`.
 - CaseHero renders a `quiet` Callout labelled “Confidential” itself when it receives a confidentiality note.
+
+## Tokens
+
+Tokens used in the styles of Callout itself. Components it renders bring their own.
+
+- `--mark` (Colour, foundations/colour.md)
+- `--ink` (Colour, foundations/colour.md)
+- `--text` (Colour, foundations/colour.md)
+- `--muted` (Colour, foundations/colour.md)
+- `--font-mono` (Typography, foundations/typography.md)
+- `--text-body` (Typography, foundations/typography.md)
+- `--text-body-xs` (Typography, foundations/typography.md)
+- `--text-label` (Typography, foundations/typography.md)
+- `--tracking-case-caps` (Typography, foundations/typography.md)
+- `--space-1` (Spacing, foundations/spacing.md)
+- `--space-2` (Spacing, foundations/spacing.md)
+- `--space-6` (Spacing, foundations/spacing.md)
+- `--measure-narrow` (Layout, foundations/layout.md)
+- `--rail` (Layout, foundations/layout.md)

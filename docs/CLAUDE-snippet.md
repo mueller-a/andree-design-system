@@ -13,5 +13,6 @@ This project uses `@andree/design-system` (Dark Studio).
 - Components with `layer: portfolio` belong to Andree's portfolio and know its
   case study data. Do not use them in this project, even though they are in
   the package.
-- Follow the Accessibility section of each component file. The target is WCAG
-  2.2 Level AA.
+- Follow the Rules and the Accessibility section of each component file. The
+  target is WCAG 2.2 Level AA. When a rule decides how you use a component,
+  cite its ID, for example `callout.body.max-three-sentences`.

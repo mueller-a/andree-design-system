@@ -37,6 +37,8 @@ Every component has a layer. It says whether the component can be used outside t
 
 35 more components are in the package but not documented yet, so this list is not the full package content. They are not listed here. Do not use one without asking first.
 
+Each component file lists its rules under Rules. Every rule has an ID such as `callout.body.max-three-sentences`; cite the ID when a rule decides how a component is used.
+
 ## Optional
 
 - [llms-full.txt](llms-full.txt): this index, every foundation and every component file in one document.

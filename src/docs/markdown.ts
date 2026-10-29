@@ -23,7 +23,7 @@ import { stringify } from 'yaml';
 import pkg from '../../package.json';
 import { componentList, documentedComponents } from './components';
 import { foundations, SITE_URL } from './site';
-import { token, hasLightValue, tokensWithPrefix, toPx, mediaOverrides, type Theme } from './tokens';
+import { token, hasLightValue, tokensWithPrefix, toPx, mediaOverrides, componentTokens, type Theme } from './tokens';
 import { ratio, fmt } from './contrast';
 import DocSection from './DocSection.astro';
 import RuleId from './RuleId.astro';
@@ -118,8 +118,23 @@ function assertClean(name: string, md: string): string {
 const frontmatter = (data: Record<string, unknown>) =>
   `---\n${stringify(data, { lineWidth: 0 }).trimEnd()}\n---`;
 
+/** Wie auf der Properties-Unterseite: Tokens aus den eigenen Styles. */
+function tokensSection(doc: Doc): string {
+  const tokens = componentTokens(doc.data.name);
+  const lines = tokens.length
+    ? tokens.map((t) => `- \`--${t.name}\`${t.foundation ? ` (${t.foundation.title}, foundations/${t.foundation.slug}.md)` : ''}`)
+    : ['No tokens.'];
+  return [
+    '## Tokens',
+    '',
+    `Tokens used in the styles of ${doc.data.name} itself. Components it renders bring their own.`,
+    '',
+    ...lines,
+  ].join('\n');
+}
+
 async function componentBody(doc: Doc): Promise<string> {
-  return htmlToMarkdown(await mdxToHtml(doc));
+  return `${htmlToMarkdown(await mdxToHtml(doc))}\n\n${tokensSection(doc)}`;
 }
 
 /** docs/components/<slug>.md: Frontmatter aus der Collection plus Fließtext. */
@@ -356,6 +371,8 @@ async function llmsIndex(withOptional: boolean): Promise<string> {
     ),
     '',
     `${pending} more components are in the package but not documented yet, so this list is not the full package content. They are not listed here. Do not use one without asking first.`,
+    '',
+    'Each component file lists its rules under Rules. Every rule has an ID such as `callout.body.max-three-sentences`; cite the ID when a rule decides how a component is used.',
     ...(withOptional
       ? [
           '',
