@@ -7,28 +7,10 @@ import FoundationLayout from '../../docs/FoundationLayout.astro';
 import TableScroll from '../../docs/TableScroll.astro';
 import { token, hasLightValue, usedIn, type Theme } from '../../docs/tokens';
 import { ratio, fmt } from '../../docs/contrast';
+import { colourTokens, textTokens, surfaces } from '../../docs/foundation-data';
 
-/* Verwendungszweck, übersetzt aus den Kommentaren in tokens.css. */
-const colourTokens: [string, string][] = [
-  ['mark', 'Yellow as a surface: call to action band, markers, dots, quotation marks. Decorative only.'],
-  ['mark-ink', 'Text and icons on --mark surfaces.'],
-  ['accent', 'Yellow as text, darkened in the light theme.'],
-  ['bg', 'Page background.'],
-  ['bg-glass', 'Sticky header background, meant for use with a backdrop blur.'],
-  ['surface', 'Cards, meta cells, the InShort box.'],
-  ['surface-hover', 'Hover state of --surface.'],
-  ['ink', 'Headings, primary text, quotes.'],
-  ['text', 'Body text.'],
-  ['muted', 'Labels, secondary text, captions.'],
-  ['border', 'Hairlines and borders.'],
-  ['border-strong', 'Chips, theme toggle border.'],
-  ['placeholder', 'Striped fill for labelled placeholders, such as missing images.'],
-  ['focus', 'Own focus ring colour, separate from the accent.'],
-];
 
 const themes: Theme[] = ['dark', 'light'];
-const textTokens = ['ink', 'text', 'muted', 'accent'] as const;
-const surfaces = ['bg', 'surface'] as const;
 const AA = 4.5;
 
 const matrix = themes.flatMap((theme) =>

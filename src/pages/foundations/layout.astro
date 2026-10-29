@@ -3,19 +3,8 @@
 import FoundationLayout from '../../docs/FoundationLayout.astro';
 import TableScroll from '../../docs/TableScroll.astro';
 import { token, toPx, usedIn, mediaOverrides } from '../../docs/tokens';
+import { layoutTokens } from '../../docs/foundation-data';
 
-/* Verwendungszweck, übersetzt aus den Kommentaren in tokens.css. */
-const layoutTokens: [string, string][] = [
-  ['measure', 'Narrow text column, for meta information and notes.'],
-  ['measure-narrow', 'Narrow notes, such as Callout quiet.'],
-  ['measure-wide', 'Body text column, for profile pages and chapters.'],
-  ['wrap', 'Site-wide frame width.'],
-  ['gutter', 'Side padding of the frame.'],
-  ['meta-col', 'Label column in detail views.'],
-  ['chapter-label-col', 'Maximum width of the label column in case study chapters.'],
-  ['rail', 'Yellow marker edge under section marks.'],
-  ['radius', 'Corner radius. None in this design, except circles.'],
-];
 
 const rows = layoutTokens.map(([name, use]) => {
   const value = token(name);

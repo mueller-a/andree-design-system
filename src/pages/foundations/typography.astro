@@ -9,45 +9,12 @@
 import FoundationLayout from '../../docs/FoundationLayout.astro';
 import TableScroll from '../../docs/TableScroll.astro';
 import { token, tokensWithPrefix, pxRange, fontSizeRules } from '../../docs/tokens';
+import { families, stepUse, caseScale } from '../../docs/foundation-data';
 
-const families: [string, string][] = [
-  ['font-display', 'Headlines'],
-  ['font-body', 'Body text'],
-  ['font-mono', 'Labels, chips, code'],
-];
 const weights = tokensWithPrefix('weight-');
 
-/* Verwendungszweck der --step-Stufen, übersetzt aus tokens.css. */
-const stepUse: Record<string, string> = {
-  'step--2': 'Capital labels',
-  'step-2': 'h2',
-  'step-3': 'Card titles',
-  'step-4': 'Detail page h1',
-  'step-5': 'Home page h1',
-};
 const steps = tokensWithPrefix('step-');
 
-/* Gewicht, Zeilenhöhe und Zweck je --text-Stufe, aus dem Portfolio. */
-const caseScale: [string, string, string, string][] = [
-  ['display', '300', '1.02', 'Hero h1'],
-  ['chapter', '300', '1.1', 'Lead sentence per chapter'],
-  ['quote', '300', '1.22', 'Testimonial'],
-  ['summary', '300', '1.28', 'TL;DR paragraph'],
-  ['stat', '300', '1', 'Key figures'],
-  ['step-num', '300', '1', 'Step numbers in a process'],
-  ['learning', '300', '1.25', 'Learnings titles'],
-  ['next', '300', '1.3', 'Next case study title'],
-  ['lede', '400', '1.5', 'Hero subtitle'],
-  ['title-l', '500', '', 'Step titles'],
-  ['title-m', '400', '1.4', 'Triptych content'],
-  ['title-s', '500', '1.3', 'Card and timeline titles'],
-  ['body', '400', '1.7', 'Chapter body text'],
-  ['body-s', '400', '1.55', 'InShort points, lists, definitions'],
-  ['body-xs', '400', '1.55', 'Card text, stat labels'],
-  ['label', '400', '', 'Mono labels, captions, roles'],
-  ['label-l', '400', '', 'Chapter label, kicker, back link'],
-  ['label-date', '400', '', 'Timeline dates'],
-];
 const missing = tokensWithPrefix('text-').filter((n) => !caseScale.some(([s]) => `text-${s}` === n));
 if (missing.length) throw new Error(`typography: --${missing.join(', --')} fehlt in der Tabelle`);
 

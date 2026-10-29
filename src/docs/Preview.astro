@@ -4,6 +4,9 @@
  * Vorschauen, die sonst Landmarks oder Bedienelemente der Seite doppeln
  * würden (z. B. SiteHeader): sichtbar, aber nicht bedienbar und nicht im
  * Accessibility-Baum. Die Beschriftung sagt das dann.
+ *
+ * `data-doc-skip`: Der Markdown-Generator (docs/components/*.md) entfernt
+ * Vorschauen samt Beschriftung, sie wären dort nur Rauschen.
  */
 interface Props {
   caption: string;
@@ -12,7 +15,7 @@ interface Props {
 const { caption, inert = false } = Astro.props;
 ---
 
-<figure class="docs-preview" data-doc-preview>
+<figure class="docs-preview" data-doc-skip>
   <div class="docs-preview__stage" inert={inert || undefined}>
     <slot />
   </div>

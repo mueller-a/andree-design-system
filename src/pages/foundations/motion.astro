@@ -2,12 +2,8 @@
 /** Dauern und Easing aus tokens.css, dazu die Regel für reduzierte Bewegung. */
 import FoundationLayout from '../../docs/FoundationLayout.astro';
 import { token, usedIn } from '../../docs/tokens';
+import { motionTokens } from '../../docs/foundation-data';
 
-const motionTokens: [string, string][] = [
-  ['motion-fast', 'Short transitions, such as link underlines and the skip link.'],
-  ['motion-base', 'Default transitions, such as hover states on cards and buttons.'],
-  ['ease', 'Easing curve for all transitions.'],
-];
 ---
 
 <FoundationLayout slug="motion">
