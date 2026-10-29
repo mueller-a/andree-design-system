@@ -129,6 +129,16 @@ a.docs-chip:hover {
 .docs-table-scroll {
   max-width: 100%;
   overflow-x: auto;
+  /* Innerhalb des Containers normal umbrechen, nicht an jeder Stelle. */
+  overflow-wrap: break-word;
+}
+
+.docs-table-scroll--medium > table {
+  min-inline-size: var(--measure-narrow);
+}
+
+.docs-table-scroll--wide > table {
+  min-inline-size: var(--measure-wide);
 }
 
 /*
@@ -180,6 +190,12 @@ a.docs-chip:hover {
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
   color: var(--muted);
+}
+
+/* Fließtext-Spalten (Zweck, Verwendung, Beschreibung) nicht auf ein Wort je
+   Zeile zusammendrücken lassen. */
+.docs-table .docs-table__text {
+  min-inline-size: var(--meta-col);
 }
 
 .docs-table tbody th {

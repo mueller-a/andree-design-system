@@ -1,0 +1,58 @@
+---
+/** Die Abstandsskala aus der Portfolio-Seite /design-system, aus tokens.css. */
+import FoundationLayout from '../../docs/FoundationLayout.astro';
+import TableScroll from '../../docs/TableScroll.astro';
+import { token, tokensWithPrefix, toPx } from '../../docs/tokens';
+
+const scale = tokensWithPrefix('space-').map((name) => ({
+  name,
+  value: token(name),
+  px: toPx(token(name)),
+}));
+---
+
+<FoundationLayout slug="spacing">
+  <section class="docs-section" aria-labelledby="scale">
+    <h2 id="scale">Space scale</h2>
+    <p class="docs-note">
+      One site-wide scale on a 4px grid, used by the case study components too.
+      There is deliberately no second numbered scale. Where a component needs
+      a value between two steps, it sets that value itself.
+    </p>
+    <TableScroll label="Space scale" size="medium">
+      <table class="docs-table">
+        <caption>The --space scale, with each step drawn to size</caption>
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Value</th>
+            <th scope="col">Pixels</th>
+            <th scope="col">Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            scale.map((s) => (
+              <tr>
+                <th scope="row"><code>--{s.name}</code></th>
+                <td><code>{s.value}</code></td>
+                <td>{s.px}px</td>
+                <td>
+                  <span class="docs-bar" style={`inline-size: var(--${s.name})`} aria-hidden="true" />
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </TableScroll>
+  </section>
+</FoundationLayout>
+
+<style>
+  .docs-bar {
+    display: block;
+    block-size: var(--space-3);
+    background: var(--accent);
+  }
+</style>

@@ -14,6 +14,10 @@ export default [
       // entfernt Safari mit VoiceOver die Listensemantik. role="list" stellt sie
       // wieder her (siehe reset.css: ul[role="list"]).
       'astro/jsx-a11y/no-redundant-roles': 'off',
+      // Horizontal scrollbare Tabellen-Container (role="region") brauchen
+      // tabindex="0", sonst sind sie per Tastatur nicht scrollbar (axe:
+      // scrollable-region-focusable). Nur für diese Rolle erlaubt.
+      'astro/jsx-a11y/no-noninteractive-tabindex': ['error', { roles: ['region'] }],
     },
   },
 ];

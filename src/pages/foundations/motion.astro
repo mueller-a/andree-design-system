@@ -1,0 +1,62 @@
+---
+/** Dauern und Easing aus tokens.css, dazu die Regel für reduzierte Bewegung. */
+import FoundationLayout from '../../docs/FoundationLayout.astro';
+import { token, usedIn } from '../../docs/tokens';
+
+const motionTokens: [string, string][] = [
+  ['motion-fast', 'Short transitions, such as link underlines and the skip link.'],
+  ['motion-base', 'Default transitions, such as hover states on cards and buttons.'],
+  ['ease', 'Easing curve for all transitions.'],
+];
+---
+
+<FoundationLayout slug="motion">
+  <section class="docs-section" aria-labelledby="tokens">
+    <h2 id="tokens">Motion tokens</h2>
+    <table class="docs-table">
+      <caption>Duration and easing tokens</caption>
+      <thead>
+        <tr>
+          <th scope="col">Token</th>
+          <th scope="col">Value</th>
+          <th scope="col">Use</th>
+          <th scope="col">Used in</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          motionTokens.map(([name, use]) => {
+            const files = usedIn(name);
+            return (
+              <tr>
+                <th scope="row"><code>--{name}</code></th>
+                <td><code>{token(name)}</code></td>
+                <td>{use}</td>
+                <td>{files.length ? files.join(', ') : 'Not used yet'}</td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section class="docs-section" aria-labelledby="reduced">
+    <h2 id="reduced">Reduced motion</h2>
+    <div class="docs-prose">
+      <p>
+        When the system asks for reduced motion, <code>reset.css</code> cuts
+        every transition and animation to 0.01ms, runs animations only once and
+        turns off smooth scrolling. Components do not need their own media
+        query for this.
+      </p>
+      <p>
+        Motion in this system stays small. Cards, buttons and links change
+        colour or background on hover, the skip link slides in when it receives
+        focus, and the <code>.fade-in</code> class in <code>global.css</code>
+        fades an element in once while moving it up by 8px. The fade-in only
+        exists when the system allows motion. No motion carries meaning.
+      </p>
+    </div>
+  </section>
+</FoundationLayout>

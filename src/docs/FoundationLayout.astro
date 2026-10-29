@@ -1,0 +1,42 @@
+---
+/** Rahmen einer Foundations-Seite: Kopf, Seitennavigation, Inhalt. */
+import DocsLayout from './DocsLayout.astro';
+import { foundations } from './site';
+
+interface Props {
+  slug: (typeof foundations)[number]['slug'];
+}
+const { slug } = Astro.props;
+const current = foundations.find((f) => f.slug === slug);
+if (!current) throw new Error(`FoundationLayout: unbekannte Foundation "${slug}"`);
+---
+
+<DocsLayout title={current.title} description={current.summary}>
+  <header class="docs-header">
+    <p class="docs-kicker">Foundations</p>
+    <h1>{current.title}</h1>
+    <p class="docs-lead">{current.summary}</p>
+  </header>
+
+  <div class="docs-with-nav">
+    <nav class="docs-subnav" aria-label="Foundations">
+      <ul role="list">
+        {
+          foundations.map((f) => (
+            <li>
+              <a
+                href={`/foundations/${f.slug}`}
+                aria-current={f.slug === slug ? 'page' : undefined}
+              >
+                {f.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="docs-page__content docs-section">
+      <slot />
+    </div>
+  </div>
+</DocsLayout>

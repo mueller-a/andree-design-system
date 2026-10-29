@@ -1,0 +1,156 @@
+---
+/**
+ * Farb-Tokens beider Themes und die Kontrastmatrix aus der Portfolio-Seite
+ * /design-system, jetzt direkt aus tokens.css berechnet.
+ */
+import FoundationLayout from '../../docs/FoundationLayout.astro';
+import TableScroll from '../../docs/TableScroll.astro';
+import { token, hasLightValue, usedIn, type Theme } from '../../docs/tokens';
+import { ratio, fmt } from '../../docs/contrast';
+
+/* Verwendungszweck, übersetzt aus den Kommentaren in tokens.css. */
+const colourTokens: [string, string][] = [
+  ['mark', 'Yellow as a surface: call to action band, markers, dots, quotation marks. Decorative only.'],
+  ['mark-ink', 'Text and icons on --mark surfaces.'],
+  ['accent', 'Yellow as text, darkened in the light theme.'],
+  ['bg', 'Page background.'],
+  ['bg-glass', 'Sticky header background, meant for use with a backdrop blur.'],
+  ['surface', 'Cards, meta cells, the InShort box.'],
+  ['surface-hover', 'Hover state of --surface.'],
+  ['ink', 'Headings, primary text, quotes.'],
+  ['text', 'Body text.'],
+  ['muted', 'Labels, secondary text, captions.'],
+  ['border', 'Hairlines and borders.'],
+  ['border-strong', 'Chips, theme toggle border.'],
+  ['placeholder', 'Striped fill for labelled placeholders, such as missing images.'],
+  ['focus', 'Own focus ring colour, separate from the accent.'],
+];
+
+const themes: Theme[] = ['dark', 'light'];
+const textTokens = ['ink', 'text', 'muted', 'accent'] as const;
+const surfaces = ['bg', 'surface'] as const;
+const AA = 4.5;
+
+const matrix = themes.flatMap((theme) =>
+  textTokens.map((t) => ({
+    theme,
+    token: t,
+    values: surfaces.map((s) => ratio(token(t, theme), token(s, theme))),
+  })),
+);
+const markRows = themes.map((theme) => ({
+  theme,
+  value: ratio(token('mark-ink', theme), token('mark', theme)),
+}));
+const verdict = (v: number) => (v >= AA ? 'passes AA' : 'fails AA');
+---
+
+<FoundationLayout slug="colour">
+  <section class="docs-section" aria-labelledby="tokens">
+    <h2 id="tokens">Colour tokens</h2>
+    <p class="docs-note">
+      Dark is the default theme. The light theme overrides the colour tokens
+      only, and applies through the system setting or the theme toggle. Values
+      are read from <code>tokens.css</code> when the site is built.
+    </p>
+    <TableScroll label="Colour tokens">
+      <table class="docs-table">
+        <caption>Colour tokens with their dark and light values</caption>
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Dark</th>
+            <th scope="col">Light</th>
+            <th scope="col">Use</th>
+            <th scope="col">Used in</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            colourTokens.map(([name, use]) => {
+              const files = usedIn(name);
+              return (
+                <tr>
+                  <th scope="row"><code>--{name}</code></th>
+                  {themes.map((theme) => (
+                    <td>
+                      <span class="docs-swatch" style={`--swatch: ${token(name, theme)}`} aria-hidden="true" />
+                      <code>{token(name, theme)}</code>
+                      {theme === 'light' && !hasLightValue(name) && <> (same as dark)</>}
+                    </td>
+                  ))}
+                  <td class="docs-table__text">{use}</td>
+                  <td class="docs-table__text">{files.length ? files.join(', ') : 'Not used yet'}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </TableScroll>
+  </section>
+
+  <section class="docs-section" aria-labelledby="contrast">
+    <h2 id="contrast">Contrast</h2>
+    <p class="docs-note">
+      Every text colour against both surfaces in both themes, computed with the
+      WCAG relative luminance formula when the site is built. Level AA asks for
+      at least 4.5:1 for normal text.
+    </p>
+    <TableScroll label="Contrast matrix" size="medium">
+      <table class="docs-table">
+        <caption>Contrast of text colours on --bg and --surface</caption>
+        <thead>
+          <tr>
+            <th scope="col">Theme</th>
+            <th scope="col">Text colour</th>
+            <th scope="col">On --bg</th>
+            <th scope="col">On --surface</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            matrix.map((row) => (
+              <tr>
+                <td>{row.theme}</td>
+                <th scope="row"><code>--{row.token}</code></th>
+                {row.values.map((v) => (
+                  <td>
+                    {fmt(v)}, {verdict(v)}
+                  </td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </TableScroll>
+    <p class="docs-note">
+      <code>--mark</code> is excluded from this matrix: it is decorative only,
+      hidden from assistive technology and never used as text, so text
+      contrast rules do not apply to it. Text placed on a <code>--mark</code>
+      surface uses <code>--mark-ink</code>:
+    </p>
+    <table class="docs-table">
+      <caption>Contrast of --mark-ink on --mark</caption>
+      <thead>
+        <tr>
+          <th scope="col">Theme</th>
+          <th scope="col">--mark-ink on --mark</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          markRows.map((row) => (
+            <tr>
+              <th scope="row">{row.theme}</th>
+              <td>
+                {fmt(row.value)}, {verdict(row.value)}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+</FoundationLayout>

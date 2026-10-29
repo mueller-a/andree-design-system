@@ -1,0 +1,27 @@
+---
+/**
+ * Container für breite Tabellen: scrollt horizontal für sich, statt die Seite
+ * zu verbreitern (1.4.10), und ist per Tastatur erreichbar und scrollbar.
+ *
+ * Die Tabelle behält darin eine Mindestbreite aus den Maß-Tokens. Ohne sie
+ * würde sie bei 320px jede Zelle Buchstabe für Buchstabe umbrechen, statt zu
+ * scrollen.
+ */
+interface Props {
+  /** Name der Region, beschreibt die Tabelle. */
+  label: string;
+  /** `medium`: --measure-narrow, `wide`: --measure-wide als Mindestbreite. */
+  size?: 'medium' | 'wide';
+}
+const { label, size = 'wide' } = Astro.props;
+---
+
+<!-- Zusatz im Namen: unterscheidet die Region vom Abschnitt gleichen Titels. -->
+<div
+  class:list={['docs-table-scroll', `docs-table-scroll--${size}`]}
+  role="region"
+  aria-label={`${label}, scrollable table`}
+  tabindex="0"
+>
+  <slot />
+</div>

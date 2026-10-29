@@ -1,0 +1,311 @@
+---
+/**
+ * Schriften, Gewichte, die allgemeine --step-Skala und die 18 Case-Study-
+ * Stufen (--text-*). Größen kommen aus tokens.css; Gewicht und Zeilenhöhe
+ * sind keine Tokens, sie sind aus der Tabelle der Portfolio-Seite
+ * /design-system übernommen (Spezifikation). Wo Komponenten davon abweichen,
+ * listet die Seite das, zur Build-Zeit aus dem CSS ermittelt.
+ */
+import FoundationLayout from '../../docs/FoundationLayout.astro';
+import TableScroll from '../../docs/TableScroll.astro';
+import { token, tokensWithPrefix, pxRange, fontSizeRules } from '../../docs/tokens';
+
+const families: [string, string][] = [
+  ['font-display', 'Headlines'],
+  ['font-body', 'Body text'],
+  ['font-mono', 'Labels, chips, code'],
+];
+const weights = tokensWithPrefix('weight-');
+
+/* Verwendungszweck der --step-Stufen, übersetzt aus tokens.css. */
+const stepUse: Record<string, string> = {
+  'step--2': 'Capital labels',
+  'step-2': 'h2',
+  'step-3': 'Card titles',
+  'step-4': 'Detail page h1',
+  'step-5': 'Home page h1',
+};
+const steps = tokensWithPrefix('step-');
+
+/* Gewicht, Zeilenhöhe und Zweck je --text-Stufe, aus dem Portfolio. */
+const caseScale: [string, string, string, string][] = [
+  ['display', '300', '1.02', 'Hero h1'],
+  ['chapter', '300', '1.1', 'Lead sentence per chapter'],
+  ['quote', '300', '1.22', 'Testimonial'],
+  ['summary', '300', '1.28', 'TL;DR paragraph'],
+  ['stat', '300', '1', 'Key figures'],
+  ['step-num', '300', '1', 'Step numbers in a process'],
+  ['learning', '300', '1.25', 'Learnings titles'],
+  ['next', '300', '1.3', 'Next case study title'],
+  ['lede', '400', '1.5', 'Hero subtitle'],
+  ['title-l', '500', '', 'Step titles'],
+  ['title-m', '400', '1.4', 'Triptych content'],
+  ['title-s', '500', '1.3', 'Card and timeline titles'],
+  ['body', '400', '1.7', 'Chapter body text'],
+  ['body-s', '400', '1.55', 'InShort points, lists, definitions'],
+  ['body-xs', '400', '1.55', 'Card text, stat labels'],
+  ['label', '400', '', 'Mono labels, captions, roles'],
+  ['label-l', '400', '', 'Chapter label, kicker, back link'],
+  ['label-date', '400', '', 'Timeline dates'],
+];
+const missing = tokensWithPrefix('text-').filter((n) => !caseScale.some(([s]) => `text-${s}` === n));
+if (missing.length) throw new Error(`typography: --${missing.join(', --')} fehlt in der Tabelle`);
+
+/* Abweichungen der Komponenten von der Spezifikation. */
+const weightValue = (w: string) => {
+  const m = w.match(/^var\(--([\w-]+)\)$/);
+  return m ? token(m[1]) : w;
+};
+const deviations = fontSizeRules().flatMap((rule) => {
+  const spec = caseScale.find(([name]) => `text-${name}` === rule.size);
+  if (!spec) return [];
+  const [name, weight, lh] = spec;
+  const out = [];
+  if (rule.weight && weightValue(rule.weight) !== weight) {
+    out.push({ file: rule.file, token: name, what: 'weight', spec: weight, actual: weightValue(rule.weight) });
+  }
+  if (lh && rule.lineHeight && rule.lineHeight !== lh) {
+    out.push({ file: rule.file, token: name, what: 'line height', spec: lh, actual: rule.lineHeight });
+  }
+  return out;
+});
+
+const leading = tokensWithPrefix('leading-');
+const tracking = tokensWithPrefix('tracking-');
+
+const px = (n: number | null) => (n === null ? 'n/a' : `${Math.round(n * 100) / 100}px`);
+const range = (value: string) => {
+  const { min, max } = pxRange(value);
+  return min === max ? px(min) : `${px(min)} to ${px(max)}`;
+};
+const SAMPLE = 'Readable at every size';
+---
+
+<FoundationLayout slug="typography">
+  <section class="docs-section" aria-labelledby="families">
+    <h2 id="families">Font families</h2>
+    <TableScroll label="Font families">
+      <table class="docs-table">
+        <caption>Font family tokens</caption>
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Stack</th>
+            <th scope="col">Use</th>
+            <th scope="col">Sample</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            families.map(([name, use]) => (
+              <tr>
+                <th scope="row"><code>--{name}</code></th>
+                <td><code>{token(name)}</code></td>
+                <td class="docs-table__text">{use}</td>
+                <td style={`font-family: var(--${name})`}>{SAMPLE}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </TableScroll>
+  </section>
+
+  <section class="docs-section" aria-labelledby="weights">
+    <h2 id="weights">Weights</h2>
+    <table class="docs-table">
+      <caption>Font weight tokens</caption>
+      <thead>
+        <tr>
+          <th scope="col">Token</th>
+          <th scope="col">Value</th>
+          <th scope="col">Sample</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          weights.map((name) => (
+            <tr>
+              <th scope="row"><code>--{name}</code></th>
+              <td>{token(name)}</td>
+              <td style={`font-weight: var(--${name}); font-size: var(--step-1)`}>{SAMPLE}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section class="docs-section" aria-labelledby="steps">
+    <h2 id="steps">General scale</h2>
+    <p class="docs-note">
+      The site-wide fluid scale, used by the header, the footer and the page
+      templates. Each step grows between its minimum and maximum with the
+      viewport width.
+    </p>
+    <TableScroll label="General type scale" size="medium">
+      <table class="docs-table">
+        <caption>The --step type scale</caption>
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Value</th>
+            <th scope="col">Size</th>
+            <th scope="col">Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            steps.map((name) => (
+              <tr>
+                <th scope="row"><code>--{name}</code></th>
+                <td><code>{token(name)}</code></td>
+                <td>{range(token(name))}</td>
+                <td>{stepUse[name] ?? ''}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </TableScroll>
+  </section>
+
+  <section class="docs-section" aria-labelledby="case-scale">
+    <h2 id="case-scale">Case study scale</h2>
+    <p class="docs-note">
+      Eighteen sizes named after their use, added to the general scale for the
+      case study components. Size comes from the token. Weight and line height
+      are not tokens: this table gives the values from the original
+      specification, and each component sets them itself.
+    </p>
+    <TableScroll label="Case study type scale">
+      <table class="docs-table">
+        <caption>The --text type scale</caption>
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Value</th>
+            <th scope="col">Size</th>
+            <th scope="col">Weight</th>
+            <th scope="col">Line height</th>
+            <th scope="col">Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            caseScale.map(([name, weight, lh, use]) => (
+              <tr>
+                <th scope="row"><code>--text-{name}</code></th>
+                <td><code>{token(`text-${name}`)}</code></td>
+                <td>{range(token(`text-${name}`))}</td>
+                <td>{weight}</td>
+                <td>{lh || 'not set'}</td>
+                <td class="docs-table__text">{use}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </TableScroll>
+    {
+      deviations.length > 0 && (
+        <>
+          <p class="docs-note">
+            Components that set a different weight or line height for a size,
+            found in their CSS when the site is built:
+          </p>
+          <TableScroll label="Differences from the specification">
+            <table class="docs-table">
+              <caption>Where components differ from the specification</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Component</th>
+                  <th scope="col">Size</th>
+                  <th scope="col">Property</th>
+                  <th scope="col">Specification</th>
+                  <th scope="col">Actual</th>
+                </tr>
+              </thead>
+              <tbody>
+                {deviations.map((d) => (
+                  <tr>
+                    <th scope="row">{d.file.replace(/\.(astro|css)$/, '')}</th>
+                    <td><code>--text-{d.token}</code></td>
+                    <td>{d.what}</td>
+                    <td>{d.spec}</td>
+                    <td>{d.actual}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
+        </>
+      )
+    }
+  </section>
+
+  <section class="docs-section" aria-labelledby="specimens">
+    <h2 id="specimens">Specimens</h2>
+    <p class="docs-note">
+      Each case study size set live, with its weight and line height.
+    </p>
+    <ul class="docs-specimens" role="list">
+      {
+        caseScale.map(([name, weight, lh]) => (
+          <li class="docs-specimen">
+            <p class="docs-kicker"><code>--text-{name}</code></p>
+            <p
+              class="docs-specimen__sample"
+              style={`font-size: var(--text-${name}); font-weight: ${weight};${lh ? ` line-height: ${lh};` : ''}`}
+            >
+              {SAMPLE}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="docs-section" aria-labelledby="leading">
+    <h2 id="leading">Leading and tracking</h2>
+    <table class="docs-table">
+      <caption>Line height and letter spacing tokens</caption>
+      <thead>
+        <tr>
+          <th scope="col">Token</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          [...leading, ...tracking].map((name) => (
+            <tr>
+              <th scope="row"><code>--{name}</code></th>
+              <td><code>{token(name)}</code></td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+</FoundationLayout>
+
+<style>
+  .docs-specimens {
+    display: grid;
+    gap: var(--space-8);
+    margin: 0;
+  }
+
+  .docs-specimen {
+    display: grid;
+    gap: var(--space-2);
+    padding-block-end: var(--space-6);
+    border-block-end: 1px solid var(--border);
+  }
+
+  .docs-specimen__sample {
+    margin: 0;
+    color: var(--ink);
+  }
+</style>

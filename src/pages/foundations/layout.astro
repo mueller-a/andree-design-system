@@ -1,0 +1,84 @@
+---
+/** Maße, Rahmen, Spalten, Rail und Radius aus tokens.css. */
+import FoundationLayout from '../../docs/FoundationLayout.astro';
+import TableScroll from '../../docs/TableScroll.astro';
+import { token, toPx, usedIn, mediaOverrides } from '../../docs/tokens';
+
+/* Verwendungszweck, übersetzt aus den Kommentaren in tokens.css. */
+const layoutTokens: [string, string][] = [
+  ['measure', 'Narrow text column, for meta information and notes.'],
+  ['measure-narrow', 'Narrow notes, such as Callout quiet.'],
+  ['measure-wide', 'Body text column, for profile pages and chapters.'],
+  ['wrap', 'Site-wide frame width.'],
+  ['gutter', 'Side padding of the frame.'],
+  ['meta-col', 'Label column in detail views.'],
+  ['chapter-label-col', 'Maximum width of the label column in case study chapters.'],
+  ['rail', 'Yellow marker edge under section marks.'],
+  ['radius', 'Corner radius. None in this design, except circles.'],
+];
+
+const rows = layoutTokens.map(([name, use]) => {
+  const value = token(name);
+  const px = toPx(value);
+  return { name, value, px, use, files: usedIn(name), overrides: mediaOverrides(name) };
+});
+---
+
+<FoundationLayout slug="layout">
+  <section class="docs-section" aria-labelledby="measures">
+    <h2 id="measures">Measures and frame</h2>
+    <TableScroll label="Layout tokens">
+      <table class="docs-table">
+        <caption>Layout tokens</caption>
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Value</th>
+            <th scope="col">Use</th>
+            <th scope="col">Used in</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((r) => (
+              <tr>
+                <th scope="row"><code>--{r.name}</code></th>
+                <td>
+                  <code>{r.value}</code>
+                  {r.px !== null && r.value.endsWith('rem') && <> ({r.px}px)</>}
+                  {r.overrides.map((o) => (
+                    <>
+                      <br />
+                      <code>{o.value}</code> at <code>{o.query}</code>
+                    </>
+                  ))}
+                </td>
+                <td class="docs-table__text">{r.use}</td>
+                <td class="docs-table__text">{r.files.length ? r.files.join(', ') : 'Not used yet'}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </TableScroll>
+  </section>
+
+  <section class="docs-section" aria-labelledby="rail">
+    <h2 id="rail">Rail</h2>
+    <p class="docs-note">
+      The rail is a <code>--rail</code> wide edge in <code>--mark</code>. It
+      marks section labels and callouts and is decorative only, so it never
+      carries meaning on its own.
+    </p>
+    <div class="docs-rail-sample" aria-hidden="true"></div>
+  </section>
+</FoundationLayout>
+
+<style>
+  .docs-rail-sample {
+    inline-size: var(--space-32);
+    block-size: var(--space-12);
+    border-inline-start: var(--rail) solid var(--mark);
+    background: var(--surface);
+  }
+</style>
