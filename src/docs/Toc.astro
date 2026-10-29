@@ -1,0 +1,58 @@
+---
+/**
+ * Inhaltsverzeichnis einer Komponentenseite: die ##-Überschriften als
+ * Ankerliste, eine Ebene. Sichtbar ab 90rem (docs.css). Der aktive
+ * Abschnitt wird per IntersectionObserver markiert; ohne JavaScript bleibt
+ * es eine reine Ankerliste.
+ */
+interface Props {
+  items: { id: string; text: string }[];
+}
+const { items } = Astro.props;
+---
+
+<nav class="docs-toc" aria-label="On this page" data-toc>
+  <h2 class="docs-toc__heading">On this page</h2>
+  <ul class="docs-nav__list" role="list">
+    {
+      items.map((item) => (
+        <li>
+          <a class="docs-nav__link" href={`#${item.id}`} data-toc-link={item.id}>
+            {item.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  // Aktiv ist der letzte Abschnitt, dessen Überschrift das obere Viertel des
+  // Viewports erreicht hat. Der Observer meldet nur, wann neu zu rechnen ist.
+  const toc = document.querySelector<HTMLElement>('[data-toc]');
+  const links = toc ? [...toc.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')] : [];
+  const targets = links
+    .map((link) => document.getElementById(link.dataset.tocLink ?? ''))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (toc && targets.length && 'IntersectionObserver' in window) {
+    const update = () => {
+      const line = window.innerHeight * 0.25;
+      let active = targets[0];
+      for (const target of targets) {
+        if (target.getBoundingClientRect().top <= line) active = target;
+      }
+      for (const link of links) {
+        if (link.dataset.tocLink === active.id) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      }
+    };
+    const observer = new IntersectionObserver(update, {
+      rootMargin: '0px 0px -75% 0px',
+      threshold: [0, 1],
+    });
+    for (const target of targets) observer.observe(target);
+    window.addEventListener('hashchange', update);
+    update();
+  }
+</script>

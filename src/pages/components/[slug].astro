@@ -12,6 +12,7 @@ import { render } from 'astro:content';
 import DocsLayout from '../../docs/DocsLayout.astro';
 import TableScroll from '../../docs/TableScroll.astro';
 import InlineText from '../../docs/InlineText.astro';
+import Toc from '../../docs/Toc.astro';
 import { documentedComponents } from '../../docs/components';
 import { understandingUrl } from '../../docs/wcag';
 
@@ -24,7 +25,7 @@ export async function getStaticPaths() {
 }
 
 const { doc, prev, next, all } = Astro.props;
-const { Content } = await render(doc);
+const { Content, headings } = await render(doc);
 const d = doc.data;
 
 const importLine = `import ${d.name} from '${d.import}';`;
@@ -35,9 +36,21 @@ const keyboard =
 const related = d.related
   .map((slug) => all.find((c) => c.data.slug === slug))
   .filter((c) => c !== undefined);
+
+/* Inhaltsverzeichnis: alle ##-Abschnitte in der Reihenfolge der Seite. */
+const toc = [
+  { id: 'import', text: 'Import' },
+  ...headings.filter((h) => h.depth === 2).map((h) => ({ id: h.slug, text: h.text })),
+  { id: 'props', text: 'Props' },
+  ...(d.slots.length > 0 ? [{ id: 'slots', text: 'Slots' }] : []),
+  { id: 'a11y-summary', text: 'Accessibility summary' },
+  ...(related.length > 0 ? [{ id: 'related', text: 'Related' }] : []),
+];
 ---
 
 <DocsLayout title={d.name} description={d.summary}>
+  <Toc slot="toc" items={toc} />
+
   <article class="docs-section" data-doc>
     <header class="docs-header">
       <p class="docs-kicker">Component</p>
