@@ -128,3 +128,30 @@ export function fontSizeRules(): {
   }
   return out;
 }
+
+/* Zuordnung eines Tokens zu seiner Foundations-Seite, nach Präfix bzw. Name. */
+const FOUNDATION_OF: [RegExp, { slug: string; title: string }][] = [
+  [/^(font-|weight-|step-|leading-|tracking-|text-)/, { slug: 'typography', title: 'Typography' }],
+  [/^space-/, { slug: 'spacing', title: 'Spacing' }],
+  [/^(measure|wrap$|gutter$|meta-col$|chapter-label-col$|rail$|radius$)/, { slug: 'layout', title: 'Layout' }],
+  [/^(motion-|ease$)/, { slug: 'motion', title: 'Motion' }],
+];
+
+function foundationOf(name: string) {
+  if (!root.has(name)) return null;
+  for (const [re, f] of FOUNDATION_OF) if (re.test(name)) return f;
+  return { slug: 'colour', title: 'Colour' };
+}
+
+/**
+ * Tokens, die eine Komponente in ihrer eigenen Datei per var() nutzt, in der
+ * Reihenfolge von tokens.css. Tokens gerenderter Kind-Komponenten zählen
+ * nicht mit.
+ */
+export function componentTokens(component: string) {
+  const entry = Object.entries(sources).find(([path]) => path.endsWith(`/components/${component}.astro`));
+  if (!entry) throw new Error(`tokens: Komponente ${component} nicht gefunden`);
+  const used = new Set([...stripComments(entry[1]).matchAll(/var\(--([\w-]+)/g)].map((m) => m[1]));
+  const order = (n: string) => (tokenNames.includes(n) ? tokenNames.indexOf(n) : Number.MAX_SAFE_INTEGER);
+  return [...used].sort((a, b) => order(a) - order(b)).map((name) => ({ name, foundation: foundationOf(name) }));
+}

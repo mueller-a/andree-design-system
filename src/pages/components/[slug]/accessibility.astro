@@ -1,0 +1,51 @@
+---
+/** Accessibility: der Abschnitt ## Accessibility plus a11y aus dem Frontmatter. */
+import { render } from 'astro:content';
+import ComponentLayout from '../../../docs/ComponentLayout.astro';
+import DocSection from '../../../docs/DocSection.astro';
+import RuleId from '../../../docs/RuleId.astro';
+import { componentPaths, headingsOf, SECTIONS_FOR } from '../../../docs/component-pages';
+import { understandingUrl } from '../../../docs/wcag';
+
+export async function getStaticPaths() {
+  return componentPaths();
+}
+
+const { doc, prev, next } = Astro.props;
+const d = doc.data;
+const { Content, headings } = await render(doc);
+Astro.locals.docSections = SECTIONS_FOR.accessibility;
+
+const keyboard =
+  d.a11y.keyboard.trim().toLowerCase() === 'none'
+    ? 'This component never takes focus.'
+    : d.a11y.keyboard;
+
+const toc = [
+  ...headingsOf(headings, 'accessibility')
+    .filter((h) => h.depth === 3)
+    .map((h) => ({ id: h.slug, text: h.text })),
+  { id: 'keyboard-and-criteria', text: 'Keyboard and success criteria' },
+];
+---
+
+<ComponentLayout doc={doc} subpage="accessibility" prev={prev} next={next} toc={toc}>
+  <Content components={{ DocSection, RuleId }} />
+
+  <h3 id="keyboard-and-criteria">Keyboard and success criteria</h3>
+  <p><strong>Keyboard:</strong> {keyboard}</p>
+  {
+    d.a11y.wcag.length > 0 && (
+      <>
+        <p id="wcag-label">Success criteria covered on this page, WCAG 2.2:</p>
+        <ul class="docs-chips" role="list" aria-labelledby="wcag-label">
+          {d.a11y.wcag.map((c) => (
+            <li>
+              <a class="docs-chip" href={understandingUrl(c)}>{c}</a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</ComponentLayout>

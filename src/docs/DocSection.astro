@@ -1,0 +1,15 @@
+---
+/**
+ * Hülle eines ##-Abschnitts der Komponenten-Doku (siehe remark/doc-sections).
+ * Rendert nur, wenn die Seite den Abschnitt angefordert hat: Astro.locals
+ * .docSections ist eine Liste von Abschnittsnamen oder 'all'.
+ */
+interface Props {
+  name: string;
+}
+const { name } = Astro.props;
+const wanted = Astro.locals.docSections;
+const show = wanted === 'all' || (wanted ?? []).includes(name);
+---
+
+{show && <slot />}

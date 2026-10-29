@@ -1,0 +1,25 @@
+---
+/** Rules: der Abschnitt ## Rules, nur für Komponenten, die ihn haben. */
+import { render } from 'astro:content';
+import ComponentLayout from '../../../docs/ComponentLayout.astro';
+import DocSection from '../../../docs/DocSection.astro';
+import RuleId from '../../../docs/RuleId.astro';
+import { componentPaths, hasRules, headingsOf, SECTIONS_FOR } from '../../../docs/component-pages';
+
+export async function getStaticPaths() {
+  return componentPaths(hasRules);
+}
+
+const { doc, prev, next } = Astro.props;
+const { Content, headings } = await render(doc);
+Astro.locals.docSections = SECTIONS_FOR.rules;
+
+/* Inhaltsverzeichnis: die Regeln selbst, damit ist es ein Regelverzeichnis. */
+const toc = headingsOf(headings, 'rules')
+  .filter((h) => h.depth === 3)
+  .map((h) => ({ id: h.slug, text: h.text }));
+---
+
+<ComponentLayout doc={doc} subpage="rules" prev={prev} next={next} toc={toc}>
+  <Content components={{ DocSection, RuleId }} />
+</ComponentLayout>

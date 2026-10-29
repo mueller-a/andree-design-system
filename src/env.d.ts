@@ -13,3 +13,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare namespace App {
+  interface Locals {
+    /** Welche ##-Abschnitte der Komponenten-Doku DocSection rendert. */
+    docSections?: string[] | 'all';
+  }
+}

@@ -1,0 +1,18 @@
+---
+/**
+ * Kennung einer Regel, sichtbar und kopierbar. Der Button erscheint erst mit
+ * JavaScript (ComponentLayout), der Erfolg geht an eine Live-Region. Im
+ * Markdown fällt der Button weg (data-doc-skip), die Kennung bleibt.
+ */
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+---
+
+<p class="docs-rule-id">
+  <code>{id}</code>
+  <button type="button" class="docs-button docs-rule-id__copy" data-copy-rule={id} data-doc-skip hidden>
+    Copy<span class="visually-hidden"> rule ID {id}</span>
+  </button>
+</p>

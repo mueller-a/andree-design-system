@@ -1,0 +1,122 @@
+---
+/**
+ * Properties: der Vertrag der Komponente nach außen, ganz aus Frontmatter
+ * und Code. Props, Slots und die Tokens, die ihre eigenen Styles verbrauchen.
+ */
+import ComponentLayout from '../../../docs/ComponentLayout.astro';
+import TableScroll from '../../../docs/TableScroll.astro';
+import InlineText from '../../../docs/InlineText.astro';
+import { componentPaths } from '../../../docs/component-pages';
+import { componentTokens } from '../../../docs/tokens';
+
+export async function getStaticPaths() {
+  return componentPaths();
+}
+
+const { doc, prev, next } = Astro.props;
+const d = doc.data;
+const tokens = componentTokens(d.name);
+
+const toc = [
+  { id: 'props', text: 'Props' },
+  ...(d.slots.length ? [{ id: 'slots', text: 'Slots' }] : []),
+  { id: 'tokens', text: 'Tokens' },
+];
+---
+
+<ComponentLayout doc={doc} subpage="properties" prev={prev} next={next} toc={toc}>
+  <h2>Properties</h2>
+
+  <h3 id="props">Props</h3>
+  {
+    d.props.length === 0 ? (
+      <p>No props.</p>
+    ) : (
+      <TableScroll label={`${d.name} props`}>
+        <table class="docs-table">
+          <caption>Props of {d.name}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Type</th>
+              <th scope="col">Required</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {d.props.map((p) => (
+              <tr>
+                <th scope="row"><code>{p.name}</code></th>
+                <td><code>{p.type}</code></td>
+                <td>{p.required ? 'yes' : 'no'}</td>
+                <td>{p.default ? <code>{p.default}</code> : 'none'}</td>
+                <td class="docs-table__text"><InlineText text={p.description} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </TableScroll>
+    )
+  }
+
+  {
+    d.slots.length > 0 && (
+      <>
+        <h3 id="slots">Slots</h3>
+        <table class="docs-table">
+          <caption>Slots of {d.name}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {d.slots.map((s) => (
+              <tr>
+                <th scope="row"><code>{s.name}</code></th>
+                <td class="docs-table__text"><InlineText text={s.description} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )
+  }
+
+  <h3 id="tokens">Tokens</h3>
+  <p>
+    Tokens used in the styles of {d.name} itself, found in its source when the
+    site is built. Components it renders bring their own.
+  </p>
+  {
+    tokens.length === 0 ? (
+      <p>No tokens.</p>
+    ) : (
+      <table class="docs-table">
+        <caption>Tokens used by {d.name}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Foundation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tokens.map((t) => (
+            <tr>
+              <th scope="row"><code>--{t.name}</code></th>
+              <td>
+                {t.foundation ? (
+                  <a href={`/foundations/${t.foundation.slug}`}>{t.foundation.title}</a>
+                ) : (
+                  'not a token of this system'
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  }
+</ComponentLayout>

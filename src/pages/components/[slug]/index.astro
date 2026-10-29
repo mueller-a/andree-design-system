@@ -1,0 +1,47 @@
+---
+/** Overview: Purpose, Anatomy, Code, Notes und Related. */
+import { render } from 'astro:content';
+import ComponentLayout from '../../../docs/ComponentLayout.astro';
+import DocSection from '../../../docs/DocSection.astro';
+import RuleId from '../../../docs/RuleId.astro';
+import { componentPaths, headingsOf, SECTIONS_FOR } from '../../../docs/component-pages';
+
+export async function getStaticPaths() {
+  return componentPaths();
+}
+
+const { doc, prev, next, all } = Astro.props;
+const { Content, headings } = await render(doc);
+Astro.locals.docSections = SECTIONS_FOR.overview;
+
+const related = doc.data.related
+  .map((slug) => all.find((c) => c.data.slug === slug))
+  .filter((c) => c !== undefined);
+
+const toc = [
+  ...SECTIONS_FOR.overview.flatMap((s) =>
+    headingsOf(headings, s)
+      .filter((h) => h.depth === 2)
+      .map((h) => ({ id: h.slug, text: h.text })),
+  ),
+  ...(related.length ? [{ id: 'related', text: 'Related' }] : []),
+];
+---
+
+<ComponentLayout doc={doc} subpage="overview" prev={prev} next={next} toc={toc}>
+  <Content components={{ DocSection, RuleId }} />
+  {
+    related.length > 0 && (
+      <>
+        <h2 id="related">Related</h2>
+        <ul role="list">
+          {related.map((r) => (
+            <li>
+              <a href={`/components/${r.data.slug}`}>{r.data.name}</a>: {r.data.summary}
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</ComponentLayout>

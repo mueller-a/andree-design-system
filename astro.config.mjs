@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import { remarkDocSections } from './src/docs/remark/doc-sections.mjs';
 
 /**
  * Das Repo ist Bibliothek und Website zugleich: `src/components`, `src/layouts`,
@@ -15,7 +16,7 @@ export default defineConfig({
   // Muss mit SITE_URL in src/docs/site.ts übereinstimmen.
   site: 'https://andree-design-system.vercel.app',
   output: 'static',
-  integrations: [mdx()],
+  integrations: [mdx({ remarkPlugins: [remarkDocSections] })],
   // Keine Syntaxhervorhebung: Shiki bringt eigene, fest eingebaute Farben mit,
   // die die Tokens umgehen und deren Kontrast in beiden Themes ungeprüft ist.
   markdown: {

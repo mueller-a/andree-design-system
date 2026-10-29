@@ -25,6 +25,8 @@ import { componentList, documentedComponents } from './components';
 import { foundations, SITE_URL } from './site';
 import { token, hasLightValue, tokensWithPrefix, toPx, mediaOverrides, type Theme } from './tokens';
 import { ratio, fmt } from './contrast';
+import DocSection from './DocSection.astro';
+import RuleId from './RuleId.astro';
 import {
   colourTokens,
   textTokens,
@@ -79,6 +81,8 @@ function htmlToMarkdown(html: string): string {
       // Eckige Klammern ohne Link dahinter brauchen keine Maskierung, sie
       // machen nur [confirm: …]-Stellen schwerer lesbar.
       .replace(/\\([[\]])/g, '$1')
+      // Leerraum am Zeilenende, etwa vor einem entfernten Kopier-Button.
+      .replace(/[ \t]+$/gm, '')
       .replace(/\n{3,}/g, '\n\n')
       .trim()
   );
@@ -91,7 +95,11 @@ async function mdxToHtml(doc: Doc): Promise<string> {
     container = await AstroContainer.create({ renderers });
   }
   const { Content } = await render(doc);
-  return container.renderToString(Content);
+  // Alle Abschnitte: Die Markdown-Fassung bleibt eine Datei je Komponente.
+  return container.renderToString(Content, {
+    props: { components: { DocSection, RuleId } },
+    locals: { docSections: 'all' },
+  });
 }
 
 /** Bricht ab, wenn die Ausgabe Reste enthält, die dort nichts zu suchen haben. */

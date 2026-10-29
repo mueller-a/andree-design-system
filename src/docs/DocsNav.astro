@@ -24,6 +24,10 @@ const { prefix, id } = Astro.props;
 const norm = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
 const path = norm(Astro.url.pathname);
 const current = (href: string) => (norm(href) === path ? 'page' : undefined);
+/* Eine Komponente gilt auch auf ihren Unterseiten (/rules, /properties,
+   /accessibility) als aktuell; die Leiste führt nur den einen Eintrag. */
+const currentComponent = (href: string) =>
+  path === norm(href) || path.startsWith(`${norm(href)}/`) ? 'page' : undefined;
 
 const entries = await componentList();
 const documented = entries.filter((e) => e.doc);
@@ -67,7 +71,7 @@ const pending = entries.length - documented.length;
               <a
                 class="docs-nav__link"
                 href={`/components/${doc!.data.slug}`}
-                aria-current={current(`/components/${doc!.data.slug}`)}
+                aria-current={currentComponent(`/components/${doc!.data.slug}`)}
               >
                 {doc!.data.name}
               </a>

@@ -1,0 +1,138 @@
+---
+/**
+ * Rahmen der vier Unterseiten einer Komponente. Über der Abschnittsleiste
+ * steht die Identität der Komponente (Breadcrumb, Name als h1, Ebene, Status,
+ * since, Summary, Import), auf allen Unterseiten gleich.
+ *
+ * Vier <nav> auf der Seite, alle eigens benannt: Documentation (Seitenleiste),
+ * Breadcrumb, Component sections, On this page.
+ */
+import type { CollectionEntry } from 'astro:content';
+import DocsLayout from './DocsLayout.astro';
+import Toc from './Toc.astro';
+import { subpagesOf, LABELS, type Subpage } from './component-pages';
+
+type Doc = CollectionEntry<'components'>;
+interface Props {
+  doc: Doc;
+  subpage: Subpage;
+  prev: Doc | null;
+  next: Doc | null;
+  toc: { id: string; text: string }[];
+}
+const { doc, subpage, prev, next, toc } = Astro.props;
+const d = doc.data;
+const sections = subpagesOf(doc);
+// Nicht als ein Template-String "import … from …": Astro hält das im
+// Frontmatter für eine Import-Anweisung und zieht es nach oben.
+const importLine = ['import', d.name, 'from', `'${d.import}';`].join(' ');
+const title = subpage === 'overview' ? d.name : `${d.name} ${LABELS[subpage].toLowerCase()}`;
+---
+
+<DocsLayout title={title} description={d.summary}>
+  {toc.length > 0 && <Toc slot="toc" items={toc} />}
+
+  <nav class="docs-breadcrumb" aria-label="Breadcrumb" data-doc-skip>
+    <ol role="list">
+      <li><a href="/#components">Components</a></li>
+      <li>
+        {
+          subpage === 'overview' ? (
+            <a href={`/components/${d.slug}`} aria-current="page">{d.name}</a>
+          ) : (
+            <a href={`/components/${d.slug}`}>{d.name}</a>
+          )
+        }
+      </li>
+    </ol>
+  </nav>
+
+  <article class="docs-section" data-doc>
+    <header class="docs-header">
+      <h1>{d.name}</h1>
+      <ul class="docs-chips" role="list">
+        <li class="docs-chip"><span class="visually-hidden">Layer: </span>{d.layer}</li>
+        <li class="docs-chip"><span class="visually-hidden">Status: </span>{d.status}</li>
+        <li class="docs-chip">since {d.since}</li>
+      </ul>
+      <p class="docs-lead">{d.summary}</p>
+    </header>
+
+    <section class="docs-import" aria-labelledby="import">
+      <h2 id="import" class="visually-hidden">Import</h2>
+      <div class="docs-import__row">
+        <pre><code data-import-line>{importLine}</code></pre>
+        <button type="button" class="docs-button" data-copy data-doc-skip hidden>
+          Copy import
+        </button>
+      </div>
+    </section>
+
+    <nav class="docs-sections" aria-label="Component sections" data-doc-skip>
+      <ul role="list">
+        {
+          sections.map((s) => (
+            <li>
+              <a href={s.href} aria-current={s.key === subpage ? 'page' : undefined}>
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="docs-body">
+      <slot />
+    </div>
+  </article>
+
+  <p class="visually-hidden" role="status" data-copy-status data-doc-skip></p>
+
+  <nav class="docs-pager" aria-label="Component pages" data-doc-skip>
+    <ul role="list">
+      {prev && <li><a href={`/components/${prev.data.slug}`}>Previous: {prev.data.name}</a></li>}
+      {next && <li><a href={`/components/${next.data.slug}`}>Next: {next.data.name}</a></li>}
+      <li><a href="/#components">All components</a></li>
+    </ul>
+  </nav>
+</DocsLayout>
+
+<script>
+  // Kopieren der Import-Zeile und der Regel-Kennungen. Ohne JavaScript
+  // bleiben beide markierbar. Der Erfolg geht an die Live-Region, nicht nur
+  // an eine Farbe; leeren und neu setzen, damit auch ein zweiter Klick
+  // angesagt wird.
+  const status = document.querySelector<HTMLElement>('[data-copy-status]');
+  const announce = (message: string) => {
+    if (!status) return;
+    status.textContent = '';
+    setTimeout(() => {
+      status.textContent = message;
+    }, 50);
+  };
+  const copy = async (text: string, done: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      announce(done);
+    } catch {
+      announce('Copying failed. Select the text and copy it by hand.');
+    }
+  };
+
+  if (navigator.clipboard) {
+    const importButton = document.querySelector<HTMLButtonElement>('[data-copy]');
+    const line = document.querySelector<HTMLElement>('[data-import-line]');
+    if (importButton && line) {
+      importButton.hidden = false;
+      importButton.addEventListener('click', () =>
+        copy(line.textContent ?? '', 'Import line copied to the clipboard.'),
+      );
+    }
+    for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy-rule]')) {
+      const id = button.dataset.copyRule ?? '';
+      button.hidden = false;
+      button.addEventListener('click', () => copy(id, `Rule ID ${id} copied to the clipboard.`));
+    }
+  }
+</script>
