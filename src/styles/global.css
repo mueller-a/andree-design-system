@@ -162,8 +162,9 @@ a:hover {
   outline: none;
 }
 
-/* Auf gelbem Grund (CTA-Band) invertiert der Fokus – sonst gelb auf gelb. */
-.home__cta :focus-visible {
+/* Auf gelbem Grund invertiert der Fokus, sonst stünde Gelb auf Gelb. Die
+   Klasse kommt auf den Container mit --mark-Fläche, z. B. ein CTA-Band. */
+.on-mark :focus-visible {
   color: var(--mark) !important;
   background-color: var(--mark-ink) !important;
   border-color: var(--mark) !important;
@@ -172,7 +173,7 @@ a:hover {
     0 4px var(--mark) !important;
 }
 
-.home__cta :focus-visible :where(*) {
+.on-mark :focus-visible :where(*) {
   color: var(--mark) !important;
   border-color: var(--mark) !important;
 }
