@@ -14,7 +14,7 @@ interface Props {
 }
 const {
   backHref = '/',
-  backLabel = '← All work',
+  backLabel = 'All work',
   kicker,
   title,
   lead,
@@ -24,7 +24,7 @@ const {
 ---
 
 <div class="case-hero">
-  <a class="case-hero__back" href={backHref}>{backLabel}</a>
+  <a class="case-hero__back" href={backHref}><span aria-hidden="true">← </span>{backLabel}</a>
   <p class="case-hero__kicker">{kicker}</p>
   <h1 class="case-hero__title">{title}</h1>
   <p class="case-hero__lead">{lead}</p>

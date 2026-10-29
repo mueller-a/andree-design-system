@@ -20,14 +20,14 @@ const {
   index,
   confidential,
   backHref = '/',
-  backLabel = '← All work',
+  backLabel = 'All work',
 } = Astro.props;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <header class="case-header">
-  <a class="case-header__back caps caps--accent" href={backHref}>{backLabel}</a>
+  <a class="case-header__back caps caps--accent" href={backHref}><span aria-hidden="true">← </span>{backLabel}</a>
 
   <p class="case-header__kind caps caps--wide">
     Case study {pad(index)} &middot; {client}
