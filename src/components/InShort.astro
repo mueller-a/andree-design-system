@@ -2,8 +2,10 @@
 /** Maximal 3 Punkte, zur Build-Zeit geprüft. */
 interface Props {
   points: string[];
+  /** Sichtbares Label über der Liste. Auf anderssprachigen Seiten übersetzen. */
+  label?: string;
 }
-const { points } = Astro.props;
+const { points, label = 'In short' } = Astro.props;
 if (points.length > 3) {
   throw new Error(
     `InShort: maximal 3 Punkte, ${points.length} übergeben. Für längere Listen eine normale Liste in Prose verwenden.`,
@@ -12,7 +14,7 @@ if (points.length > 3) {
 ---
 
 <div class="in-short">
-  <p class="in-short__label">In short</p>
+  <p class="in-short__label">{label}</p>
   <ul class="in-short__list" role="list">
     {
       points.map((point) => (
@@ -64,7 +66,7 @@ if (points.length > 3) {
   .in-short__dot {
     width: 9px;
     height: 9px;
-    margin-top: 8px;
+    margin-top: var(--space-2);
     background: var(--mark);
   }
 </style>
