@@ -47,14 +47,6 @@ meaning comes from the label. In the portfolio, `default` carries what a
 validation did not solve, at the end of a chapter, and `quiet` carries the
 confidentiality notice in the case study hero.
 
-### When not to use
-
-- To sum up the key points of a chapter, use InShort.
-- To show a verbatim quote, use Testimonial.
-- For a message the reader has to notice while the page is open. Callout is
-  static text and is not announced as a status message.
-  [confirm: whether the design system needs a component for status messages]
-
 ## Anatomy
 
 <Preview caption="Live preview, variant default.">
@@ -78,14 +70,40 @@ confidentiality notice in the case study hero.
 | `default` | full width of the container | `--text-body` | `--ink` |
 | `quiet` | at most `--measure-narrow` (520px) | `--text-body-xs` | `--text` |
 
-## Content
+## Rules
 
-- The label names the type of note in one to three words. The portfolio uses
-  "The limit" and "Confidential".
-- Write the label in sentence case. The capitals come from CSS, so the label
-  stays readable as words when styles are off.
-- [confirm: a maximum length for the body. The portfolio uses one paragraph of
-  two to three sentences.]
+### Name the kind of note in one to three words
+`callout.label.one-to-three-words`
+
+The label is what tells the reader what kind of note follows. The portfolio
+uses "The limit" and "Confidential".
+
+### Write the label in sentence case
+`callout.label.sentence-case`
+
+The capitals come from CSS, so the label stays readable as words when styles
+are off.
+
+### Keep the body to three sentences
+`callout.body.max-three-sentences`
+
+Longer passages stop being an aside and compete with the chapter text.
+
+### Do not use it to sum up a chapter
+`callout.usage.not-for-summaries`
+
+The key points of a chapter belong in InShort.
+
+### Do not use it for quotes
+`callout.usage.not-for-quotes`
+
+A verbatim quote belongs in Testimonial.
+
+### Do not use it for messages the reader has to notice
+`callout.usage.not-for-status-messages`
+
+Callout is static text and is not announced as a status message.
+[confirm: whether the design system needs a component for status messages]
 
 ## Accessibility
 

@@ -143,12 +143,18 @@ pnpm verify      # alles zusammen
 Pro Komponente eine MDX-Datei unter `content/components/<slug>.mdx`. Schema und
 die Definition der Ebenen (`foundation`, `primitive`, `pattern`, `portfolio`)
 stehen in `src/content.config.ts`. Der Fließtext hat genau diese Abschnitte, in
-dieser Reihenfolge: Purpose, Anatomy, Content (optional), Accessibility, Code,
+dieser Reihenfolge: Purpose, Anatomy, Rules (optional), Accessibility, Code,
 Notes (optional). Props und Slots stehen nur im Frontmatter.
 
+Unter `## Rules` steht jede normative Aussage als `###`-Regel mit einer
+Kennung direkt darunter, in der Form `<slug>.<bereich>.<kurzname>`, zum
+Beispiel `callout.body.max-three-sentences`. Die Kennung ist im ganzen Repo
+eindeutig, damit ein Werkzeug eine Regel zitieren kann.
+
 `pnpm docs:check` (`scripts/docs-check.mjs`) prüft, dass jede Komponente eine
-Doku hat, jede Doku auf eine Komponente zeigt, Slugs und `related` stimmen und
-jede dokumentierte Prop im `interface Props` steht. Noch nicht dokumentierte
+Doku hat, jede Doku auf eine Komponente zeigt, Slugs und `related` stimmen,
+Props in Name, Typ und Pflicht zum `interface Props` passen, die Abschnitte
+stimmen und jede Regel genau eine eindeutige Kennung hat. Noch nicht dokumentierte
 Komponenten stehen dort in `UNDOCUMENTED` und erzeugen nur eine Warnung. Wer
 eine Komponente dokumentiert, streicht sie aus der Liste.
 

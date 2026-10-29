@@ -38,12 +38,6 @@ related:
 
 InShort sums up a case study chapter in at most three points, in a box on `--surface` directly under the chapter’s lead sentence. Chapter renders it from its `inShort` prop.
 
-### When not to use
-
-- Inside a Chapter. Pass the points to Chapter’s `inShort` prop, which places InShort under the lead sentence.
-- For a single labelled note, such as a limit or a confidentiality notice, use Callout.
-- For more than three points. Use a plain list inside Prose.
-
 ## Anatomy
 
 1. **Box**: background `--surface`.
@@ -51,10 +45,31 @@ InShort sums up a case study chapter in at most three points, in a box on `--sur
 3. **List**: one item per point, colour `--ink`, size `--text-body-s`.
 4. **Marker**: a 9px square in `--mark` before each point, decorative only.
 
-## Content
+## Rules
 
-- At most three points. A fourth point stops the build with an error.
-- Each point in the portfolio is one sentence.
+### Pass at most three points
+
+`in-short.points.max-three`
+
+A fourth point stops the build with an error. For a longer list, use a plain list inside Prose.
+
+### Keep each point to one sentence
+
+`in-short.points.one-sentence`
+
+Every point in the portfolio is one sentence. [confirm: whether this is a rule or only the current practice]
+
+### Inside a Chapter, pass the points to Chapter
+
+`in-short.usage.through-chapter`
+
+Chapter’s `inShort` prop renders InShort itself and places it under the lead sentence.
+
+### Do not use it for a single note
+
+`in-short.usage.not-for-single-notes`
+
+A single labelled note, such as a limit or a confidentiality notice, belongs in Callout.
 
 ## Accessibility
 

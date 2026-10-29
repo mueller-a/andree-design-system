@@ -50,11 +50,6 @@ related: []
 
 SiteHeader is the top of every page: the site name as a link home, the primary navigation and the theme toggle, in one row that wraps on narrow screens. `Base.astro` renders it on every page, directly after the skip link.
 
-### When not to use
-
-- On pages built with `Base`, `TextPage`, `CaseStudy` or `CaseStudyV2`. They already render SiteHeader, a second one would add a second banner.
-- For navigation inside a page, such as a table of contents. [confirm: which component covers in-page navigation]
-
 ## Anatomy
 
 1. **Header**: a `<header>` with a bottom border in `--border`. Its content sits in `.wrap` from `global.css`.
@@ -72,10 +67,43 @@ The navigation item that matches `path` gets `aria-current="page"`, the accent c
 - Every other item is current on its own path and every path below it.
 - An item is also current on every prefix listed for its `href` in `aliases`, and below it. `{ '/': ['/work'] }` marks the `/` item on `/work/prince` but not on `/workshop`.
 
-## Content
+## Rules
 
-- Navigation labels are single words in the portfolio: Work, Profile, Accessibility, Contact.
-- Write labels in sentence case. The capitals come from CSS.
+### Render it once per page
+
+`site-header.usage.once-per-page`
+
+`Base`, `TextPage`, `CaseStudy` and `CaseStudyV2` already render SiteHeader. A second one would add a second banner.
+
+### Do not use it for navigation inside a page
+
+`site-header.usage.not-for-in-page-navigation`
+
+SiteHeader is the site-wide header, not a table of contents. [confirm: which component covers in-page navigation]
+
+### Load reset.css and global.css
+
+`site-header.setup.global-styles`
+
+SiteHeader needs `reset.css` for the list reset and `global.css` for `.wrap` and the focus style. `Base` loads both.
+
+### List extra paths for a section in aliases
+
+`site-header.nav.aliases`
+
+When a navigation item stands for a section that lives under another path, such as a work overview at `/` with case studies under `/work`, list that path in `aliases`, or in `navAliases` on `Base`.
+
+### Keep navigation labels to one word
+
+`site-header.nav.one-word-labels`
+
+The portfolio uses Work, Profile, Accessibility and Contact. [confirm: whether this is a rule or only the current practice]
+
+### Write navigation labels in sentence case
+
+`site-header.nav.sentence-case`
+
+The capitals come from CSS.
 
 ## Accessibility
 
@@ -170,4 +198,3 @@ const nav = [
 - Until 0.3.0, `/` was current on every path under `/work`, written into the component. Since 0.3.0 that takes `aliases={{ '/': ['/work'] }}`, or `navAliases` on `Base` and the layouts built on it.
 - Until 0.3.0, ThemeToggle was a toggle with `aria-pressed`, which announced the light theme as off while it was on.
 - The skip link is not part of SiteHeader. `Base.astro` renders SkipLink before it.
-- SiteHeader needs `reset.css` for the list reset and `global.css` for `.wrap` and the focus style.

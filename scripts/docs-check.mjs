@@ -15,6 +15,12 @@
  * 7. docs/ (llms.txt, Markdown je Komponente und Foundation) entspricht dem,
  *    was `pnpm docs:build` jetzt erzeugen würde. Sonst driften Quelle und
  *    ausgelieferte Fassung auseinander.
+ * 8. Jede ###-Regel unter `## Rules` hat genau eine Kennung (eine Zeile nur
+ *    aus `<slug>.<bereich>.<kurzname>` direkt unter der Überschrift), sie
+ *    beginnt mit dem slug, und keine Kennung kommt im Repo zweimal vor.
+ * 9. Nur die Abschnitte Purpose, Anatomy, Rules, Accessibility, Code, Notes,
+ *    in dieser Reihenfolge; Purpose, Anatomy, Accessibility und Code Pflicht.
+ *    Die Komponentenseiten teilen den Inhalt nach diesen Namen auf.
  *
  * Punkt 1 gilt schrittweise: Komponenten in content/undocumented.json erzeugen
  * nur eine Warnung. Die Liste darf nur schrumpfen. Wer eine Komponente
@@ -135,7 +141,7 @@ for (const file of docFiles) {
     errors.push(`${file}: Frontmatter ist kein gültiges YAML (${err.message})`);
     continue;
   }
-  docs.push({ file, data });
+  docs.push({ file, data, raw });
 }
 
 // 2 + 3: Verweis auf die Komponente, Slug eindeutig und gleich Dateiname.
@@ -230,25 +236,77 @@ for (const { file, data } of docs) {
   }
 }
 
+// 8 + 9: Abschnitte und Regel-Kennungen im MDX-Körper.
+const SECTIONS = ['Purpose', 'Anatomy', 'Rules', 'Accessibility', 'Code', 'Notes'];
+const REQUIRED = ['Purpose', 'Anatomy', 'Accessibility', 'Code'];
+const ruleIds = new Map();
+for (const { file, data, raw } of docs) {
+  // Codeblöcke entfernen, damit Beispiele nicht als Überschriften zählen.
+  const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, '').replace(/^```[\s\S]*?^```/gm, '');
+  const parts = body.split(/^## (.+)$/m);
+  const names = [];
+  const sections = new Map();
+  for (let i = 1; i < parts.length; i += 2) {
+    names.push(parts[i].trim());
+    sections.set(parts[i].trim(), parts[i + 1]);
+  }
+  const unknown = names.filter((n) => !SECTIONS.includes(n));
+  if (unknown.length) errors.push(`${file}: unbekannte Abschnitte ${unknown.map((n) => `"## ${n}"`).join(', ')}`);
+  for (const r of REQUIRED) if (!names.includes(r)) errors.push(`${file}: Pflichtabschnitt "## ${r}" fehlt`);
+  const known = names.filter((n) => SECTIONS.includes(n));
+  const ordered = [...known].sort((a, b) => SECTIONS.indexOf(a) - SECTIONS.indexOf(b));
+  if (known.join() !== ordered.join()) errors.push(`${file}: Abschnitte nicht in der Reihenfolge ${SECTIONS.join(', ')}`);
+
+  const rules = sections.get('Rules');
+  if (rules === undefined) continue;
+  const idRe = new RegExp(`^${escapeRe(data.slug)}\\.[a-z0-9]+(-[a-z0-9]+)*\\.[a-z0-9]+(-[a-z0-9]+)*$`);
+  const blocks = rules.split(/^### (.+)$/m);
+  if (blocks.length < 3) errors.push(`${file}: "## Rules" enthält keine ###-Regel`);
+  for (let i = 1; i < blocks.length; i += 2) {
+    const title = blocks[i].trim();
+    const lines = blocks[i + 1].split('\n').map((l) => l.trim()).filter(Boolean);
+    const idLines = lines.filter((l) => /^`[^`]+`$/.test(l));
+    if (!lines.length || !/^`[^`]+`$/.test(lines[0]) || idLines.length !== 1) {
+      errors.push(`${file}: Regel "${title}" braucht genau eine Kennung direkt unter der Überschrift`);
+      continue;
+    }
+    const id = idLines[0].slice(1, -1);
+    if (!idRe.test(id)) {
+      errors.push(`${file}: Kennung "${id}" hat nicht die Form ${data.slug}.<bereich>.<kurzname>`);
+    }
+    if (ruleIds.has(id)) errors.push(`${file}: Kennung "${id}" gibt es schon in ${ruleIds.get(id)}`);
+    else ruleIds.set(id, file);
+  }
+}
+
 // 7: committete Fassung gegen frisch erzeugte.
-const fresh = await generateDocs();
-const committed = await readCommittedDocs();
-const stale = [];
-for (const [path, content] of fresh) {
-  if (!committed.has(path)) stale.push(`${path} fehlt`);
-  else if (committed.get(path) !== content) stale.push(`${path} veraltet`);
+// Scheitert der Build, die übrigen Befunde trotzdem melden: gerade bei
+// kaputtem MDX sind sie die hilfreichen.
+let fresh = null;
+try {
+  fresh = await generateDocs();
+} catch (err) {
+  errors.push(`docs/ konnte nicht erzeugt werden (${err.message}), Abgleich übersprungen`);
 }
-for (const path of committed.keys()) {
-  if (!fresh.has(path)) stale.push(`${path} gehört zu keiner Quelle mehr`);
-}
-if (stale.length) {
-  errors.push(`docs/ passt nicht zur Quelle (${stale.join(', ')}). \`pnpm docs:build\` ausführen und committen.`);
+if (fresh) {
+  const committed = await readCommittedDocs();
+  const stale = [];
+  for (const [path, content] of fresh) {
+    if (!committed.has(path)) stale.push(`${path} fehlt`);
+    else if (committed.get(path) !== content) stale.push(`${path} veraltet`);
+  }
+  for (const path of committed.keys()) {
+    if (!fresh.has(path)) stale.push(`${path} gehört zu keiner Quelle mehr`);
+  }
+  if (stale.length) {
+    errors.push(`docs/ passt nicht zur Quelle (${stale.join(', ')}). \`pnpm docs:build\` ausführen und committen.`);
+  }
 }
 
 for (const w of warnings) console.warn(`⚠ ${w}`);
 for (const e of errors) console.error(`✗ ${e}`);
 console.warn(
-  `\n${docs.length} Doku-Dateien, ${componentNames.length} Komponenten, ` +
+  `\n${docs.length} Doku-Dateien, ${componentNames.length} Komponenten, ${ruleIds.size} Regeln, ` +
     `${errors.length} Fehler, ${warnings.length} Warnungen.`,
 );
 process.exit(errors.length > 0 ? 1 : 0);
