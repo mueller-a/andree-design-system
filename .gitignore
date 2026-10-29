@@ -1,0 +1,25 @@
+# Abhängigkeiten
+node_modules/
+
+# Build-Ausgabe
+dist/
+.astro/
+.vercel/
+
+# Umgebungsvariablen
+.env
+.env.*
+!.env.example
+
+# System
+.DS_Store
+*.log
+pnpm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Lokales Material
+.claude/

@@ -1,0 +1,11 @@
+# pnpm ab v10 blockiert Postinstall-Scripts standardmäßig.
+# Nur diese Pakete dürfen bei der Installation bauen:
+#   - esbuild: platziert seine native Binary (von Astro/Vite gebraucht)
+#   - sharp:   Bildoptimierung für Astros <Image>
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+
+allowBuilds:
+  esbuild: true
+  sharp: true
