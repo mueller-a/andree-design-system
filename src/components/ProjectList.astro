@@ -30,8 +30,10 @@ const Heading = `h${headingLevel}` as const;
               &middot; <span>{entry.data.period}</span>
             </p>
             <Heading class="card__title">{entry.data.title}</Heading>
-            <p class="card__summary">{entry.data.summary}</p>
-            <p class="caps caps--faint card__role">{entry.data.role}</p>
+            <div class="card__lede">
+              <p class="card__summary">{entry.data.summary}</p>
+              <p class="card__role">{entry.data.role}</p>
+            </div>
             <ul class="card__outcomes" role="list">
               {entry.data.outcome.map((item) => (
                 <li>
@@ -62,7 +64,7 @@ const Heading = `h${headingLevel}` as const;
                   formats={['avif', 'webp']}
                   fallbackFormat="png"
                   widths={[360, 680, 1000]}
-                  sizes="(min-width: 64rem) 340px, 100vw"
+                  sizes="(min-width: 64rem) 520px, 100vw"
                   loading="lazy"
                   decoding="async"
                   pictureAttributes={
@@ -78,7 +80,7 @@ const Heading = `h${headingLevel}` as const;
                     formats={['avif', 'webp']}
                     fallbackFormat="png"
                     widths={[360, 680, 1000]}
-                    sizes="(min-width: 64rem) 340px, 100vw"
+                    sizes="(min-width: 64rem) 520px, 100vw"
                     loading="lazy"
                     decoding="async"
                     pictureAttributes={{ class: 'card__cover-variant card__cover-variant--dark' }}
@@ -103,7 +105,7 @@ const Heading = `h${headingLevel}` as const;
 
   .card {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(0, 1fr) clamp(380px, 32vw, 520px);
     gap: var(--space-12);
     align-items: end;
     padding: var(--space-10);
@@ -155,8 +157,20 @@ const Heading = `h${headingLevel}` as const;
     line-height: 1.6;
   }
 
+  /* Summary und Rolle als eine Gruppe: die Rolle ist Beisatz zur Summary,
+     kein eigener Block, daher der engere Abstand. */
+  .card__lede {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
   .card__role {
     margin: 0;
+    max-width: 52ch;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--muted);
   }
 
   /* Ergebnisse zwischen Summary (step-0) und Tags (step--2), Marke wie in
@@ -199,7 +213,8 @@ const Heading = `h${headingLevel}` as const;
   }
 
   .card__cover {
-    block-size: 190px;
+    block-size: auto;
+    aspect-ratio: 4 / 3;
     background: var(--placeholder);
     overflow: hidden;
   }
