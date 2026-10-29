@@ -4,9 +4,11 @@ import type { CollectionEntry } from 'astro:content';
 
 /**
  * Ausgewählte Arbeiten als Karten (Dark Studio): pro Karte ein einziger Link,
- * links Kennung/Titel/Summary/Tags, rechts das Cover. Bei `gate !== 'none'`
- * bleibt ein beschriftetes Flächenraster statt des echten Covers, unabhängig
- * davon, ob der Kundenname (`confidential`) genannt werden darf.
+ * links Kennzeile (Kunde · Branche · Zeitraum), Titel, Summary, Rolle, Outcomes
+ * und Tags, rechts das Cover. Bei `gate !== 'none'` bleibt ein beschriftetes
+ * Flächenraster statt des echten Covers, unabhängig davon, ob der Kundenname
+ * (`confidential`) genannt werden darf. Das Gate betrifft nur das Cover, die
+ * Textfelder bleiben sichtbar.
  */
 interface Props {
   entries: CollectionEntry<'work'>[];
@@ -24,10 +26,20 @@ const Heading = `h${headingLevel}` as const;
         <a class="card" href={`/work/${entry.id}`}>
           <div class="card__body">
             <p class="caps caps--accent card__kind">
-              {entry.data.client} &middot; {entry.data.period}
+              <span>{entry.data.client}</span> &middot; <span>{entry.data.sector}</span>{' '}
+              &middot; <span>{entry.data.period}</span>
             </p>
             <Heading class="card__title">{entry.data.title}</Heading>
             <p class="card__summary">{entry.data.summary}</p>
+            <p class="caps caps--faint card__role">{entry.data.role}</p>
+            <ul class="card__outcomes" role="list">
+              {entry.data.outcome.map((item) => (
+                <li>
+                  <span class="card__outcome-square" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
             {entry.data.tags.length > 0 && (
               <ul class="card__tags" role="list">
                 {entry.data.tags.map((tag) => (
@@ -115,6 +127,11 @@ const Heading = `h${headingLevel}` as const;
     margin: 0;
   }
 
+  /* Umbruch nur an den Trennpunkten, nie mitten in Kunde, Branche oder Zeitraum. */
+  .card__kind span {
+    white-space: nowrap;
+  }
+
   .card__title {
     margin: 0;
     font-size: var(--step-3);
@@ -136,6 +153,37 @@ const Heading = `h${headingLevel}` as const;
     max-width: 52ch;
     color: var(--text);
     line-height: 1.6;
+  }
+
+  .card__role {
+    margin: 0;
+  }
+
+  /* Ergebnisse zwischen Summary (step-0) und Tags (step--2), Marke wie in
+     OutcomeList.astro, hier in --accent. */
+  .card__outcomes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    max-width: 52ch;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .card__outcomes li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: baseline;
+  }
+
+  .card__outcome-square {
+    inline-size: 6px;
+    block-size: 6px;
+    background: var(--accent);
+    flex: none;
+    translate: 0 -2px;
   }
 
   .card__tags {
