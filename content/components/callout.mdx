@@ -16,10 +16,10 @@ props:
     required: true
     description: Visible label above the body, set in mono capitals.
   - name: variant
-    type: "'limit' | 'confidential'"
+    type: "'default' | 'quiet'"
     required: false
-    default: "'limit'"
-    description: "`limit` runs full width at body size, `confidential` caps the width at 520px and sets the body one size smaller."
+    default: "'default'"
+    description: "`default` runs full width at body size, `quiet` caps the width at `--measure-narrow` and sets the body one size smaller."
 slots:
   - name: default
     description: The body of the note, usually one or more paragraphs.
@@ -41,9 +41,10 @@ import Callout from '../../src/components/Callout.astro';
 ## Purpose
 
 Callout sets one short passage apart from the text around it and names what
-kind of passage it is. In the portfolio it carries two kinds of note: what a
-validation did not solve, at the end of a chapter, and the confidentiality
-notice in the case study hero.
+kind of passage it is. The variants only change width, size and colour, the
+meaning comes from the label. In the portfolio, `default` carries what a
+validation did not solve, at the end of a chapter, and `quiet` carries the
+confidentiality notice in the case study hero.
 
 ### When not to use
 
@@ -55,11 +56,11 @@ notice in the case study hero.
 
 ## Anatomy
 
-<Callout label="The limit" variant="limit">
+<Callout label="The limit">
   <p>Access restrictions meant parts of the underlying data were not visible to developers on the team.</p>
 </Callout>
 
-<Callout label="Confidential" variant="confidential">
+<Callout label="Confidential" variant="quiet">
   <p>Client work under NDA. Some surfaces are abstracted.</p>
 </Callout>
 
@@ -69,8 +70,8 @@ notice in the case study hero.
 
 | Variant | Width | Body size | Body colour |
 | --- | --- | --- | --- |
-| `limit` (default) | full width of the container | `--text-body` | `--ink` |
-| `confidential` | at most 520px | 1rem | `--text` |
+| `default` | full width of the container | `--text-body` | `--ink` |
+| `quiet` | at most `--measure-narrow` (520px) | `--text-body-xs` | `--text` |
 
 ## Content
 
@@ -113,7 +114,7 @@ measured on the portfolio's colour table. Other backgrounds are not verified.
 
 ### Let the text grow and wrap
 
-All text sizes are in rem and the `confidential` variant only caps the width,
+All text sizes are in rem and the `quiet` variant only caps the width,
 so text scales with the browser setting and wraps at 320px without horizontal
 scrolling.
 
@@ -147,7 +148,7 @@ Realistic, at the end of a chapter in a case study:
 import Callout from '@andree/design-system/components/Callout.astro';
 ---
 
-<Callout label="The limit" variant="limit">
+<Callout label="The limit">
   <p>
     Access restrictions meant parts of the underlying data were not
     visible to developers on the team. That slowed feature development
@@ -159,10 +160,8 @@ import Callout from '@andree/design-system/components/Callout.astro';
 
 ## Notes
 
-- The variant names describe the two portfolio uses, not a visual role.
-  [confirm: whether to rename them to neutral names before other projects use
-  Callout]
-- The `confidential` variant sets 520px, 1rem and a 0.25rem padding directly
-  instead of using tokens.
-- CaseHero renders a `confidential` Callout itself when it receives a
-  confidentiality note.
+- Until 0.3.0 the variants were called `limit` and `confidential`, after
+  their portfolio uses. `limit` became `default`, `confidential` became
+  `quiet`.
+- CaseHero renders a `quiet` Callout labelled "Confidential" itself when it
+  receives a confidentiality note.

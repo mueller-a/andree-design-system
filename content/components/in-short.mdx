@@ -4,7 +4,7 @@ slug: in-short
 layer: portfolio
 status: draft
 since: "0.1.0"
-summary: A short list of up to three points under a fixed "In short" label, summing up a case study chapter.
+summary: A short list of up to three points under a small label, summing up a case study chapter.
 import: "@andree/design-system/components/InShort.astro"
 tags:
   - case-study
@@ -15,6 +15,11 @@ props:
     type: string[]
     required: true
     description: The points in display order, at most three.
+  - name: label
+    type: string
+    required: false
+    default: "'In short'"
+    description: Visible label above the list, to be translated on pages in other languages.
 slots: []
 a11y:
   keyboard: none
@@ -43,7 +48,7 @@ from its `inShort` prop.
   InShort under the lead sentence.
 - For a single labelled note, such as a limit or a confidentiality notice,
   use Callout.
-- For more than three points. [confirm: which component takes a longer list]
+- For more than three points. Use a plain list inside Prose.
 
 ## Anatomy
 
@@ -55,15 +60,14 @@ from its `inShort` prop.
 />
 
 1. **Box**: background `--surface`.
-2. **Label**: the fixed text "In short" in mono capitals, colour `--muted`.
+2. **Label**: "In short" unless `label` says otherwise, in mono capitals,
+   colour `--muted`.
 3. **List**: one item per point, colour `--ink`, size `--text-body-s`.
 4. **Marker**: a 9px square in `--mark` before each point, decorative only.
 
 ## Content
 
-- At most three points. The limit is documented in the component, not
-  enforced: a fourth point renders. The approach chapter of the PRINCE case
-  study currently passes four.
+- At most three points. A fourth point stops the build with an error.
 - Each point in the portfolio is one sentence.
 
 ## Accessibility
@@ -82,11 +86,11 @@ and is hidden from assistive technology.
 
 **WCAG:** 1.1.1 Non-text Content
 
-### Use it on English pages only
+### Translate the label on pages in other languages
 
-The label "In short" is fixed English text without its own language
-attribute, so on a page in another language it is read with the wrong
-pronunciation.
+The default label "In short" is English and carries no language attribute of
+its own, so on a page in another language it is read with the wrong
+pronunciation unless `label` replaces it.
 
 **WCAG:** 3.1.2 Language of Parts
 
@@ -147,8 +151,9 @@ import Chapter from '@andree/design-system/components/Chapter.astro';
 
 ## Notes
 
-- InShort is `portfolio` rather than `primitive` because its label is fixed
-  to "In short" and it is built to sit under a chapter's lead sentence.
-  Making the label a prop would move it towards `primitive`.
-- Marker size, marker offset and the 22px marker column are set in px
-  instead of tokens.
+- Until 0.3.0 the label was fixed to "In short" and the three-point limit
+  was not enforced.
+- InShort is still filed as `portfolio`: it is built to sit under a
+  chapter's lead sentence. [confirm: whether InShort moves to `primitive` now
+  that the label is a prop]
+- Marker size and the 22px marker column are set in px instead of tokens.

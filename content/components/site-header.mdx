@@ -23,6 +23,11 @@ props:
     type: NavItem[]
     required: true
     description: "Navigation items in display order, each `{ href: string; label: string }`."
+  - name: aliases
+    type: Record<string, string[]>
+    required: false
+    default: "{}"
+    description: Extra path prefixes per navigation `href` that also mark that item as the current page.
 slots: []
 a11y:
   keyboard: "Tab moves to the home link, each navigation link and the theme toggle, in that order. Enter follows a link. Enter or Space switches the theme."
@@ -35,6 +40,7 @@ a11y:
     - 2.4.3 Focus Order
     - 2.4.4 Link Purpose (In Context)
     - 2.4.7 Focus Visible
+    - 2.5.3 Label in Name
     - 2.5.8 Target Size (Minimum)
     - 4.1.2 Name, Role, Value
 related: []
@@ -82,8 +88,11 @@ accent colour and a 2px underline in `--mark`. Matching works like this:
 
 - A trailing slash on the path is ignored.
 - `mailto:` and `http` links are never current.
-- `/` is current on `/` and on every path under `/work`.
+- `/` is current on `/` only.
 - Every other item is current on its own path and every path below it.
+- An item is also current on every prefix listed for its `href` in
+  `aliases`, and below it. `{ '/': ['/work'] }` marks the `/` item on
+  `/work/prince` but not on `/workshop`.
 
 ## Content
 
@@ -132,12 +141,14 @@ apart. Smaller gaps or larger link text change that.
 
 **WCAG:** 2.5.8 Target Size (Minimum)
 
-### Make the theme toggle's name and state agree
+### Let the theme toggle say what it does, starting with its visible text
 
-A screen reader announces the toggle's visible label together with its
-pressed state, so the two have to describe the same theme.
+The toggle is a plain button without a pressed state. Its visible text names
+the active theme and a visually hidden suffix names the action, so the
+accessible name reads "Dark theme, switch to light" and starts with what is
+on screen.
 
-**WCAG:** 4.1.2 Name, Role, Value
+**WCAG:** 4.1.2 Name, Role, Value, 2.5.3 Label in Name
 
 ### Let the header wrap instead of scroll
 
@@ -170,7 +181,8 @@ import SiteHeader from '@andree/design-system/components/SiteHeader.astro';
 />
 ```
 
-Realistic, as `Base.astro` renders it with the portfolio's navigation:
+Realistic, with the portfolio's navigation, whose work overview lives at `/`.
+Pages built with `Base` pass the aliases as `navAliases` instead:
 
 ```astro
 ---
@@ -184,17 +196,21 @@ const nav = [
 ];
 ---
 
-<SiteHeader path={Astro.url.pathname} siteName="Andree Joachim Müller" nav={nav} />
+<SiteHeader
+  path={Astro.url.pathname}
+  siteName="Andree Joachim Müller"
+  nav={nav}
+  aliases={{ '/': ['/work'] }}
+/>
 ```
 
 ## Notes
 
-- The rule that makes `/` current on every path under `/work` is written into
-  the component. It fits the portfolio, where the work overview lives at `/`.
-  In another project it marks the first item as current on any `/work` page.
-- ThemeToggle currently breaks the rule above on name and state: in the light
-  theme it reads "Light" with `aria-pressed="false"`, which announces the
-  light theme as off while it is on.
+- Until 0.3.0, `/` was current on every path under `/work`, written into the
+  component. Since 0.3.0 that takes `aliases={{ '/': ['/work'] }}`, or
+  `navAliases` on `Base` and the layouts built on it.
+- Until 0.3.0, ThemeToggle was a toggle with `aria-pressed`, which announced
+  the light theme as off while it was on.
 - The skip link is not part of SiteHeader. `Base.astro` renders SkipLink
   before it.
 - SiteHeader needs `reset.css` for the list reset and `global.css` for
