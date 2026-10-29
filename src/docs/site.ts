@@ -44,7 +44,7 @@ export const footerNav: NavItem[] = [
 /** Foundations in Navigationsreihenfolge, zugleich Kacheln auf der Startseite. */
 export const foundations = [
   { slug: 'colour', title: 'Colour', summary: 'Colour tokens in both themes and the contrast of every text colour on every surface.' },
-  { slug: 'typography', title: 'Typography', summary: 'Font families, weights, the general step scale and the 18 case study sizes, with specimens.' },
+  { slug: 'typography', title: 'Typography', summary: 'Font families, weights, the general step scale and the 18 case study sizes.' },
   { slug: 'spacing', title: 'Spacing', summary: 'The 4px-based space scale, from 4 to 128px.' },
   { slug: 'layout', title: 'Layout', summary: 'Measures, frame width, gutter, columns, the rail and the radius.' },
   { slug: 'motion', title: 'Motion', summary: 'Durations and easing, and how reduced motion overrides them.' },

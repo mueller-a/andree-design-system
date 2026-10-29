@@ -5,6 +5,7 @@
  * Verwendungszweck, übersetzt aus den Kommentaren in tokens.css, sowie
  * Gewicht und Zeilenhöhe der --text-Stufen aus der Spezifikation.
  */
+import { token, pxRange, fontSizeRules } from './tokens';
 
 export const colourTokens: [string, string][] = [
   ['mark', 'Yellow as a surface: call to action band, markers, dots, quotation marks. Decorative only.'],
@@ -81,3 +82,34 @@ export const motionTokens: [string, string][] = [
   ['motion-base', 'Default transitions, such as hover states on cards and buttons.'],
   ['ease', 'Easing curve for all transitions.'],
 ];
+
+/** "44px" oder "44px to 88px", aus einem festen Wert oder einem clamp(). */
+export function sizeRange(value: string): string {
+  const px = (n: number | null) => (n === null ? 'n/a' : `${Math.round(n * 100) / 100}px`);
+  const { min, max } = pxRange(value);
+  return min === max ? px(min) : `${px(min)} to ${px(max)}`;
+}
+
+/**
+ * Wo Komponenten bei einer --text-Stufe ein anderes Gewicht oder eine andere
+ * Zeilenhöhe setzen als die Spezifikation, zur Build-Zeit aus dem CSS.
+ */
+export function specDeviations() {
+  const weightValue = (w: string) => {
+    const m = w.match(/^var\(--([\w-]+)\)$/);
+    return m ? token(m[1]) : w;
+  };
+  return fontSizeRules().flatMap((rule) => {
+    const spec = caseScale.find(([name]) => `text-${name}` === rule.size);
+    if (!spec) return [];
+    const [name, weight, lh] = spec;
+    const out = [];
+    if (rule.weight && weightValue(rule.weight) !== weight) {
+      out.push({ file: rule.file, token: name, what: 'weight', spec: weight, actual: weightValue(rule.weight) });
+    }
+    if (lh && rule.lineHeight && rule.lineHeight !== lh) {
+      out.push({ file: rule.file, token: name, what: 'line height', spec: lh, actual: rule.lineHeight });
+    }
+    return out;
+  });
+}

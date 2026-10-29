@@ -29,7 +29,9 @@ function block(css: string, selector: string): string {
 function declarations(body: string): Map<string, string> {
   const out = new Map<string, string>();
   for (const m of body.matchAll(/--([\w-]+)\s*:\s*([^;]+);/g)) {
-    out.set(m[1], m[2].replace(/\s+/g, ' ').trim());
+    // Mehrzeilige Werte (z. B. --placeholder) auf eine Zeile, ohne Leerraum
+    // direkt innerhalb der Klammern.
+    out.set(m[1], m[2].replace(/\s+/g, ' ').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').trim());
   }
   return out;
 }

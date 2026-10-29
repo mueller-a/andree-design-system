@@ -8,8 +8,8 @@
  */
 import FoundationLayout from '../../docs/FoundationLayout.astro';
 import TableScroll from '../../docs/TableScroll.astro';
-import { token, tokensWithPrefix, pxRange, fontSizeRules } from '../../docs/tokens';
-import { families, stepUse, caseScale } from '../../docs/foundation-data';
+import { token, tokensWithPrefix } from '../../docs/tokens';
+import { families, stepUse, caseScale, sizeRange, specDeviations } from '../../docs/foundation-data';
 
 const weights = tokensWithPrefix('weight-');
 
@@ -19,32 +19,12 @@ const missing = tokensWithPrefix('text-').filter((n) => !caseScale.some(([s]) =>
 if (missing.length) throw new Error(`typography: --${missing.join(', --')} fehlt in der Tabelle`);
 
 /* Abweichungen der Komponenten von der Spezifikation. */
-const weightValue = (w: string) => {
-  const m = w.match(/^var\(--([\w-]+)\)$/);
-  return m ? token(m[1]) : w;
-};
-const deviations = fontSizeRules().flatMap((rule) => {
-  const spec = caseScale.find(([name]) => `text-${name}` === rule.size);
-  if (!spec) return [];
-  const [name, weight, lh] = spec;
-  const out = [];
-  if (rule.weight && weightValue(rule.weight) !== weight) {
-    out.push({ file: rule.file, token: name, what: 'weight', spec: weight, actual: weightValue(rule.weight) });
-  }
-  if (lh && rule.lineHeight && rule.lineHeight !== lh) {
-    out.push({ file: rule.file, token: name, what: 'line height', spec: lh, actual: rule.lineHeight });
-  }
-  return out;
-});
+const deviations = specDeviations();
 
 const leading = tokensWithPrefix('leading-');
 const tracking = tokensWithPrefix('tracking-');
 
-const px = (n: number | null) => (n === null ? 'n/a' : `${Math.round(n * 100) / 100}px`);
-const range = (value: string) => {
-  const { min, max } = pxRange(value);
-  return min === max ? px(min) : `${px(min)} to ${px(max)}`;
-};
+const range = sizeRange;
 const SAMPLE = 'Readable at every size';
 ---
 
