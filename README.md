@@ -81,9 +81,10 @@ Das Paket ist noch nicht vollständig app-agnostisch:
 
 - `CaseStudy.astro`, `CaseStudyV2.astro` und `ProjectList.astro` erwarten eine
   Astro-Content-Collection namens `work` mit dem Schema aus der
-  `content.config.ts` des Portfolios. Deshalb meldet `pnpm check` in diesem Repo
-  für genau diese drei Dateien Typfehler: Hier gibt es keine Collection `work`.
-  In einer App mit dieser Collection laufen sie fehlerfrei.
+  `content.config.ts` des Portfolios. Damit `pnpm check` in diesem Repo grün
+  bleibt, definiert `src/content.config.ts` eine leere Collection `work` mit
+  einer Kopie dieses Schemas. Ändert sich das Schema im Portfolio, muss die
+  Kopie nachgezogen werden.
 - `GatedImage.astro` und `src/lib/access.ts` implementieren ein Cookie-basiertes
   Zugangsgate. Mechanisch generisch, inhaltlich für den Zugangscode-Ablauf des
   Portfolios entstanden. Gültige Codes kommen aus `ACCESS_CODES` in der Umgebung
@@ -96,11 +97,29 @@ Callbacks statt konkreter Collection-Typen annehmen.
 
 ```bash
 pnpm install
-pnpm dev     # Doku-Seite (sobald src/pages existiert)
+pnpm dev         # Doku-Seite (sobald src/pages existiert)
 pnpm build
 pnpm check
 pnpm lint
+pnpm docs:check  # Doku gegen Komponenten-Code prüfen
+pnpm verify      # alles zusammen
 ```
+
+## Dokumentation
+
+Pro Komponente eine MDX-Datei unter `content/components/<slug>.mdx`. Schema und
+die Definition der Ebenen (`foundation`, `primitive`, `pattern`, `portfolio`)
+stehen in `src/content.config.ts`. Der Fließtext hat genau diese Abschnitte, in
+dieser Reihenfolge: Purpose, Anatomy, Content (optional), Accessibility, Code,
+Notes (optional). Props und Slots stehen nur im Frontmatter.
+
+`pnpm docs:check` (`scripts/docs-check.mjs`) prüft, dass jede Komponente eine
+Doku hat, jede Doku auf eine Komponente zeigt, Slugs und `related` stimmen und
+jede dokumentierte Prop im `interface Props` steht. Noch nicht dokumentierte
+Komponenten stehen dort in `UNDOCUMENTED` und erzeugen nur eine Warnung. Wer
+eine Komponente dokumentiert, streicht sie aus der Liste.
+
+`content/` liegt außerhalb von `files` und wird nicht mit ausgeliefert.
 
 ## Versionen
 
