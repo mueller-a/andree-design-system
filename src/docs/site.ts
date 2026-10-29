@@ -27,17 +27,12 @@ export const site = {
   ogDefault: `${PORTFOLIO_URL}/og/default.png`,
 };
 
-export const nav: NavItem[] = [
-  { href: '/', label: 'Overview' },
-  { href: '/foundations/colour', label: 'Foundations' },
-  { href: REPO_URL, label: 'GitHub' },
-];
-
-/** Komponentenseiten gehören zur Übersicht, alle Foundations zu "Foundations". */
-export const navAliases: Record<string, string[]> = {
-  '/': ['/components'],
-  '/foundations/colour': ['/foundations'],
-};
+/**
+ * Obere Navigation: nur GitHub. Overview und Foundations stehen in der
+ * Seitenleiste (DocsNav), zwei Navigationen für dieselbe Aufgabe sollen
+ * nicht konkurrieren. Die Marke links führt weiter zur Übersicht.
+ */
+export const nav: NavItem[] = [{ href: REPO_URL, label: 'GitHub' }];
 
 /** Rechtliches liegt beim Portfolio, die Erklärung zur Barrierefreiheit hier. */
 export const footerNav: NavItem[] = [

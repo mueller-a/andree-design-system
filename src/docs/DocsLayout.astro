@@ -16,7 +16,7 @@
  */
 import Base from '../layouts/Base.astro';
 import DocsNav from './DocsNav.astro';
-import { site, nav, navAliases, footerNav } from './site';
+import { site, nav, footerNav } from './site';
 import './docs.css';
 
 interface Props {
@@ -31,7 +31,6 @@ const hasToc = Astro.slots.has('toc');
 <Base
   site={site}
   nav={nav}
-  navAliases={navAliases}
   footerNav={footerNav}
   title={title}
   description={description}
