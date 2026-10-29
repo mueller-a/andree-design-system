@@ -7,7 +7,9 @@
  * 3. Jeder `slug` ist eindeutig und entspricht dem Dateinamen, jede
  *    Komponente hat höchstens eine Doku-Datei.
  * 4. Jeder Eintrag in `related` zeigt auf einen existierenden `slug`.
- * 5. Jedes `props[].name` steht im `interface Props` der Komponente.
+ * 5. Jedes `props[].name` steht im `interface Props` der Komponente, mit
+ *    gleichem `type` (als Text) und gleicher Pflicht/Optionalität. Und
+ *    umgekehrt: jede Prop im Code steht in der Doku.
  * 6. Warnung: `status: draft` bei einer Komponente, die älter ist als die
  *    aktuelle Paketversion.
  *
@@ -87,6 +89,48 @@ function propsBlock(fm) {
     }
   }
   return fm.slice(start);
+}
+
+/**
+ * Member von `interface Props` als Map name -> { type, optional }. Trennt am
+ * `;` auf oberster Klammerebene, damit Objekt-, Generic- und Tupel-Typen
+ * zusammenbleiben. Kommentare werden vorher entfernt. Reicht für die
+ * Schreibweise in diesem Repo, ist aber kein TypeScript-Parser.
+ */
+function propsMembers(block) {
+  const open = block.indexOf('{');
+  const close = block.lastIndexOf('}');
+  if (open === -1 || close <= open) return new Map();
+  const body = block
+    .slice(open + 1, close)
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '');
+  const segments = [];
+  let depth = 0;
+  let current = '';
+  for (let i = 0; i < body.length; i += 1) {
+    const ch = body[i];
+    if (ch === '=' && body[i + 1] === '>') {
+      current += '=>';
+      i += 1;
+      continue;
+    }
+    if ('{[(<'.includes(ch)) depth += 1;
+    if ('}])>'.includes(ch)) depth -= 1;
+    if (ch === ';' && depth === 0) {
+      segments.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  segments.push(current);
+  const members = new Map();
+  for (const seg of segments) {
+    const m = seg.trim().match(/^(\w+)(\?)?\s*:\s*([\s\S]+)$/);
+    if (m) members.set(m[1], { type: m[3].replace(/\s+/g, ' ').trim(), optional: Boolean(m[2]) });
+  }
+  return members;
 }
 
 /** "0.10.0" > "0.9.0", ohne Abhängigkeit. */
@@ -177,10 +221,33 @@ for (const { file, data } of docs) {
   if (componentSet.has(data.name)) {
     const source = await readFile(`${COMPONENTS_DIR}/${data.name}.astro`, 'utf8');
     const block = propsBlock(frontmatter(source));
-    for (const prop of data.props ?? []) {
+    const members = propsMembers(block);
+    const docProps = data.props ?? [];
+    for (const prop of docProps) {
       const re = new RegExp(`(^|[\\s{;,])${escapeRe(prop.name)}\\??\\s*:`, 'm');
       if (!re.test(block)) {
         errors.push(`${file}: prop "${prop.name}" steht nicht im interface Props von ${data.name}.astro`);
+        continue;
+      }
+      const member = members.get(prop.name);
+      if (!member) continue;
+      const docType = String(prop.type ?? '').replace(/\s+/g, ' ').trim();
+      if (docType !== member.type) {
+        errors.push(`${file}: prop "${prop.name}" hat type "${docType}", im Code "${member.type}"`);
+      }
+      const docRequired = prop.required === true;
+      if (docRequired === member.optional) {
+        errors.push(
+          `${file}: prop "${prop.name}" ist im Code ${member.optional ? 'optional' : 'Pflicht'}, ` +
+            `in der Doku required: ${docRequired}`,
+        );
+      }
+    }
+    // 5, Gegenrichtung: jede Prop im Code steht in der Doku.
+    const docNames = new Set(docProps.map((p) => p.name));
+    for (const name of members.keys()) {
+      if (!docNames.has(name)) {
+        errors.push(`${file}: prop "${name}" steht im interface Props von ${data.name}.astro, fehlt aber in der Doku`);
       }
     }
   }
