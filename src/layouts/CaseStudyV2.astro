@@ -47,13 +47,15 @@ interface Props {
   entry: CollectionEntry<'work'>;
   site: SiteInfo;
   nav: NavItem[];
+  /** Weitergereicht an Base. */
+  navAliases?: Record<string, string[]>;
   footerNav: NavItem[];
   /** CreativeWork-JSON-LD, von der Seite berechnet (bindet das Layout nicht
    * an die App-spezifische Content-Collection). */
   jsonLd: Record<string, unknown>;
 }
 
-const { entry, site, nav, footerNav, jsonLd } = Astro.props;
+const { entry, site, nav, navAliases, footerNav, jsonLd } = Astro.props;
 const d = entry.data;
 
 const all = (await getCollection('work', ({ data }) => !data.draft)).sort(
@@ -77,6 +79,7 @@ const hasAfterTldr = Astro.slots.has('afterTldr');
 <Base
   site={site}
   nav={nav}
+  navAliases={navAliases}
   footerNav={footerNav}
   title={d.title}
   description={d.summary}

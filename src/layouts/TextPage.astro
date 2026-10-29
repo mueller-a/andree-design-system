@@ -21,6 +21,8 @@ interface SiteInfo {
 interface Props {
   site: SiteInfo;
   nav: NavItem[];
+  /** Weitergereicht an Base. */
+  navAliases?: Record<string, string[]>;
   footerNav: NavItem[];
   title: string;
   description?: string;
@@ -34,7 +36,7 @@ interface Props {
   noindex?: boolean;
 }
 
-const { site, nav, footerNav, title, description, kicker, lead, updated, lang, noindex } =
+const { site, nav, navAliases, footerNav, title, description, kicker, lead, updated, lang, noindex } =
   Astro.props;
 
 const updatedLocale = lang === 'de' ? 'de-DE' : 'en-GB';
@@ -49,6 +51,7 @@ const updatedWord = lang === 'de' ? 'Stand' : 'Updated';
 <Base
   site={site}
   nav={nav}
+  navAliases={navAliases}
   footerNav={footerNav}
   title={title}
   description={description}

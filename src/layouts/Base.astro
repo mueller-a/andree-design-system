@@ -32,6 +32,8 @@ interface Props {
   site: SiteInfo;
   /** Hauptnavigation (Header). */
   nav: NavItem[];
+  /** Weitergereicht an SiteHeader `aliases`: Pfad-Präfixe je Nav-Eintrag. */
+  navAliases?: Record<string, string[]>;
   /** Rechtliche Navigation (Footer). */
   footerNav: NavItem[];
   /** Seitentitel ohne Namenszusatz. Für die Startseite leer lassen. */
@@ -48,6 +50,7 @@ interface Props {
 const {
   site,
   nav,
+  navAliases,
   footerNav,
   title,
   description = site.description,
@@ -108,7 +111,12 @@ const ogImageUrl = new URL(ogImage, site.url).href;
 
   <body>
     <SkipLink />
-    <SiteHeader path={Astro.url.pathname} siteName={site.name} nav={nav} />
+    <SiteHeader
+      path={Astro.url.pathname}
+      siteName={site.name}
+      nav={nav}
+      aliases={navAliases}
+    />
 
     <main id="main" class={mainClass}>
       <slot />

@@ -13,18 +13,26 @@ interface Props {
   siteName: string;
   /** Hauptnavigation rechts. */
   nav: NavItem[];
+  /** Zusätzliche Pfad-Präfixe, die denselben Nav-Eintrag als aktuell markieren.
+   *  Beispiel: { '/': ['/work'] } für ein Portfolio, dessen Startseite die Arbeiten listet. */
+  aliases?: Record<string, string[]>;
 }
 
-const { path, siteName, nav } = Astro.props;
+const { path, siteName, nav, aliases = {} } = Astro.props;
 
 const norm = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
 const current = norm(path);
 
+// Exakter Pfad oder Unterpfad; `/` nur exakt, sonst wäre es überall aktuell.
+const matches = (prefix: string) => {
+  const p = norm(prefix);
+  if (p === '/') return current === '/';
+  return current === p || current.startsWith(p + '/');
+};
+
 const isCurrent = (href: string) => {
   if (href.startsWith('mailto:') || href.startsWith('http')) return false;
-  const h = norm(href);
-  if (h === '/') return current === '/' || current.startsWith('/work');
-  return current === h || current.startsWith(h + '/');
+  return matches(href) || (aliases[href] ?? []).some(matches);
 };
 ---
 
