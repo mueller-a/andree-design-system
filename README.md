@@ -13,13 +13,13 @@ Das Repo ist Bibliothek und Website zugleich. Ausgeliefert werden nur
 Das Paket liegt nicht auf npm, sondern wird über einen Git-Tag installiert:
 
 ```bash
-pnpm add github:mueller-a/andree-design-system#v0.2.0
+pnpm add github:mueller-a/andree-design-system#v0.3.0
 ```
 
 oder direkt in der `package.json`:
 
 ```json
-"@andree/design-system": "github:mueller-a/andree-design-system#v0.2.0"
+"@andree/design-system": "github:mueller-a/andree-design-system#v0.3.0"
 ```
 
 Astro bringt das konsumierende Projekt selbst mit (`peerDependencies`: `astro ^5.14.1`).
@@ -72,6 +72,9 @@ Tokens ohne `Base` nutzt.
   Dateien `Archivo-Variable.woff2`, `Archivo-Variable-ext.woff2`,
   `IBMPlexMono-Regular.woff2` und `IBMPlexMono-Regular-ext.woff2` müssen in der App
   unter `public/fonts/` liegen.
+- **Gelbe Flächen:** Container mit `--mark` als Hintergrund bekommen
+  `class="on-mark"`, damit der Fokus dort invertiert statt Gelb auf Gelb zu
+  zeigen.
 - **Analytics:** `Base.astro` bindet `@vercel/analytics` ein. Außerhalb von Vercel
   bleibt das wirkungslos.
 
@@ -123,7 +126,7 @@ eine Komponente dokumentiert, streicht sie aus der Liste.
 
 ## Versionen
 
-Neue Versionen als Git-Tag (`v0.3.0` usw.) setzen und im konsumierenden Projekt
+Neue Versionen als Git-Tag (`v0.4.0` usw.) setzen und im konsumierenden Projekt
 den Tag in der Abhängigkeit hochziehen.
 
 ## Historie
