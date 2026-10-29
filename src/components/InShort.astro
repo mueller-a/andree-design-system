@@ -1,9 +1,14 @@
 ---
-/** Maximal 3 Punkte. */
+/** Maximal 3 Punkte, zur Build-Zeit geprüft. */
 interface Props {
   points: string[];
 }
 const { points } = Astro.props;
+if (points.length > 3) {
+  throw new Error(
+    `InShort: maximal 3 Punkte, ${points.length} übergeben. Für längere Listen eine normale Liste in Prose verwenden.`,
+  );
+}
 ---
 
 <div class="in-short">
