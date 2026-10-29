@@ -1,0 +1,20 @@
+---
+/**
+ * Live-Vorschau einer Komponente in einem beschrifteten Rahmen. `inert` für
+ * Vorschauen, die sonst Landmarks oder Bedienelemente der Seite doppeln
+ * würden (z. B. SiteHeader): sichtbar, aber nicht bedienbar und nicht im
+ * Accessibility-Baum. Die Beschriftung sagt das dann.
+ */
+interface Props {
+  caption: string;
+  inert?: boolean;
+}
+const { caption, inert = false } = Astro.props;
+---
+
+<figure class="docs-preview" data-doc-preview>
+  <div class="docs-preview__stage" inert={inert || undefined}>
+    <slot />
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>

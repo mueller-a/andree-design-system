@@ -37,6 +37,7 @@ related:
 ---
 
 import Callout from '../../src/components/Callout.astro';
+import Preview from '../../src/docs/Preview.astro';
 
 ## Purpose
 
@@ -56,13 +57,17 @@ confidentiality notice in the case study hero.
 
 ## Anatomy
 
-<Callout label="The limit">
-  <p>Access restrictions meant parts of the underlying data were not visible to developers on the team.</p>
-</Callout>
+<Preview caption="Live preview, variant default.">
+  <Callout label="The limit">
+    <p>Access restrictions meant parts of the underlying data were not visible to developers on the team.</p>
+  </Callout>
+</Preview>
 
-<Callout label="Confidential" variant="quiet">
-  <p>Client work under NDA. Some surfaces are abstracted.</p>
-</Callout>
+<Preview caption="Live preview, variant quiet.">
+  <Callout label="Confidential" variant="quiet">
+    <p>Client work under NDA. Some surfaces are abstracted.</p>
+  </Callout>
+</Preview>
 
 1. **Label**: a paragraph in mono capitals, colour `--muted`.
 2. **Body**: the default slot. Paragraphs inside it have no outer margin.

@@ -47,6 +47,7 @@ related: []
 ---
 
 import SiteHeader from '../../src/components/SiteHeader.astro';
+import Preview from '../../src/docs/Preview.astro';
 
 ## Purpose
 
@@ -63,16 +64,21 @@ screens. `Base.astro` renders it on every page, directly after the skip link.
 
 ## Anatomy
 
-<SiteHeader
-  path="/about"
-  siteName="Andree Joachim Müller"
-  nav={[
-    { href: '/', label: 'Work' },
-    { href: '/about', label: 'Profile' },
-    { href: '/accessibility', label: 'Accessibility' },
-    { href: 'mailto:hello@example.com', label: 'Contact' },
-  ]}
-/>
+<Preview
+  caption="Live preview with Profile as the current page. Not interactive: it would repeat the navigation landmark and the theme toggle of this page. The header at the top of this page is the same component and can be used."
+  inert
+>
+  <SiteHeader
+    path="/about"
+    siteName="Andree Joachim Müller"
+    nav={[
+      { href: '/', label: 'Work' },
+      { href: '/about', label: 'Profile' },
+      { href: '/accessibility', label: 'Accessibility' },
+      { href: 'mailto:hello@example.com', label: 'Contact' },
+    ]}
+  />
+</Preview>
 
 1. **Header**: a `<header>` with a bottom border in `--border`. Its content
    sits in `.wrap` from `global.css`.

@@ -1,0 +1,196 @@
+---
+/**
+ * Eine Seite je dokumentierter Komponente. Reihenfolge: Kopf, Import, der
+ * MDX-Körper in seiner eigenen Reihenfolge, Props, Slots, Accessibility-
+ * Kurzfassung, Related, Blättern.
+ *
+ * Für die maschinenlesbare Fassung (Prompt 4) liegt der Inhalt in
+ * <article data-doc>. Bedienelemente ohne Inhalt (Kopier-Button, Live-Region)
+ * tragen data-doc-skip, Live-Vorschauen data-doc-preview, Dekor aria-hidden.
+ */
+import { render } from 'astro:content';
+import DocsLayout from '../../docs/DocsLayout.astro';
+import TableScroll from '../../docs/TableScroll.astro';
+import InlineText from '../../docs/InlineText.astro';
+import { documentedComponents } from '../../docs/components';
+import { understandingUrl } from '../../docs/wcag';
+
+export async function getStaticPaths() {
+  const docs = await documentedComponents();
+  return docs.map((doc, i) => ({
+    params: { slug: doc.data.slug },
+    props: { doc, prev: docs[i - 1] ?? null, next: docs[i + 1] ?? null, all: docs },
+  }));
+}
+
+const { doc, prev, next, all } = Astro.props;
+const { Content } = await render(doc);
+const d = doc.data;
+
+const importLine = `import ${d.name} from '${d.import}';`;
+const keyboard =
+  d.a11y.keyboard.trim().toLowerCase() === 'none'
+    ? 'This component never takes focus.'
+    : d.a11y.keyboard;
+const related = d.related
+  .map((slug) => all.find((c) => c.data.slug === slug))
+  .filter((c) => c !== undefined);
+---
+
+<DocsLayout title={d.name} description={d.summary}>
+  <article class="docs-section" data-doc>
+    <header class="docs-header">
+      <p class="docs-kicker">Component</p>
+      <h1>{d.name}</h1>
+      <ul class="docs-chips" role="list">
+        <li class="docs-chip"><span class="visually-hidden">Layer: </span>{d.layer}</li>
+        <li class="docs-chip"><span class="visually-hidden">Status: </span>{d.status}</li>
+        <li class="docs-chip">since {d.since}</li>
+      </ul>
+      <p class="docs-lead">{d.summary}</p>
+    </header>
+
+    <section class="docs-import" aria-labelledby="import">
+      <h2 id="import">Import</h2>
+      <div class="docs-import__row">
+        <pre><code data-import-line>{importLine}</code></pre>
+        <button type="button" class="docs-button" data-copy data-doc-skip hidden>
+          Copy import
+        </button>
+      </div>
+      <p class="docs-note" role="status" data-copy-status data-doc-skip></p>
+    </section>
+
+    <div class="docs-body">
+      <Content />
+    </div>
+
+    <section class="docs-section" aria-labelledby="props">
+      <h2 id="props">Props</h2>
+      {
+        d.props.length === 0 ? (
+          <p>No props.</p>
+        ) : (
+          <TableScroll label={`${d.name} props`}>
+            <table class="docs-table">
+              <caption>Props of {d.name}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Required</th>
+                  <th scope="col">Default</th>
+                  <th scope="col">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {d.props.map((p) => (
+                  <tr>
+                    <th scope="row"><code>{p.name}</code></th>
+                    <td><code>{p.type}</code></td>
+                    <td>{p.required ? 'yes' : 'no'}</td>
+                    <td>{p.default ? <code>{p.default}</code> : 'none'}</td>
+                    <td class="docs-table__text"><InlineText text={p.description} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
+        )
+      }
+    </section>
+
+    {
+      d.slots.length > 0 && (
+        <section class="docs-section" aria-labelledby="slots">
+          <h2 id="slots">Slots</h2>
+          <table class="docs-table">
+            <caption>Slots of {d.name}</caption>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.slots.map((s) => (
+                <tr>
+                  <th scope="row"><code>{s.name}</code></th>
+                  <td class="docs-table__text"><InlineText text={s.description} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )
+    }
+
+    <section class="docs-section" aria-labelledby="a11y-summary">
+      <h2 id="a11y-summary">Accessibility summary</h2>
+      <p><strong>Keyboard:</strong> {keyboard}</p>
+      {
+        d.a11y.wcag.length > 0 && (
+          <>
+            <p id="wcag-label">Success criteria covered on this page, WCAG 2.2:</p>
+            <ul class="docs-chips" role="list" aria-labelledby="wcag-label">
+              {d.a11y.wcag.map((c) => (
+                <li>
+                  <a class="docs-chip" href={understandingUrl(c)}>{c}</a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+    </section>
+
+    {
+      related.length > 0 && (
+        <section class="docs-section" aria-labelledby="related">
+          <h2 id="related">Related</h2>
+          <ul role="list">
+            {related.map((r) => (
+              <li>
+                <a href={`/components/${r.data.slug}`}>{r.data.name}</a>: {r.data.summary}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+
+  <nav class="docs-pager" aria-label="Component pages" data-doc-skip>
+    <ul role="list">
+      {prev && <li><a href={`/components/${prev.data.slug}`}>Previous: {prev.data.name}</a></li>}
+      {next && <li><a href={`/components/${next.data.slug}`}>Next: {next.data.name}</a></li>}
+      <li><a href="/#components">All components</a></li>
+    </ul>
+  </nav>
+</DocsLayout>
+
+<script>
+  // Kopieren nur mit JavaScript; ohne bleibt die Zeile markierbar. Der Erfolg
+  // geht an die Live-Region, nicht nur an eine Farbe.
+  const button = document.querySelector<HTMLButtonElement>('[data-copy]');
+  const line = document.querySelector<HTMLElement>('[data-import-line]');
+  const status = document.querySelector<HTMLElement>('[data-copy-status]');
+
+  if (button && line && status && navigator.clipboard) {
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      let message: string;
+      try {
+        await navigator.clipboard.writeText(line.textContent ?? '');
+        message = 'Import line copied to the clipboard.';
+      } catch {
+        message = 'Copying failed. Select the line and copy it by hand.';
+      }
+      // Leeren und neu setzen, damit auch ein zweiter Klick angesagt wird.
+      status.textContent = '';
+      setTimeout(() => {
+        status.textContent = message;
+      }, 50);
+    });
+  }
+</script>

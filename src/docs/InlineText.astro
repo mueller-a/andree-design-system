@@ -1,0 +1,9 @@
+---
+/** Text aus dem Frontmatter, in dem `Backticks` als <code> erscheinen sollen. */
+interface Props {
+  text: string;
+}
+const parts = Astro.props.text.split('`');
+---
+
+{parts.map((part, i) => (i % 2 === 1 ? <code>{part}</code> : part))}

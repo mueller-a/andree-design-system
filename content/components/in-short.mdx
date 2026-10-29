@@ -35,6 +35,7 @@ related:
 ---
 
 import InShort from '../../src/components/InShort.astro';
+import Preview from '../../src/docs/Preview.astro';
 
 ## Purpose
 
@@ -52,12 +53,14 @@ from its `inShort` prop.
 
 ## Anatomy
 
-<InShort
-  points={[
-    'Verification already sat inside the cycle, not a single pass at the end.',
-    "One limit sat outside the team's control: restricted access to parts of the underlying data.",
-  ]}
-/>
+<Preview caption="Live preview with two points and the default label.">
+  <InShort
+    points={[
+      'Verification already sat inside the cycle, not a single pass at the end.',
+      "One limit sat outside the team's control: restricted access to parts of the underlying data.",
+    ]}
+  />
+</Preview>
 
 1. **Box**: background `--surface`.
 2. **Label**: "In short" unless `label` says otherwise, in mono capitals,
