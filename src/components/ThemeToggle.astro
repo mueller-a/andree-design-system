@@ -1,16 +1,43 @@
 ---
 /**
- * Echter Button mit aria-pressed. `aria-pressed="true"` = dunkles Design aktiv.
- * Farbe ist nicht der einzige Träger: sichtbares Label „Dark" / „Light" plus
- * ein 8px-Punkt in --mark. Standard ist dunkel; hell nur per Wahl oder
- * Systemeinstellung. Der Zustand wird beim Laden mit dem tatsächlich wirksamen
- * Design abgeglichen.
+ * Gewöhnlicher Button, der das Design wechselt, kein Umschalter mit
+ * `aria-pressed`. Der sichtbare Text nennt das aktive Design („Dark" /
+ * „Light") und ist zusammen mit dem 8px-Punkt in --mark der nicht-farbliche
+ * Zustandsträger. Ein visuell verstecktes Suffix ergänzt die Aktion, so dass
+ * der zugängliche Name den sichtbaren Text enthält (2.5.3 Label in Name) und
+ * sagt, was passiert: „Dark theme, switch to light".
+ *
+ * Standard ist dunkel; hell nur per Wahl oder Systemeinstellung. Label und
+ * Aktion werden beim Laden mit dem tatsächlich wirksamen Design abgeglichen.
+ * Die Beschriftungen erreichen das Modul-Skript als data-Attribute, ohne
+ * Inline-Skript.
  */
+interface Props {
+  /** Beschriftungen, Standard englisch. Für anderssprachige Projekte überschreibbar. */
+  labels?: { dark: string; light: string; switchToDark: string; switchToLight: string };
+}
+const {
+  labels = {
+    dark: 'Dark',
+    light: 'Light',
+    switchToDark: 'theme, switch to dark',
+    switchToLight: 'theme, switch to light',
+  },
+} = Astro.props;
 ---
 
-<button type="button" class="theme-toggle" data-theme-toggle aria-pressed="true">
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  data-label-dark={labels.dark}
+  data-label-light={labels.light}
+  data-label-switch-to-dark={labels.switchToDark}
+  data-label-switch-to-light={labels.switchToLight}
+>
   <span class="theme-toggle__dot" aria-hidden="true"></span>
-  <span data-theme-toggle-label>Dark</span>
+  <span data-theme-toggle-label>{labels.dark}</span>
+  <span class="visually-hidden" data-theme-toggle-action>{labels.switchToLight}</span>
 </button>
 
 <style>
@@ -59,12 +86,17 @@
       : 'dark';
   };
 
+  // Label nennt das aktive Design, der versteckte Aktionstext das Ziel.
+  // Beide aus den data-Attributen des jeweiligen Buttons.
   const sync = () => {
     const isDark = effectiveTheme() === 'dark';
     buttons.forEach((btn) => {
-      btn.setAttribute('aria-pressed', String(isDark));
+      if (!(btn instanceof HTMLElement)) return;
+      const { labelDark, labelLight, labelSwitchToDark, labelSwitchToLight } = btn.dataset;
       const label = btn.querySelector('[data-theme-toggle-label]');
-      if (label) label.textContent = isDark ? 'Dark' : 'Light';
+      const action = btn.querySelector('[data-theme-toggle-action]');
+      if (label) label.textContent = (isDark ? labelDark : labelLight) ?? '';
+      if (action) action.textContent = (isDark ? labelSwitchToLight : labelSwitchToDark) ?? '';
     });
   };
 
