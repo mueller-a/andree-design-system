@@ -1,0 +1,173 @@
+---
+name: SiteHeader
+slug: site-header
+layer: pattern
+status: draft
+since: 0.1.0
+summary: Site-wide header with the site name as home link, the primary navigation and the theme toggle.
+import: "@andree/design-system/components/SiteHeader.astro"
+tags:
+  - navigation
+  - layout
+  - landmark
+props:
+  - name: path
+    type: string
+    required: true
+    description: Current path of the page, used to mark the matching navigation item as the current page.
+  - name: siteName
+    type: string
+    required: true
+    description: Name shown on the left, which is also the text of the home link.
+  - name: nav
+    type: NavItem[]
+    required: true
+    description: "Navigation items in display order, each `{ href: string; label: string }`."
+  - name: aliases
+    type: Record<string, string[]>
+    required: false
+    default: "{}"
+    description: Extra path prefixes per navigation `href` that also mark that item as the current page.
+slots: []
+a11y:
+  keyboard: Tab moves to the home link, each navigation link and the theme toggle, in that order. Enter follows a link. Enter or Space switches the theme.
+  wcag:
+    - 1.3.1 Info and Relationships
+    - 1.4.1 Use of Color
+    - 1.4.3 Contrast (Minimum)
+    - 1.4.10 Reflow
+    - 2.1.1 Keyboard
+    - 2.4.3 Focus Order
+    - 2.4.4 Link Purpose (In Context)
+    - 2.4.7 Focus Visible
+    - 2.5.3 Label in Name
+    - 2.5.8 Target Size (Minimum)
+    - 4.1.2 Name, Role, Value
+related: []
+---
+
+## Purpose
+
+SiteHeader is the top of every page: the site name as a link home, the primary navigation and the theme toggle, in one row that wraps on narrow screens. `Base.astro` renders it on every page, directly after the skip link.
+
+### When not to use
+
+- On pages built with `Base`, `TextPage`, `CaseStudy` or `CaseStudyV2`. They already render SiteHeader, a second one would add a second banner.
+- For navigation inside a page, such as a table of contents. [confirm: which component covers in-page navigation]
+
+## Anatomy
+
+1. **Header**: a `<header>` with a bottom border in `--border`. Its content sits in `.wrap` from `global.css`.
+2. **Home link**: the site name, linking to `/` with `rel="home"`.
+3. **Navigation**: a `<nav>` named “Primary” with a list of links in mono capitals.
+4. **Theme toggle**: ThemeToggle, inside the navigation after the list.
+
+### Current page
+
+The navigation item that matches `path` gets `aria-current="page"`, the accent colour and a 2px underline in `--mark`. Matching works like this:
+
+- A trailing slash on the path is ignored.
+- `mailto:` and `http` links are never current.
+- `/` is current on `/` only.
+- Every other item is current on its own path and every path below it.
+- An item is also current on every prefix listed for its `href` in `aliases`, and below it. `{ '/': ['/work'] }` marks the `/` item on `/work/prince` but not on `/workshop`.
+
+## Content
+
+- Navigation labels are single words in the portfolio: Work, Profile, Accessibility, Contact.
+- Write labels in sentence case. The capitals come from CSS.
+
+## Accessibility
+
+### Mark the current page in code and in more than colour
+
+The current item carries `aria-current="page"` for screen readers and an underline next to the accent colour, so the state does not depend on telling colours apart.
+
+**WCAG:** 1.3.1 Info and Relationships, 1.4.1 Use of Color
+
+### Keep the navigation a named list
+
+The navigation is named “Primary”, which tells it apart from the footer navigation named “Legal”, and the list keeps its list semantics through `role="list"` even with list markers removed.
+
+**WCAG:** 1.3.1 Info and Relationships
+
+### Give the home link the site name as its text
+
+The home link’s name is `siteName`, so it says where it leads without an image or a separate label.
+
+**WCAG:** 2.4.4 Link Purpose (In Context)
+
+### Keep the focus order equal to the visual order
+
+Home link, navigation links and theme toggle follow each other in the markup in the order they appear, wrapping does not reorder them, and each shows the global focus style.
+
+**WCAG:** 2.1.1 Keyboard, 2.4.3 Focus Order, 2.4.7 Focus Visible
+
+### Keep the navigation links spaced apart
+
+The links are 21 to 22px high, below 24px. They pass only because the 32px gap between links and the 16px gap between wrapped rows keep them far enough apart. Smaller gaps or larger link text change that.
+
+**WCAG:** 2.5.8 Target Size (Minimum)
+
+### Let the theme toggle say what it does, starting with its visible text
+
+The toggle is a plain button without a pressed state. Its visible text names the active theme and a visually hidden suffix names the action, so the accessible name reads “Dark theme, switch to light” and starts with what is on screen.
+
+**WCAG:** 4.1.2 Name, Role, Value, 2.5.3 Label in Name
+
+### Let the header wrap instead of scroll
+
+At 320px the header wraps onto several rows and the page does not scroll sideways.
+
+**WCAG:** 1.4.10 Reflow
+
+### Keep text contrast at 4.5:1 or more
+
+Navigation links in `--text` reach at least 11.29:1 and the current item in `--accent` at least 5.46:1 on `--bg` in both themes, measured on the portfolio’s colour table.
+
+**WCAG:** 1.4.3 Contrast (Minimum)
+
+## Code
+
+Minimal:
+
+```astro
+---
+import SiteHeader from '@andree/design-system/components/SiteHeader.astro';
+---
+
+<SiteHeader
+  path={Astro.url.pathname}
+  siteName="Example"
+  nav={[{ href: '/', label: 'Home' }]}
+/>
+```
+
+Realistic, with the portfolio’s navigation, whose work overview lives at `/`. Pages built with `Base` pass the aliases as `navAliases` instead:
+
+```astro
+---
+import SiteHeader from '@andree/design-system/components/SiteHeader.astro';
+
+const nav = [
+  { href: '/', label: 'Work' },
+  { href: '/about', label: 'Profile' },
+  { href: '/accessibility', label: 'Accessibility' },
+  { href: 'mailto:hello@example.com', label: 'Contact' },
+];
+---
+
+<SiteHeader
+  path={Astro.url.pathname}
+  siteName="Andree Joachim Müller"
+  nav={nav}
+  aliases={{ '/': ['/work'] }}
+/>
+```
+
+## Notes
+
+- Until 0.3.0, `/` was current on every path under `/work`, written into the component. Since 0.3.0 that takes `aliases={{ '/': ['/work'] }}`, or `navAliases` on `Base` and the layouts built on it.
+- Until 0.3.0, ThemeToggle was a toggle with `aria-pressed`, which announced the light theme as off while it was on.
+- The skip link is not part of SiteHeader. `Base.astro` renders SkipLink before it.
+- SiteHeader needs `reset.css` for the list reset and `global.css` for `.wrap` and the focus style.

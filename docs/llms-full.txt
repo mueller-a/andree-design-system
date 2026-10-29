@@ -1,0 +1,699 @@
+# Dark Studio design system
+
+> Design tokens, Astro components and layouts by Andree Joachim Müller, published as @andree/design-system 0.3.0.
+
+The package is not on npm. Install it from a Git tag:
+
+```sh
+pnpm add github:mueller-a/andree-design-system#v0.3.0
+```
+
+Import paths: `@andree/design-system/styles/*.css`, `@andree/design-system/components/*.astro`, `@andree/design-system/layouts/*.astro`, `@andree/design-system/lib/*`. Pages built on `layouts/Base.astro` load the tokens, the reset and the global styles. The app provides the fonts and `theme-init.js` in its `public` folder. Use tokens from `styles/tokens.css`, never hard-coded colour or spacing values.
+
+Human-readable documentation: https://andree-design-system.vercel.app
+
+## Layers
+
+Every component has a layer. It says whether the component can be used outside the portfolio.
+
+- `foundation`: tokens, reset, fonts, `Base.astro`. Not a visible building block but the base everything sits on.
+- `primitive`: a generic building block with no knowledge of content. Works in a calculator as well as in a portfolio.
+- `pattern`: composed and opinionated, but independent of any project.
+- `portfolio`: knows case studies or their data model. Not meaningful outside the portfolio, do not use it in other projects.
+
+## Foundations
+
+- [Colour](foundations/colour.md): Colour tokens in both themes and the contrast of every text colour on every surface.
+- [Typography](foundations/typography.md): Font families, weights, the general step scale and the 18 case study sizes.
+- [Spacing](foundations/spacing.md): The 4px-based space scale, from 4 to 128px.
+- [Layout](foundations/layout.md): Measures, frame width, gutter, columns, the rail and the radius.
+- [Motion](foundations/motion.md): Durations and easing, and how reduced motion overrides them.
+
+## Components
+
+- [Callout](components/callout.md): A labelled note with a yellow rail that sets one short passage apart from the text around it. Layer: primitive. Status: draft. Import: `@andree/design-system/components/Callout.astro`.
+- [InShort](components/in-short.md): A short list of up to three points under a small label, summing up a case study chapter. Layer: portfolio. Status: draft. Import: `@andree/design-system/components/InShort.astro`.
+- [SiteHeader](components/site-header.md): Site-wide header with the site name as home link, the primary navigation and the theme toggle. Layer: pattern. Status: draft. Import: `@andree/design-system/components/SiteHeader.astro`.
+
+35 more components are in the package but not documented yet, so this list is not the full package content. They are not listed here. Do not use one without asking first.
+
+# Foundation: Colour
+
+> Colour tokens in both themes and the contrast of every text colour on every surface.
+
+Values are read from `styles/tokens.css` of @andree/design-system 0.3.0.
+
+## Colour tokens
+
+Dark is the default theme. The light theme overrides the colour tokens only, and applies through the system setting or the theme toggle.
+
+| Token | Dark | Light | Use |
+| --- | --- | --- | --- |
+| `--mark` | `#f5c518` | `#e0b000` | Yellow as a surface: call to action band, markers, dots, quotation marks. Decorative only. |
+| `--mark-ink` | `#1b1e1f` | same as dark | Text and icons on --mark surfaces. |
+| `--accent` | `#f5c518` | `#7a5f00` | Yellow as text, darkened in the light theme. |
+| `--bg` | `#14232d` | `#f4f3ef` | Page background. |
+| `--bg-glass` | `rgba(20, 35, 45, 0.94)` | `rgba(244, 243, 239, 0.94)` | Sticky header background, meant for use with a backdrop blur. |
+| `--surface` | `#1c2c36` | `#ffffff` | Cards, meta cells, the InShort box. |
+| `--surface-hover` | `#22333d` | `#f4f5f8` | Hover state of --surface. |
+| `--ink` | `#ffffff` | `#14232d` | Headings, primary text, quotes. |
+| `--text` | `#dfe5e8` | `#24333d` | Body text. |
+| `--muted` | `#c9d1d6` | `#4e5b64` | Labels, secondary text, captions. |
+| `--border` | `rgba(183, 191, 204, 0.22)` | `#d9d6cf` | Hairlines and borders. |
+| `--border-strong` | `#3a4b56` | `#bdb9b0` | Chips, theme toggle border. |
+| `--placeholder` | `repeating-linear-gradient(135deg, rgba(183, 191, 204, 0.14) 0 8px, rgba(183, 191, 204, 0.05) 8px 16px)` | `repeating-linear-gradient(135deg, #edeef1 0 8px, #f6f7f9 8px 16px)` | Striped fill for labelled placeholders, such as missing images. |
+| `--focus` | `#6faaff` | `#0a5fcc` | Own focus ring colour, separate from the accent. |
+
+## Contrast
+
+Every text colour against both surfaces in both themes, WCAG relative luminance. Level AA asks for at least 4.5:1 for normal text.
+
+| Theme | Text colour | On --bg | On --surface |
+| --- | --- | --- | --- |
+| dark | `--ink` | 16.05:1, passes AA | 14.35:1, passes AA |
+| dark | `--text` | 12.62:1, passes AA | 11.29:1, passes AA |
+| dark | `--muted` | 10.38:1, passes AA | 9.28:1, passes AA |
+| dark | `--accent` | 9.85:1, passes AA | 8.81:1, passes AA |
+| light | `--ink` | 14.46:1, passes AA | 16.05:1, passes AA |
+| light | `--text` | 11.70:1, passes AA | 13.00:1, passes AA |
+| light | `--muted` | 6.30:1, passes AA | 6.99:1, passes AA |
+| light | `--accent` | 5.46:1, passes AA | 6.06:1, passes AA |
+
+`--mark` is decorative only and never used as text. Text on a `--mark` surface uses `--mark-ink`:
+
+| Theme | --mark-ink on --mark |
+| --- | --- |
+| dark | 10.29:1, passes AA |
+| light | 8.29:1, passes AA |
+
+# Foundation: Typography
+
+> Font families, weights, the general step scale and the 18 case study sizes.
+
+Values are read from `styles/tokens.css` of @andree/design-system 0.3.0.
+
+## Font families
+
+| Token | Stack | Use |
+| --- | --- | --- |
+| `--font-display` | `"Archivo", "Helvetica Neue", Helvetica, system-ui, sans-serif` | Headlines |
+| `--font-body` | `"Archivo", "Helvetica Neue", Helvetica, system-ui, sans-serif` | Body text |
+| `--font-mono` | `"IBM Plex Mono", ui-monospace, SFMono-Regular, monospace` | Labels, chips, code |
+
+## Weights
+
+| Token | Value |
+| --- | --- |
+| `--weight-display` | 200 |
+| `--weight-subhead` | 300 |
+| `--weight-body` | 400 |
+| `--weight-strong` | 600 |
+| `--weight-medium` | 500 |
+
+## General scale
+
+The site-wide fluid scale, used by the header, the footer and the page templates.
+
+| Token | Value | Size | Use |
+| --- | --- | --- | --- |
+| `--step--2` | `clamp(0.63rem, 0.61rem + 0.1vw, 0.69rem)` | 10.08px to 11.04px | Capital labels |
+| `--step--1` | `clamp(0.81rem, 0.78rem + 0.15vw, 0.88rem)` | 12.96px to 14.08px |  |
+| `--step-0` | `clamp(1rem, 0.96rem + 0.2vw, 1.06rem)` | 16px to 16.96px |  |
+| `--step-1` | `clamp(1.13rem, 1.06rem + 0.3vw, 1.25rem)` | 18.08px to 20px |  |
+| `--step-2` | `clamp(1.38rem, 1.25rem + 0.6vw, 1.75rem)` | 22.08px to 28px | h2 |
+| `--step-3` | `clamp(1.75rem, 1.5rem + 1.2vw, 2.5rem)` | 28px to 40px | Card titles |
+| `--step-4` | `clamp(2.25rem, 1.8rem + 2.4vw, 4.13rem)` | 36px to 66.08px | Detail page h1 |
+| `--step-5` | `clamp(2.75rem, 1.9rem + 4.4vw, 6.5rem)` | 44px to 104px | Home page h1 |
+
+## Case study scale
+
+Eighteen sizes named after their use. Size comes from the token. Weight and line height are not tokens: this table gives the values from the original specification, and each component sets them itself.
+
+| Token | Value | Size | Weight | Line height | Use |
+| --- | --- | --- | --- | --- | --- |
+| `--text-display` | `clamp(2.75rem, 6.4vw, 5.5rem)` | 44px to 88px | 300 | 1.02 | Hero h1 |
+| `--text-chapter` | `clamp(2.125rem, 4vw, 3.375rem)` | 34px to 54px | 300 | 1.1 | Lead sentence per chapter |
+| `--text-quote` | `clamp(1.75rem, 2.8vw, 2.5rem)` | 28px to 40px | 300 | 1.22 | Testimonial |
+| `--text-summary` | `clamp(1.625rem, 2.8vw, 2.375rem)` | 26px to 38px | 300 | 1.28 | TL;DR paragraph |
+| `--text-stat` | `3.25rem` | 52px | 300 | 1 | Key figures |
+| `--text-step-num` | `2.25rem` | 36px | 300 | 1 | Step numbers in a process |
+| `--text-learning` | `1.625rem` | 26px | 300 | 1.25 | Learnings titles |
+| `--text-next` | `clamp(1.25rem, 2vw, 1.625rem)` | 20px to 26px | 300 | 1.3 | Next case study title |
+| `--text-lede` | `clamp(1.1875rem, 1.8vw, 1.5rem)` | 19px to 24px | 400 | 1.5 | Hero subtitle |
+| `--text-title-l` | `1.375rem` | 22px | 500 | not set | Step titles |
+| `--text-title-m` | `1.25rem` | 20px | 400 | 1.4 | Triptych content |
+| `--text-title-s` | `1.1875rem` | 19px | 500 | 1.3 | Card and timeline titles |
+| `--text-body` | `1.125rem` | 18px | 400 | 1.7 | Chapter body text |
+| `--text-body-s` | `1.0625rem` | 17px | 400 | 1.55 | InShort points, lists, definitions |
+| `--text-body-xs` | `1rem` | 16px | 400 | 1.55 | Card text, stat labels |
+| `--text-label` | `0.75rem` | 12px | 400 | not set | Mono labels, captions, roles |
+| `--text-label-l` | `0.8125rem` | 13px | 400 | not set | Chapter label, kicker, back link |
+| `--text-label-date` | `0.75rem` | 12px | 400 | not set | Timeline dates |
+
+Components that set a different weight or line height for a size:
+
+| Component | Size | Property | Specification | Actual |
+| --- | --- | --- | --- | --- |
+| DefinitionRows | `--text-body-s` | line height | 1.55 | 1.6 |
+| GatedImage | `--text-body` | line height | 1.7 | 1.6 |
+| InShort | `--text-body-s` | line height | 1.55 | 1.5 |
+| InitiativeList | `--text-body` | line height | 1.7 | 1.45 |
+| JourneyStrip | `--text-label` | weight | 400 | 500 |
+| Learnings | `--text-body` | line height | 1.7 | 1.6 |
+| PillarGrid | `--text-body-xs` | weight | 400 | 500 |
+| ProcessSteps | `--text-body-s` | line height | 1.55 | 1.6 |
+
+## Leading and tracking
+
+| Token | Value |
+| --- | --- |
+| `--leading-body` | `1.65` |
+| `--leading-tight` | `0.98` |
+| `--tracking-display` | `-0.04em` |
+| `--tracking-tight` | `-0.02em` |
+| `--tracking-caps` | `0.18em` |
+| `--tracking-caps-wide` | `0.22em` |
+| `--tracking-case-display` | `-0.035em` |
+| `--tracking-case-chapter` | `-0.03em` |
+| `--tracking-case-quote` | `-0.02em` |
+| `--tracking-case-caps` | `0.2em` |
+| `--tracking-case-caps-date` | `0.16em` |
+
+# Foundation: Spacing
+
+> The 4px-based space scale, from 4 to 128px.
+
+Values are read from `styles/tokens.css` of @andree/design-system 0.3.0.
+
+## Space scale
+
+One site-wide scale on a 4px grid. There is no second numbered scale.
+
+| Token | Value | Pixels |
+| --- | --- | --- |
+| `--space-1` | `0.25rem` | 4px |
+| `--space-2` | `0.5rem` | 8px |
+| `--space-3` | `0.75rem` | 12px |
+| `--space-4` | `1rem` | 16px |
+| `--space-6` | `1.5rem` | 24px |
+| `--space-8` | `2rem` | 32px |
+| `--space-10` | `2.5rem` | 40px |
+| `--space-12` | `3rem` | 48px |
+| `--space-14` | `3.5rem` | 56px |
+| `--space-16` | `4rem` | 64px |
+| `--space-24` | `6rem` | 96px |
+| `--space-32` | `8rem` | 128px |
+
+# Foundation: Layout
+
+> Measures, frame width, gutter, columns, the rail and the radius.
+
+Values are read from `styles/tokens.css` of @andree/design-system 0.3.0.
+
+## Measures and frame
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--measure` | `40ch` | Narrow text column, for meta information and notes. |
+| `--measure-narrow` | `32.5rem` (520px) | Narrow notes, such as Callout quiet. |
+| `--measure-wide` | `66ch` | Body text column, for profile pages and chapters. |
+| `--wrap` | `105rem` (1680px) | Site-wide frame width. |
+| `--gutter` | `3.75rem` (60px); `2.5rem` at `max-width: 64rem`; `1.5rem` at `max-width: 40rem` | Side padding of the frame. |
+| `--meta-col` | `12.5rem` (200px) | Label column in detail views. |
+| `--chapter-label-col` | `260px` | Maximum width of the label column in case study chapters. |
+| `--rail` | `3px` | Yellow marker edge under section marks. |
+| `--radius` | `0` | Corner radius. None in this design, except circles. |
+
+The rail is a `--rail` wide edge in `--mark`. It is decorative only and never carries meaning on its own.
+
+# Foundation: Motion
+
+> Durations and easing, and how reduced motion overrides them.
+
+Values are read from `styles/tokens.css` of @andree/design-system 0.3.0.
+
+## Motion tokens
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--motion-fast` | `120ms` | Short transitions, such as link underlines and the skip link. |
+| `--motion-base` | `200ms` | Default transitions, such as hover states on cards and buttons. |
+| `--ease` | `cubic-bezier(0.2, 0, 0, 1)` | Easing curve for all transitions. |
+
+## Reduced motion
+
+When the system asks for reduced motion, `reset.css` cuts every transition and animation to 0.01ms, runs animations only once and turns off smooth scrolling. Components do not need their own media query for this.
+
+# Component: Callout
+
+```yaml
+name: Callout
+slug: callout
+layer: primitive
+status: draft
+since: 0.1.0
+summary: A labelled note with a yellow rail that sets one short passage apart from the text around it.
+import: "@andree/design-system/components/Callout.astro"
+tags:
+  - content
+  - emphasis
+  - note
+props:
+  - name: label
+    type: string
+    required: true
+    description: Visible label above the body, set in mono capitals.
+  - name: variant
+    type: "'default' | 'quiet'"
+    required: false
+    default: "'default'"
+    description: "`default` runs full width at body size, `quiet` caps the width at `--measure-narrow` and sets the body one size smaller."
+slots:
+  - name: default
+    description: The body of the note, usually one or more paragraphs.
+a11y:
+  keyboard: none
+  wcag:
+    - 1.3.1 Info and Relationships
+    - 1.4.1 Use of Color
+    - 1.4.3 Contrast (Minimum)
+    - 1.4.4 Resize Text
+    - 1.4.10 Reflow
+    - 2.4.7 Focus Visible
+related:
+  - in-short
+```
+
+## Purpose
+
+Callout sets one short passage apart from the text around it and names what kind of passage it is. The variants only change width, size and colour, the meaning comes from the label. In the portfolio, `default` carries what a validation did not solve, at the end of a chapter, and `quiet` carries the confidentiality notice in the case study hero.
+
+### When not to use
+
+- To sum up the key points of a chapter, use InShort.
+- To show a verbatim quote, use Testimonial.
+- For a message the reader has to notice while the page is open. Callout is static text and is not announced as a status message. [confirm: whether the design system needs a component for status messages]
+
+## Anatomy
+
+1. **Label**: a paragraph in mono capitals, colour `--muted`.
+2. **Body**: the default slot. Paragraphs inside it have no outer margin.
+3. **Rail**: a left border, `--rail` wide, in `--mark`. Decorative only.
+
+| Variant | Width | Body size | Body colour |
+| --- | --- | --- | --- |
+| `default` | full width of the container | `--text-body` | `--ink` |
+| `quiet` | at most `--measure-narrow` (520px) | `--text-body-xs` | `--text` |
+
+## Content
+
+- The label names the type of note in one to three words. The portfolio uses “The limit” and “Confidential”.
+- Write the label in sentence case. The capitals come from CSS, so the label stays readable as words when styles are off.
+- [confirm: a maximum length for the body. The portfolio uses one paragraph of two to three sentences.]
+
+## Accessibility
+
+### Let the label, not the rail, say what the note is
+
+The yellow rail is a border without a text equivalent, so a reader who cannot see it or tell its colour learns the kind of note only from the label.
+
+**WCAG:** 1.4.1 Use of Color
+
+### Place the callout under the heading of the section it qualifies
+
+The label is a paragraph, not a heading, so the callout does not appear in a list of headings and is found by reading the section it belongs to.
+
+**WCAG:** 1.3.1 Info and Relationships
+
+### Pass real paragraphs and lists into the body
+
+The body passes its content through unchanged, so any structure a reader needs has to be in the markup that goes into the slot.
+
+**WCAG:** 1.3.1 Info and Relationships
+
+### Use the callout on `--bg` or `--surface` only
+
+Label and body text reach at least 6.30:1 on both backgrounds in both themes, measured on the portfolio’s colour table. Other backgrounds are not verified.
+
+**WCAG:** 1.4.3 Contrast (Minimum)
+
+### Let the text grow and wrap
+
+All text sizes are in rem and the `quiet` variant only caps the width, so text scales with the browser setting and wraps at 320px without horizontal scrolling.
+
+**WCAG:** 1.4.4 Resize Text, 1.4.10 Reflow
+
+### Keep links in the body visibly focused
+
+The callout itself never takes focus. Links passed into the body get the global focus style from `global.css`, which has to be loaded on the page.
+
+**WCAG:** 2.4.7 Focus Visible
+
+## Code
+
+Minimal:
+
+```astro
+---
+import Callout from '@andree/design-system/components/Callout.astro';
+---
+
+<Callout label="Note">
+  <p>One short passage that qualifies the section above.</p>
+</Callout>
+```
+
+Realistic, at the end of a chapter in a case study:
+
+```astro
+---
+import Callout from '@andree/design-system/components/Callout.astro';
+---
+
+<Callout label="The limit">
+  <p>
+    Access restrictions meant parts of the underlying data were not
+    visible to developers on the team. That slowed feature development
+    in places we couldn't fully see ourselves, and it stayed unresolved
+    when I moved on in December 2023.
+  </p>
+</Callout>
+```
+
+## Notes
+
+- Until 0.3.0 the variants were called `limit` and `confidential`, after their portfolio uses. `limit` became `default`, `confidential` became `quiet`.
+- CaseHero renders a `quiet` Callout labelled “Confidential” itself when it receives a confidentiality note.
+
+# Component: InShort
+
+```yaml
+name: InShort
+slug: in-short
+layer: portfolio
+status: draft
+since: 0.1.0
+summary: A short list of up to three points under a small label, summing up a case study chapter.
+import: "@andree/design-system/components/InShort.astro"
+tags:
+  - case-study
+  - summary
+  - list
+props:
+  - name: points
+    type: string[]
+    required: true
+    description: The points in display order, at most three.
+  - name: label
+    type: string
+    required: false
+    default: "'In short'"
+    description: Visible label above the list, to be translated on pages in other languages.
+slots: []
+a11y:
+  keyboard: none
+  wcag:
+    - 1.1.1 Non-text Content
+    - 1.3.1 Info and Relationships
+    - 1.4.3 Contrast (Minimum)
+    - 1.4.4 Resize Text
+    - 1.4.10 Reflow
+    - 3.1.2 Language of Parts
+related:
+  - callout
+```
+
+## Purpose
+
+InShort sums up a case study chapter in at most three points, in a box on `--surface` directly under the chapter’s lead sentence. Chapter renders it from its `inShort` prop.
+
+### When not to use
+
+- Inside a Chapter. Pass the points to Chapter’s `inShort` prop, which places InShort under the lead sentence.
+- For a single labelled note, such as a limit or a confidentiality notice, use Callout.
+- For more than three points. Use a plain list inside Prose.
+
+## Anatomy
+
+1. **Box**: background `--surface`.
+2. **Label**: “In short” unless `label` says otherwise, in mono capitals, colour `--muted`.
+3. **List**: one item per point, colour `--ink`, size `--text-body-s`.
+4. **Marker**: a 9px square in `--mark` before each point, decorative only.
+
+## Content
+
+- At most three points. A fourth point stops the build with an error.
+- Each point in the portfolio is one sentence.
+
+## Accessibility
+
+### Keep the points a real list
+
+The points render as a list with `role="list"`, so screen readers announce how many points there are and where each one starts.
+
+**WCAG:** 1.3.1 Info and Relationships
+
+### Keep the marker silent
+
+The square before each point carries no information beyond the list itself and is hidden from assistive technology.
+
+**WCAG:** 1.1.1 Non-text Content
+
+### Translate the label on pages in other languages
+
+The default label “In short” is English and carries no language attribute of its own, so on a page in another language it is read with the wrong pronunciation unless `label` replaces it.
+
+**WCAG:** 3.1.2 Language of Parts
+
+### Let the heading before it carry the structure
+
+The label is a paragraph, not a heading, so InShort relies on the heading above it. In a Chapter that is the lead sentence.
+
+**WCAG:** 1.3.1 Info and Relationships
+
+### Use it on `--surface` only
+
+The label in `--muted` reaches at least 6.99:1 and the points in `--ink` at least 14.35:1 on `--surface` in both themes, measured on the portfolio’s colour table.
+
+**WCAG:** 1.4.3 Contrast (Minimum)
+
+### Let the text grow and wrap
+
+Text sizes are in rem, so the points scale with the browser setting and wrap at 320px without horizontal scrolling.
+
+**WCAG:** 1.4.4 Resize Text, 1.4.10 Reflow
+
+## Code
+
+Minimal:
+
+```astro
+---
+import InShort from '@andree/design-system/components/InShort.astro';
+---
+
+<InShort points={['One short point.', 'Another short point.']} />
+```
+
+Realistic, through Chapter, from the situation chapter of the PRINCE case study:
+
+```astro
+---
+import Chapter from '@andree/design-system/components/Chapter.astro';
+---
+
+<Chapter
+  id="situation"
+  label="01 · Situation"
+  lead="The same study, run twice, decades apart."
+  inShort={[
+    'Decades of studies sat in digital archives with no way to search across them.',
+    'The same test for the same substance sometimes ran again, because nobody could tell it already existed.',
+    'Even once a comparable study turned up, getting its data out meant printing it and retyping it by hand: many PDFs were screenshots, not real text.',
+  ]}
+>
+  <p>Chapter text.</p>
+</Chapter>
+```
+
+## Notes
+
+- Until 0.3.0 the label was fixed to “In short” and the three-point limit was not enforced.
+- InShort is still filed as `portfolio`: it is built to sit under a chapter’s lead sentence. [confirm: whether InShort moves to `primitive` now that the label is a prop]
+- Marker size and the 22px marker column are set in px instead of tokens.
+
+# Component: SiteHeader
+
+```yaml
+name: SiteHeader
+slug: site-header
+layer: pattern
+status: draft
+since: 0.1.0
+summary: Site-wide header with the site name as home link, the primary navigation and the theme toggle.
+import: "@andree/design-system/components/SiteHeader.astro"
+tags:
+  - navigation
+  - layout
+  - landmark
+props:
+  - name: path
+    type: string
+    required: true
+    description: Current path of the page, used to mark the matching navigation item as the current page.
+  - name: siteName
+    type: string
+    required: true
+    description: Name shown on the left, which is also the text of the home link.
+  - name: nav
+    type: NavItem[]
+    required: true
+    description: "Navigation items in display order, each `{ href: string; label: string }`."
+  - name: aliases
+    type: Record<string, string[]>
+    required: false
+    default: "{}"
+    description: Extra path prefixes per navigation `href` that also mark that item as the current page.
+slots: []
+a11y:
+  keyboard: Tab moves to the home link, each navigation link and the theme toggle, in that order. Enter follows a link. Enter or Space switches the theme.
+  wcag:
+    - 1.3.1 Info and Relationships
+    - 1.4.1 Use of Color
+    - 1.4.3 Contrast (Minimum)
+    - 1.4.10 Reflow
+    - 2.1.1 Keyboard
+    - 2.4.3 Focus Order
+    - 2.4.4 Link Purpose (In Context)
+    - 2.4.7 Focus Visible
+    - 2.5.3 Label in Name
+    - 2.5.8 Target Size (Minimum)
+    - 4.1.2 Name, Role, Value
+related: []
+```
+
+## Purpose
+
+SiteHeader is the top of every page: the site name as a link home, the primary navigation and the theme toggle, in one row that wraps on narrow screens. `Base.astro` renders it on every page, directly after the skip link.
+
+### When not to use
+
+- On pages built with `Base`, `TextPage`, `CaseStudy` or `CaseStudyV2`. They already render SiteHeader, a second one would add a second banner.
+- For navigation inside a page, such as a table of contents. [confirm: which component covers in-page navigation]
+
+## Anatomy
+
+1. **Header**: a `<header>` with a bottom border in `--border`. Its content sits in `.wrap` from `global.css`.
+2. **Home link**: the site name, linking to `/` with `rel="home"`.
+3. **Navigation**: a `<nav>` named “Primary” with a list of links in mono capitals.
+4. **Theme toggle**: ThemeToggle, inside the navigation after the list.
+
+### Current page
+
+The navigation item that matches `path` gets `aria-current="page"`, the accent colour and a 2px underline in `--mark`. Matching works like this:
+
+- A trailing slash on the path is ignored.
+- `mailto:` and `http` links are never current.
+- `/` is current on `/` only.
+- Every other item is current on its own path and every path below it.
+- An item is also current on every prefix listed for its `href` in `aliases`, and below it. `{ '/': ['/work'] }` marks the `/` item on `/work/prince` but not on `/workshop`.
+
+## Content
+
+- Navigation labels are single words in the portfolio: Work, Profile, Accessibility, Contact.
+- Write labels in sentence case. The capitals come from CSS.
+
+## Accessibility
+
+### Mark the current page in code and in more than colour
+
+The current item carries `aria-current="page"` for screen readers and an underline next to the accent colour, so the state does not depend on telling colours apart.
+
+**WCAG:** 1.3.1 Info and Relationships, 1.4.1 Use of Color
+
+### Keep the navigation a named list
+
+The navigation is named “Primary”, which tells it apart from the footer navigation named “Legal”, and the list keeps its list semantics through `role="list"` even with list markers removed.
+
+**WCAG:** 1.3.1 Info and Relationships
+
+### Give the home link the site name as its text
+
+The home link’s name is `siteName`, so it says where it leads without an image or a separate label.
+
+**WCAG:** 2.4.4 Link Purpose (In Context)
+
+### Keep the focus order equal to the visual order
+
+Home link, navigation links and theme toggle follow each other in the markup in the order they appear, wrapping does not reorder them, and each shows the global focus style.
+
+**WCAG:** 2.1.1 Keyboard, 2.4.3 Focus Order, 2.4.7 Focus Visible
+
+### Keep the navigation links spaced apart
+
+The links are 21 to 22px high, below 24px. They pass only because the 32px gap between links and the 16px gap between wrapped rows keep them far enough apart. Smaller gaps or larger link text change that.
+
+**WCAG:** 2.5.8 Target Size (Minimum)
+
+### Let the theme toggle say what it does, starting with its visible text
+
+The toggle is a plain button without a pressed state. Its visible text names the active theme and a visually hidden suffix names the action, so the accessible name reads “Dark theme, switch to light” and starts with what is on screen.
+
+**WCAG:** 4.1.2 Name, Role, Value, 2.5.3 Label in Name
+
+### Let the header wrap instead of scroll
+
+At 320px the header wraps onto several rows and the page does not scroll sideways.
+
+**WCAG:** 1.4.10 Reflow
+
+### Keep text contrast at 4.5:1 or more
+
+Navigation links in `--text` reach at least 11.29:1 and the current item in `--accent` at least 5.46:1 on `--bg` in both themes, measured on the portfolio’s colour table.
+
+**WCAG:** 1.4.3 Contrast (Minimum)
+
+## Code
+
+Minimal:
+
+```astro
+---
+import SiteHeader from '@andree/design-system/components/SiteHeader.astro';
+---
+
+<SiteHeader
+  path={Astro.url.pathname}
+  siteName="Example"
+  nav={[{ href: '/', label: 'Home' }]}
+/>
+```
+
+Realistic, with the portfolio’s navigation, whose work overview lives at `/`. Pages built with `Base` pass the aliases as `navAliases` instead:
+
+```astro
+---
+import SiteHeader from '@andree/design-system/components/SiteHeader.astro';
+
+const nav = [
+  { href: '/', label: 'Work' },
+  { href: '/about', label: 'Profile' },
+  { href: '/accessibility', label: 'Accessibility' },
+  { href: 'mailto:hello@example.com', label: 'Contact' },
+];
+---
+
+<SiteHeader
+  path={Astro.url.pathname}
+  siteName="Andree Joachim Müller"
+  nav={nav}
+  aliases={{ '/': ['/work'] }}
+/>
+```
+
+## Notes
+
+- Until 0.3.0, `/` was current on every path under `/work`, written into the component. Since 0.3.0 that takes `aliases={{ '/': ['/work'] }}`, or `navAliases` on `Base` and the layouts built on it.
+- Until 0.3.0, ThemeToggle was a toggle with `aria-pressed`, which announced the light theme as off while it was on.
+- The skip link is not part of SiteHeader. `Base.astro` renders SkipLink before it.
+- SiteHeader needs `reset.css` for the list reset and `global.css` for `.wrap` and the focus style.

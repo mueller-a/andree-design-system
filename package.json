@@ -32,8 +32,9 @@
     "check": "astro check",
     "lint": "eslint .",
     "docs:check": "node scripts/docs-check.mjs",
-    "verify": "pnpm check && pnpm lint && pnpm build && pnpm docs:check && pnpm a11y",
-    "a11y": "node scripts/a11y.mjs"
+    "verify": "pnpm check && pnpm lint && pnpm build && pnpm docs:build && pnpm docs:check && pnpm a11y",
+    "a11y": "node scripts/a11y.mjs",
+    "docs:build": "node scripts/docs-build.mjs"
   },
   "peerDependencies": {
     "astro": "^5.14.1"

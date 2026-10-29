@@ -12,6 +12,9 @@
  *    umgekehrt: jede Prop im Code steht in der Doku.
  * 6. Warnung: `status: draft` bei einer Komponente, die älter ist als die
  *    aktuelle Paketversion.
+ * 7. docs/ (llms.txt, Markdown je Komponente und Foundation) entspricht dem,
+ *    was `pnpm docs:build` jetzt erzeugen würde. Sonst driften Quelle und
+ *    ausgelieferte Fassung auseinander.
  *
  * Punkt 1 gilt schrittweise: Komponenten in content/undocumented.json erzeugen
  * nur eine Warnung. Die Liste darf nur schrumpfen. Wer eine Komponente
@@ -23,6 +26,7 @@
  */
 import { readFile, readdir } from 'node:fs/promises';
 import { parse } from 'yaml';
+import { generateDocs, readCommittedDocs } from './docs-generate.mjs';
 
 const COMPONENTS_DIR = 'src/components';
 const DOCS_DIR = 'content/components';
@@ -224,6 +228,21 @@ for (const { file, data } of docs) {
       warnings.push(`${file}: status draft seit ${data.since}, aktuelle Version ${version}`);
     }
   }
+}
+
+// 7: committete Fassung gegen frisch erzeugte.
+const fresh = await generateDocs();
+const committed = await readCommittedDocs();
+const stale = [];
+for (const [path, content] of fresh) {
+  if (!committed.has(path)) stale.push(`${path} fehlt`);
+  else if (committed.get(path) !== content) stale.push(`${path} veraltet`);
+}
+for (const path of committed.keys()) {
+  if (!fresh.has(path)) stale.push(`${path} gehört zu keiner Quelle mehr`);
+}
+if (stale.length) {
+  errors.push(`docs/ passt nicht zur Quelle (${stale.join(', ')}). \`pnpm docs:build\` ausführen und committen.`);
 }
 
 for (const w of warnings) console.warn(`⚠ ${w}`);

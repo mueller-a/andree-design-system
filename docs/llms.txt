@@ -1,0 +1,42 @@
+# Dark Studio design system
+
+> Design tokens, Astro components and layouts by Andree Joachim Müller, published as @andree/design-system 0.3.0.
+
+The package is not on npm. Install it from a Git tag:
+
+```sh
+pnpm add github:mueller-a/andree-design-system#v0.3.0
+```
+
+Import paths: `@andree/design-system/styles/*.css`, `@andree/design-system/components/*.astro`, `@andree/design-system/layouts/*.astro`, `@andree/design-system/lib/*`. Pages built on `layouts/Base.astro` load the tokens, the reset and the global styles. The app provides the fonts and `theme-init.js` in its `public` folder. Use tokens from `styles/tokens.css`, never hard-coded colour or spacing values.
+
+Human-readable documentation: https://andree-design-system.vercel.app
+
+## Layers
+
+Every component has a layer. It says whether the component can be used outside the portfolio.
+
+- `foundation`: tokens, reset, fonts, `Base.astro`. Not a visible building block but the base everything sits on.
+- `primitive`: a generic building block with no knowledge of content. Works in a calculator as well as in a portfolio.
+- `pattern`: composed and opinionated, but independent of any project.
+- `portfolio`: knows case studies or their data model. Not meaningful outside the portfolio, do not use it in other projects.
+
+## Foundations
+
+- [Colour](foundations/colour.md): Colour tokens in both themes and the contrast of every text colour on every surface.
+- [Typography](foundations/typography.md): Font families, weights, the general step scale and the 18 case study sizes.
+- [Spacing](foundations/spacing.md): The 4px-based space scale, from 4 to 128px.
+- [Layout](foundations/layout.md): Measures, frame width, gutter, columns, the rail and the radius.
+- [Motion](foundations/motion.md): Durations and easing, and how reduced motion overrides them.
+
+## Components
+
+- [Callout](components/callout.md): A labelled note with a yellow rail that sets one short passage apart from the text around it. Layer: primitive. Status: draft. Import: `@andree/design-system/components/Callout.astro`.
+- [InShort](components/in-short.md): A short list of up to three points under a small label, summing up a case study chapter. Layer: portfolio. Status: draft. Import: `@andree/design-system/components/InShort.astro`.
+- [SiteHeader](components/site-header.md): Site-wide header with the site name as home link, the primary navigation and the theme toggle. Layer: pattern. Status: draft. Import: `@andree/design-system/components/SiteHeader.astro`.
+
+35 more components are in the package but not documented yet, so this list is not the full package content. They are not listed here. Do not use one without asking first.
+
+## Optional
+
+- [llms-full.txt](llms-full.txt): this index, every foundation and every component file in one document.
